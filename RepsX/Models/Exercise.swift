@@ -20,24 +20,22 @@ class Exercise {
     //standard variables
     var id: UUID
     var name: String
-    var category: String
-
-    //relationship variables
-    ///Read as: A single exercise is composed of multiple sets
-    ///deleteRule: When you delete the instance of the exercise, you also delete any associated sets
-    @Relationship(deleteRule: .cascade) var sets: [Set] = []
+    var category: Category?
     
-    ///Read as: An exercise instance belongs to a single workout instance
-    @Relationship(deleteRule: .cascade, inverse: \Workout.exercises) var workout: Workout?
+    //when an Exercise is initialized, it always starts with no associated sets
+    var sets: [Set] = []
+    
+    ///Read as: An exercise instance belongs to a single workout instance. This is mandatory
+    @Relationship(deleteRule: .cascade, inverse: \Workout.exercises) var workout: Workout
     
     //initialize the instance
-    init(id: UUID = UUID(), name: String, category: String, workout: Workout) {
+    init(id: UUID = UUID(),
+         name: String,
+         category: Category?,
+         workout: Workout) {
         self.id = id //unique ID
         self.name = name //ex bench
         self.category = category //ex chest
         self.workout = workout //ex chest day
     }
-    
-    //this is a test comment for committs in Exercise
 }
-

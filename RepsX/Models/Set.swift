@@ -21,16 +21,21 @@ class Set {
     var weight: Double
     
     //relationships
-    ///TODO: Add relationship set <> exercise, many <> one
     ///read as: there can be many sets of a given exercise (in a workout)
-    @Relationship(inverse:\Exercise.sets) var exercise: Exercise?
+    ///inverse: \Exercise.sets: This specifies the “inverse” side of the relationship. It tells SwiftData that on the other side of this relationship, in the Exercise model, there is a property called sets that holds the corresponding collection of Set instances.
+    ///var exercise: Exercise: This declares a reference to an Exercise instance. A Set must always be associated with an Exercise.
+    @Relationship(deleteRule: .cascade, inverse:\Exercise.sets) var exercise: Exercise
     
     
     //init
-    init(id: UUID = UUID(), reps: Int, weight: Double, exercise: Exercise) {
+    init(id: UUID = UUID(),
+         exercise: Exercise, //mandatory to assign a set to an exercise
+         reps: Int = 0, //defaults to 0 if no value provided
+         weight: Double = 0 //defaults to 0 if no value provided
+         ) {
         self.id = id
+        self.exercise = exercise
         self.reps = reps
         self.weight = weight
-        self.exercise = exercise
     }
 }
