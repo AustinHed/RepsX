@@ -37,5 +37,7 @@ class Exercise {
         self.category = category //ex chest
         self.workout = workout //ex chest day
     }
+    
+    //this is a test comment for committs in Exercise
 }
 
