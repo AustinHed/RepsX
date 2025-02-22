@@ -50,7 +50,12 @@ class Workout {
         Workout(name: "Chest Day", startTime: Date().addingTimeInterval(-3600), endTime: Date(), weight: 150.0, notes: "Good Lift", rating: 5),
         Workout(name: "Leg Day", startTime: Date().addingTimeInterval(-4600), endTime: Date().addingTimeInterval(-1000), weight: 160.0, notes: "Good Lift", rating: 4),
         Workout(name: "Arm Day", startTime: Date().addingTimeInterval(-5600), endTime: Date().addingTimeInterval(-2000), weight: 170.0, notes: "Good Lift", rating: 3),
-        Workout(name: "Back Day", startTime: Date().addingTimeInterval(-6600), endTime: Date().addingTimeInterval(-3000), weight: 180.0, notes: "Good Lift", rating: 2),
+        Workout(name: "Back Day",
+                startTime: Calendar.current.date(byAdding: .month, value: -1, to: Date())!.addingTimeInterval(-6600),
+                endTime: Calendar.current.date(byAdding: .month, value: -1, to: Date())!.addingTimeInterval(-3000),
+                weight: 180.0,
+                notes: "Good Lift",
+                rating: 2),
         
     ]
 }

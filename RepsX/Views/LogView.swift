@@ -13,16 +13,53 @@ struct LogView: View {
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     @Environment(\.modelContext) private var modelContext
     
+    // Group workouts by month and year (e.g., "February 2025")
+    private var groupedWorkouts: [String: [Workout]] {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMMM yyyy"
+        return Dictionary(grouping: workouts) { workout in
+            dateFormatter.string(from: workout.startTime)
+        }
+    }
+    
     var body: some View {
         NavigationView {
-            List{
-                ForEach(workouts) {workout in
-                    logViewRow(for: workout)
+            List {
+                // Sort sections by month-year string in descending order.
+                ForEach(groupedWorkouts.keys.sorted(by: <), id: \.self) { section in
+                    Section(header:
+                        //section headers
+                            HStack {
+                        Text(section)
+                            .bold()
+                        Spacer()
+                        // Display the count of workouts for this section.
+                        Text("\(groupedWorkouts[section]?.count ?? 0) Workouts")
+                            .bold()
+                    }
+                    ) {
+                        // For each workout in the section, display a row.
+                        ForEach(groupedWorkouts[section] ?? []) { workout in
+                            logViewRow(for: workout)
+                                .listRowBackground(Color.clear)
+                                .listRowSeparator(Visibility.hidden)
+                                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                        }
+                    }
+                }
+                .swipeActions {
+                    Button {
+                        //action
+                    } label: {
+                        Image(systemName: "trash.fill")
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(.red)
+                    }
+                    .tint(.clear)
                     
                 }
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
             }
+            //.environment(\.defaultMinListRowHeight, 0)
             .contentMargins(.horizontal,0)
             .navigationTitle("Log")
         }
@@ -44,7 +81,7 @@ extension LogView {
         }
         .frame(width: 40, height: 50)
         .padding(1)
-        .background(Color.white)
+        .background(Color.secondary.opacity(0.2))
         .cornerRadius(6)
     }
     
