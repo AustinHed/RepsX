@@ -10,23 +10,15 @@ import SwiftData
 
 @main
 struct RepsXApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
-
+    
+    //testing add workout view
+    let newWorkout = Workout(id: UUID(), startTime: Date())
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            //LogView()
+            AddNewWorkoutView(workout: newWorkout)
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(for: [Workout.self, Exercise.self, Set.self])
     }
 }

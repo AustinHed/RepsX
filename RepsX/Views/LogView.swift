@@ -13,6 +13,11 @@ struct LogView: View {
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     @Environment(\.modelContext) private var modelContext
     
+    //View Model
+    private var workoutViewModel: WorkoutViewModel {
+        WorkoutViewModel(modelContext: modelContext)
+    }
+    
     // Group workouts by month and year (e.g., "February 2025")
     private var groupedWorkouts: [String: [Workout]] {
         let dateFormatter = DateFormatter()
@@ -25,43 +30,45 @@ struct LogView: View {
     var body: some View {
         NavigationView {
             List {
-                // Sort sections by month-year string in descending order.
-                ForEach(groupedWorkouts.keys.sorted(by: <), id: \.self) { section in
-                    Section(header:
-                        //section headers
-                            HStack {
-                        Text(section)
-                            .bold()
-                        Spacer()
-                        // Display the count of workouts for this section.
-                        Text("\(groupedWorkouts[section]?.count ?? 0) Workouts")
-                            .bold()
-                    }
-                    ) {
-                        // For each workout in the section, display a row.
-                        ForEach(groupedWorkouts[section] ?? []) { workout in
-                            logViewRow(for: workout)
-                                .listRowBackground(Color.clear)
-                                .listRowSeparator(Visibility.hidden)
-                                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                ForEach(workouts) { workout in
+                    logViewRow(for: workout)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(Visibility.hidden)
+                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                        .swipeActions {
+                            Button {
+                                DispatchQueue.main.async{
+                                    workoutViewModel.deleteWorkout(workout)
+                                    print("delete workout")
+                                }
+                                
+                            } label: {
+                                Image(systemName: "trash.fill")
+                                    .symbolRenderingMode(.palette)
+                                    .foregroundStyle(.red)
+                            }
+                            .tint(.clear)
+                            
                         }
-                    }
                 }
-                .swipeActions {
-                    Button {
-                        //action
-                    } label: {
-                        Image(systemName: "trash.fill")
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(.red)
-                    }
-                    .tint(.clear)
-                    
-                }
+                
             }
             //.environment(\.defaultMinListRowHeight, 0)
             .contentMargins(.horizontal,0)
             .navigationTitle("Log")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        DispatchQueue.main.async {
+                            //TODO: update the add workout function
+                            workoutViewModel.addWorkout(date: Date())
+                            print("added workout")
+                        }
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
         }
     }
 }

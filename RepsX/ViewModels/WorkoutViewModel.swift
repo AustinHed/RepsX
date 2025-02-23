@@ -83,5 +83,27 @@ import SwiftData
             return []
         }
     }
+    
+    
+    //DateTime
+
+    /// Returns a formatted date string like "Fri, Feb 21 @ 9:03AM"
+    func formattedDate(_ date: Date) -> String {
+        let workoutDateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.dateFormat = "EEE, MMM d ' @ 'h:mma"
+            return formatter
+        }()
+        return workoutDateFormatter.string(from: date)
+    }
+    
+    func toolbarDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "MMM d"
+        let formattedDate = formatter.string(from: date)
+        return formattedDate
+    }
 }
 

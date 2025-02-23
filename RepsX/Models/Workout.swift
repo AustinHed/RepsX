@@ -21,7 +21,7 @@ class Workout {
     @Relationship(deleteRule: .cascade) var exercises: [Exercise] = []
     
     init(id: UUID = UUID(),
-         name: String,
+         name: String = "",
          startTime: Date,
          endTime: Date? = nil,
          weight: Double? = nil,
