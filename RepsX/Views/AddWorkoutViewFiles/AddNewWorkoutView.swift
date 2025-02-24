@@ -53,16 +53,7 @@ struct AddNewWorkoutView: View {
             //MARK: Exercises
             ForEach(workout.exercises) { exercise in
                 Section() {
-                    //name
-                    Text(exercise.name)
-                    //list of sets
-                    //add set
-                    Button {
-                        //action
-                    } label: {
-                        Text("Add Set")
-                    }
-
+                    ExerciseSectionView(exercise: exercise)
                 }
                 //one row for the workout name
                 //for each, with each row being a set

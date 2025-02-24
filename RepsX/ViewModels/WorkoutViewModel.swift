@@ -20,7 +20,6 @@ import SwiftData
     }
 
     //MARK: Add & Delete functions
-    
     //add a new Workout to memory
     func addWorkout(date: Date) {
         let newWorkout = Workout(id: UUID(),name: "Unnamed Workout", startTime: date)
