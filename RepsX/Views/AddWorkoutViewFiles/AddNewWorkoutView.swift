@@ -51,7 +51,7 @@ struct AddNewWorkoutView: View {
             }
             
             //MARK: Exercises
-            ForEach(workout.exercises) { exercise in
+            ForEach(workout.exercises.sorted {$0.order < $1.order}) { exercise in
                 Section() {
                     ExerciseSectionView(exercise: exercise)
                     
@@ -73,6 +73,7 @@ struct AddNewWorkoutView: View {
             
             
         }
+        //MARK: Toolbar & Nav Title
         .toolbar {
             ToolbarItem(placement:.topBarLeading) {
                 Text("finish button")
@@ -83,6 +84,8 @@ struct AddNewWorkoutView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(workoutViewModel.toolbarDate(workout.startTime))
+        
+        //MARK: Sheets
         .sheet(isPresented: $isTimePickerPresented) {
             if editingTime == .start {
                 TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .start)

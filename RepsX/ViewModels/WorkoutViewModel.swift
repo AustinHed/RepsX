@@ -14,33 +14,35 @@ import SwiftData
 /// -
 @Observable class WorkoutViewModel {
     private var modelContext: ModelContext
-
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
 
-    //MARK: Add & Delete functions
+    
+    //MARK: A&D Workouts
     //add a new Workout to memory
     func addWorkout(date: Date) {
         let newWorkout = Workout(id: UUID(),name: "Unnamed Workout", startTime: date)
         modelContext.insert(newWorkout)
         save()
     }
-    
-    //add an exercise to a specific Workout
-    func addExercise(to workout: Workout) {
-        let newExercise = Exercise(id: UUID(), name: "Unnamed Exercise", category: .chest, workout: workout)
-        workout.exercises.append(newExercise)
-        modelContext.insert(newExercise)
-        save()
-    }
-    
     //delete a workout from Memory
     func deleteWorkout(_ workout: Workout) {
         modelContext.delete(workout)
         save()
     }
     
+    
+    //MARK: A&D Exercises
+    //add an exercise to a specific Workout
+    func addExercise(to workout: Workout) {
+        let order = workout.exercises.count
+        let newExercise = Exercise(id: UUID(), name: "Unnamed Exercise", category: .chest, workout: workout, order: order)
+        workout.exercises.append(newExercise)
+        modelContext.insert(newExercise)
+        save()
+    }
+    //delete exercise
     func deleteExercise(_ exercise: Exercise, from workout: Workout) {
         //1. Remove the exercise from the workout's exercises array. This is to avoid potential UI issues where a view depends on the array
         if let index = workout.exercises.firstIndex(where: { $0.id == exercise.id }) {
@@ -49,11 +51,14 @@ import SwiftData
         
         // 2. Now safely delete the exercise from the context
         modelContext.delete(exercise)
+        
+        //3. refresh exercise order property
+        updateExerciseOrders(for: workout)
         save()
     }
     
-    //MARK: Update Workout functions
     
+    //MARK: Update Workout functions
     //name
     func updateName(_ workout: Workout, _ newName: String) {
         workout.name = newName
@@ -88,6 +93,20 @@ import SwiftData
         }
         save()
     }
+    
+    
+    //MARK: Update Exercise
+    func updateExerciseOrders(for workout: Workout) {
+        //first, sort the exercises
+        let sortedExercises = workout.exercises.sorted { $0.order < $1.order }
+        //then, update the order properties
+        for (index, exercise) in sortedExercises.enumerated() {
+            exercise.order = index
+        }
+        //then save
+        save()
+    }
+    
     
     //MARK: Save & Fetch
     //save

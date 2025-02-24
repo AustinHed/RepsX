@@ -19,6 +19,7 @@ class Set {
     var id: UUID
     var reps: Int
     var setWeight: Double
+    var order: Int
     
     //relationships
     ///read as: there can be many sets of a given exercise (in a workout)
@@ -31,11 +32,13 @@ class Set {
     init(id: UUID = UUID(),
          exercise: Exercise, //mandatory to assign a set to an exercise
          reps: Int = 0, //defaults to 0 if no value provided
-         weight: Double = 0 //defaults to 0 if no value provided
+         weight: Double = 0, //defaults to 0 if no value provided
+         order: Int = 0
          ) {
         self.id = id
         self.exercise = exercise
         self.reps = reps
         self.setWeight = weight
+        self.order = order
     }
 }

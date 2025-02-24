@@ -21,6 +21,7 @@ class Exercise {
     var id: UUID
     var name: String
     var category: Category?
+    var order: Int
     
     //when an Exercise is initialized, it always starts with no associated sets
     var sets: [Set] = []
@@ -32,10 +33,13 @@ class Exercise {
     init(id: UUID = UUID(),
          name: String,
          category: Category?,
-         workout: Workout) {
+         workout: Workout,
+         order: Int = 0
+        ) {
         self.id = id //unique ID
         self.name = name //ex bench
         self.category = category //ex chest
         self.workout = workout //ex chest day
+        self.order = order
     }
 }

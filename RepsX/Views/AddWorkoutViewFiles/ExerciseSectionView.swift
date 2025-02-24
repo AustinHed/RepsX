@@ -31,7 +31,8 @@ struct ExerciseSectionView: View {
         
         
         //sets
-        ForEach(Array(exercise.sets.enumerated()), id: \.element.id) { index, set in
+        //display sets in order of set.order
+        ForEach(Array(exercise.sets.sorted { $0.order < $1.order }.enumerated()), id: \.element.id) { index, set in
             HStack  {
                 //number
                 Text("\(index + 1)")
@@ -62,7 +63,7 @@ struct ExerciseSectionView: View {
                 }
                 .padding(.horizontal,8)
                 .frame(maxHeight: 15)
-
+                
             }
         }
         
