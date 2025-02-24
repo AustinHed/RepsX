@@ -1,0 +1,312 @@
+//
+//  AddNewWorkoutView.swift
+//  RepsX
+//
+//  Created by Austin Hed on 2/22/25.
+//
+
+import SwiftUI
+
+struct AddNewWorkoutView: View {
+    
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
+    
+    //the initialized workout
+    @State var workout: Workout
+    
+    //viewModel
+    private var workoutViewModel: WorkoutViewModel {
+        WorkoutViewModel(modelContext: modelContext)
+    }
+    
+    // Focus state to detect when the name field loses focus
+    @FocusState private var nameFieldFocused: Bool
+    @FocusState private var startTimeFocused: Bool
+    @FocusState private var endTimeFocused: Bool
+    
+    //time picker
+    @State private var isTimePickerPresented: Bool = false
+    @State private var editingTime: TimePickerMode = .start
+    
+    //rating picker
+    @State private var isRatingPickerPresented: Bool = false
+    
+    var body: some View {
+        List {
+            //MARK: Workout Details
+            Section() {
+                //Name row with inline editing.
+                nameEditingRow
+                
+                //Start time row
+                startTimeRow
+                
+                //End time row
+                endTimeRow
+                
+                //Rating row
+                ratingRow
+
+            }
+            
+            //MARK: Exercises
+            ForEach(workout.exercises) { exercise in
+                Section() {
+                    //name
+                    Text(exercise.name)
+                    //list of sets
+                    //add set
+                    Button {
+                        //action
+                    } label: {
+                        Text("Add Set")
+                    }
+
+                }
+                //one row for the workout name
+                //for each, with each row being a set
+                //one row with an add set
+            }
+            
+            //MARK: Add Exercise Button
+            Section() {
+                Button {
+                    workoutViewModel.addExercise(to: workout)
+                    print("add exercise button")
+                } label: {
+                    Text("Add Exercise")
+                }
+            }
+            
+            
+        }
+        .toolbar {
+            ToolbarItem(placement:.topBarLeading) {
+                Text("finish button")
+            }
+            ToolbarItem(placement:.topBarTrailing) {
+                Text("more button")
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(workoutViewModel.toolbarDate(workout.startTime))
+        .sheet(isPresented: $isTimePickerPresented) {
+            if editingTime == .start {
+                TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .start)
+            } else {
+                TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .end)
+            }
+        }
+        .sheet(isPresented: $isRatingPickerPresented) {
+            WorkoutRatingSheet(workout: workout, workoutViewModel: workoutViewModel)
+        }
+    }
+}
+
+//MARK: Workout Details
+//Name Row
+extension AddNewWorkoutView {
+    var nameEditingRow: some View {
+        HStack {
+            Text("Name")
+            Spacer()
+            TextField("Name", text: Binding(
+                get: { workout.name },
+                set: { workout.name = $0 }
+            ))
+            .multilineTextAlignment(.trailing)
+            // If the workout name is blank, the text appears in light gray (via the placeholder), otherwise in black.
+            .foregroundColor(workout.name.isEmpty ? .gray : .black)
+            .focused($nameFieldFocused)
+            .onSubmit {
+                // Called when the user taps Return
+                workoutViewModel.updateName(workout, workout.name)
+                print("updated name returned, workoutName \(workout.name)")
+            }
+            .onChange(of: nameFieldFocused) { isFocused in
+                // When focus is lost, update the workout name.
+                if !isFocused {
+                    workoutViewModel.updateName(workout, workout.name)
+                    print("updated name not focused, workoutName \(workout.name)")
+                    
+                }
+            }
+        }
+    }
+}
+//start time row
+extension AddNewWorkoutView {
+    var startTimeRow: some View {
+        HStack {
+            Text("Start Time")
+            Spacer()
+            Button {
+                //action
+                editingTime = .start
+                isTimePickerPresented.toggle()
+            } label: {
+                Text("\(workoutViewModel.formattedDate(workout.startTime))")
+            }
+        }
+    }
+}
+//end time row
+extension AddNewWorkoutView {
+    var endTimeRow: some View {
+        HStack{
+            Text("End Time")
+            Spacer()
+            Button {
+                //action
+                editingTime = .end
+                isTimePickerPresented.toggle()
+            } label: {
+                if workout.endTime != nil {
+                    Text("\(workoutViewModel.formattedDate(workout.endTime!))")
+                } else {
+                    Text("-")
+                }
+            }
+            
+            
+        }
+    }
+}
+//rating row
+extension AddNewWorkoutView {
+    var ratingRow: some View {
+        HStack{
+            Text("Rating")
+            Spacer()
+            Button {
+                isRatingPickerPresented.toggle()
+            } label: {
+                Text(workout.rating.map(String.init) ?? "-")
+            }
+        }
+    }
+}
+
+//MARK: Exercises
+
+
+//MARK: Add Exercise Button
+
+
+//MARK: Date and Time
+//time picker enum
+enum TimePickerMode {
+    case start, end
+}
+
+//dateTime picker
+struct TimePickerSheet: View {
+    var workout:Workout //the workout to edit
+    let workoutViewModel: WorkoutViewModel //the viewModel to use
+    var mode: TimePickerMode //determine start or end time
+    
+    @Environment(\.dismiss) private var dismiss //dismiss
+    @State private var tempDate: Date = Date() //value to play with
+    
+    
+    var body: some View {
+        NavigationStack {
+            VStack {
+                DatePicker("", selection: $tempDate, displayedComponents: [.date, .hourAndMinute])
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                    .padding()
+                Spacer()
+            }
+            .navigationTitle(mode == . start ? "Edit Start Time" : "Edit End Time")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        switch mode {
+                        case .start:
+                            workoutViewModel.updateStartTime(workout, tempDate)
+                        case .end:
+                            workoutViewModel.updateEndTime(workout, tempDate)
+                        }
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .onAppear {
+            switch mode {
+            case .start:
+                tempDate = workout.startTime
+            case .end:
+                tempDate = workout.endTime ?? Date()
+            }
+        }
+        .presentationDetents([.fraction(0.5)])
+    }
+}
+
+//MARK: Rating
+//workoutRating picker
+struct WorkoutRatingSheet: View {
+    var workout: Workout
+    let workoutViewModel: WorkoutViewModel
+    
+    @Environment(\.dismiss) private var dismiss //dismiss
+    @State private var tempRating:Int = 5
+    
+    var body: some View {
+        NavigationStack {
+            VStack {
+                Picker("Rating", selection: $tempRating) {
+                    //nil, disguised as a 0
+                    Text("NA").tag(0)
+                    //options 1 through 5
+                    ForEach(1...5, id: \.self) { rating in
+                        Text("\(rating)")
+                    }
+                }
+                .pickerStyle(WheelPickerStyle())
+            }
+            .navigationTitle("Rating")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        //action to update the ratings value
+                        workoutViewModel.updateRating(workout, tempRating)
+                        print("updated rating")
+                        dismiss()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.fraction(0.5)])
+        .onAppear{
+            tempRating = workout.rating ?? 0
+        }
+    }
+    
+}
+
+#Preview {
+    let testWorkout = Workout(name: "Chest Day", startTime: Date().addingTimeInterval(-3600), endTime: Date(), weight: 150.0, notes: "Good Lift", rating: 5)
+    let newWorkout = Workout(id: UUID(), startTime: Date())
+    NavigationStack{
+        AddNewWorkoutView(workout: newWorkout)
+            .modelContainer(SampleWorkout.shared.modelContainer)
+    }
+    
+    
+}

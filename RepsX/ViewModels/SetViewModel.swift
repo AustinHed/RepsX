@@ -41,7 +41,7 @@ import SwiftUI
     }
     
     func updateWeight(_ set: Set, newWeight: Double) {
-        set.weight = newWeight
+        set.setWeight = newWeight
         save()
     }
     

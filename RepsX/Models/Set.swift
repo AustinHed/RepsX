@@ -18,7 +18,7 @@ class Set {
     //the basic params of a set
     var id: UUID
     var reps: Int
-    var weight: Double
+    var setWeight: Double
     
     //relationships
     ///read as: there can be many sets of a given exercise (in a workout)
@@ -36,6 +36,6 @@ class Set {
         self.id = id
         self.exercise = exercise
         self.reps = reps
-        self.weight = weight
+        self.setWeight = weight
     }
 }

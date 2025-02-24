@@ -26,7 +26,9 @@ class Workout {
          endTime: Date? = nil,
          weight: Double? = nil,
          notes: String? = nil,
-         rating: Int? = nil) {
+         rating: Int? = nil,
+         exercises: [Exercise]? = []
+    ) {
         self.id = id
         self.name = name
         self.startTime = startTime
@@ -34,6 +36,7 @@ class Workout {
         self.weight = weight
         self.notes = notes
         self.rating = rating
+        self.exercises = exercises ?? []
     }
     
     /// Computed property that returns the workout length (in seconds).
@@ -57,5 +60,8 @@ class Workout {
                 notes: "Good Lift",
                 rating: 2),
         
+    ]
+    
+    static let sampleWorkout = [Workout(id: UUID(), startTime: Date())
     ]
 }

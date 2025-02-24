@@ -10,11 +10,10 @@ import SwiftData
 
 
 @MainActor
-class SampleData {
-    static let shared = SampleData()
+class SampleWorkout {
     
+    static let shared = SampleWorkout()
     let modelContainer: ModelContainer
-    
     var context: ModelContext {
         modelContainer.mainContext
     }
@@ -30,9 +29,11 @@ class SampleData {
         do {
             modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
             
+            //need to edit this function
             insertSampleData()
             
             try context.save()
+            
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
@@ -55,7 +56,7 @@ class SampleData {
     
     private func insertSampleData() {
         // For each workout in your sample data...
-        for workout in Workout.sampleData {
+        for workout in Workout.sampleWorkout {
             // ...create one exercise per each sample exercise (4 total)
             for exerciseData in sampleExercises {
                 let exercise = Exercise(name: exerciseData.name, category: exerciseData.category, workout: workout)

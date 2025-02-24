@@ -19,51 +19,79 @@ import SwiftData
         self.modelContext = modelContext
     }
 
-    //Add and Delete
+    //MARK: Add & Delete functions
+    
+    //add a new Workout to memory
     func addWorkout(date: Date) {
         let newWorkout = Workout(id: UUID(),name: "Unnamed Workout", startTime: date)
         modelContext.insert(newWorkout)
         save()
     }
     
+    //add an exercise to a specific Workout
+    func addExercise(to workout: Workout) {
+        let newExercise = Exercise(id: UUID(), name: "Unnamed Exercise", category: .chest, workout: workout)
+        workout.exercises.append(newExercise)
+        modelContext.insert(newExercise)
+        save()
+    }
+    
+    //delete a workout from Memory
     func deleteWorkout(_ workout: Workout) {
         modelContext.delete(workout)
         save()
     }
     
-    //Update
+    func deleteExercise(_ exercise: Exercise, from workout: Workout) {
+        //1. Remove the exercise from the workout's exercises array. This is to avoid potential UI issues where a view depends on the array
+        if let index = workout.exercises.firstIndex(where: { $0.id == exercise.id }) {
+            workout.exercises.remove(at: index)  // Remove the exercise from the workout
+        }
+        
+        // 2. Now safely delete the exercise from the context
+        modelContext.delete(exercise)
+        save()
+    }
     
+    //MARK: Update Workout functions
+    
+    //name
     func updateName(_ workout: Workout, _ newName: String) {
         workout.name = newName
         save()
     }
-    
+    //start time
     func updateStartTime(_ workout: Workout, _ newStartTime: Date) {
         workout.startTime = newStartTime
         save()
     }
-    
+    //end time
     func updateEndTime(_ workout: Workout, _ newEndTime: Date?) {
         workout.endTime = newEndTime
         save()
     }
-    
+    //bodyweight
     func updateWeight(_ workout: Workout, _ newWeight: Double?) {
         workout.weight = newWeight
         save()
     }
-    
+    //notes
     func updateNotes(_ workout: Workout, _ newNotes: String?) {
         workout.notes = newNotes
         save()
     }
-    
+    //rating
     func updateRating(_ workout: Workout, _ newRating: Int) {
-        workout.rating = newRating
+        if newRating == 0 {
+            workout.rating = nil
+        } else {
+            workout.rating = newRating
+        }
         save()
     }
     
-    //Save
+    //MARK: Save & Fetch
+    //save
     func save() {
         do {
             try modelContext.save()
@@ -72,8 +100,7 @@ import SwiftData
         }
         
     }
-
-    //Fetch
+    //fetch
     func fetchWorkouts() -> [Workout] {
         let descriptor = FetchDescriptor<Workout>(sortBy: [SortDescriptor(\.startTime, order: .reverse)])
         do {
@@ -85,9 +112,8 @@ import SwiftData
     }
     
     
-    //DateTime
-
-    /// Returns a formatted date string like "Fri, Feb 21 @ 9:03AM"
+    //MARK: Date & Time helpers
+    //Workout Details format - Returns a formatted date string like "Fri, Feb 21 @ 9:03AM"
     func formattedDate(_ date: Date) -> String {
         let workoutDateFormatter: DateFormatter = {
             let formatter = DateFormatter()
@@ -98,6 +124,7 @@ import SwiftData
         return workoutDateFormatter.string(from: date)
     }
     
+    //toolbar format
     func toolbarDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
