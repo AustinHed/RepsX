@@ -20,6 +20,7 @@ struct ExerciseSectionView: View {
     }
     
     //focus states
+    @FocusState var isKeyboardActive: Bool //to dismiss the keyboard
     @FocusState private var setWeightFocused: Bool
     
     //body
@@ -27,6 +28,7 @@ struct ExerciseSectionView: View {
         //name
         Text(exercise.name)
             .font(.headline)
+        
         
         //sets
         ForEach(Array(exercise.sets.enumerated()), id: \.element.id) { index, set in
@@ -40,26 +42,8 @@ struct ExerciseSectionView: View {
                     .foregroundColor(.white)
                 
                 //editable weight
-                VStack(alignment:.leading){
-                    Text("Lbs")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    TextField("Weight", text: Binding(
-                        get: { String(format: "%.0f", set.setWeight) },
-                        set: { newValue in
-                            if let number = Double(newValue) {
-                                set.setWeight = number
-                            }
-                        }
-                    ))
-                    .keyboardType(.decimalPad)
-                    .submitLabel(.done)
-                    .onSubmit {
-                        //update the actual setWeight for the set
-                        exerciseViewModel.updateWeight(set, newWeight: set.setWeight)
-                    }
-                }
-                .padding(.horizontal,8)
+                setWeightField(for: set)
+                    .padding(.horizontal,8)
                 
                 //reps
                 VStack(alignment:.leading){
@@ -88,6 +72,42 @@ struct ExerciseSectionView: View {
         } label: {
             Text("Add Set")
         }
+    }
+    
+}
+
+extension ExerciseSectionView {
+    /// Returns an editable weight field view for a given set.
+    func setWeightField(for set: Set) -> some View {
+        VStack(alignment: .leading) {
+            Text("Lbs")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            
+            TextField("0", text: Binding(
+                get: {
+                    let formatted = String(format: "%.0f", set.setWeight)
+                    return formatted == "0" ? "" : formatted
+                },
+                set: { newValue in
+                    if newValue.isEmpty {
+                        set.setWeight = 0
+                    } else if let number = Double(newValue) {
+                        set.setWeight = number
+                    } else {
+                        set.setWeight = 0
+                        print("the setWeight value was invalid")
+                    }
+                }
+            ))
+            .focused($isKeyboardActive)
+            .keyboardType(.decimalPad)
+            .submitLabel(.done)
+            .onSubmit {
+                exerciseViewModel.updateWeight(set, newWeight: set.setWeight)
+            }
+        }
+        .padding(.horizontal, 8)
     }
 }
 

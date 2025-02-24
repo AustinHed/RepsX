@@ -18,6 +18,7 @@ struct RepsXApp: App {
         WindowGroup {
             //LogView()
             AddNewWorkoutView(workout: newWorkout)
+                .globalKeyboardDoneButton()
         }
         .modelContainer(for: [Workout.self, Exercise.self, Set.self])
     }

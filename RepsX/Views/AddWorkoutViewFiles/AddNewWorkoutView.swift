@@ -54,6 +54,7 @@ struct AddNewWorkoutView: View {
             ForEach(workout.exercises) { exercise in
                 Section() {
                     ExerciseSectionView(exercise: exercise)
+                    
                 }
                 //one row for the workout name
                 //for each, with each row being a set
