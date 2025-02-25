@@ -12,15 +12,16 @@ import SwiftData
 struct RepsXApp: App {
     
     //testing add workout view
-    let newWorkout = Workout(id: UUID(), startTime: Date())
+    //let newWorkout = Workout(id: UUID(), startTime: Date())
     
     var body: some Scene {
         WindowGroup {
-            //LogView()
-            NavigationStack{
-                AddNewWorkoutView(workout: newWorkout)
-                    .globalKeyboardDoneButton()
-            }
+            LogView()
+                .globalKeyboardDoneButton()
+//            NavigationStack{
+//                AddNewWorkoutView(workout: newWorkout)
+//                    .globalKeyboardDoneButton()
+//            }
         }
         .modelContainer(for: [Workout.self, Exercise.self, Set.self])
     }

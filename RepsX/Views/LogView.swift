@@ -63,14 +63,14 @@ struct LogView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        DispatchQueue.main.async {
+                        //DispatchQueue.main.async {
                             //TODO: update the add workout function
                             // Create a new workout and present the AddNewWorkoutView.
                             let createdWorkout = workoutViewModel.addWorkout(date: Date())
                             newWorkout = createdWorkout
                             isAddNewWorkoutPresented = true
                             print("added workout")
-                        }
+                        //}
                     } label: {
                         Image(systemName: "plus")
                     }
