@@ -14,8 +14,11 @@ struct LogView: View {
     @Environment(\.modelContext) private var modelContext
     
     // New state variables to manage the new workout and full screen cover
-    @State private var isAddNewWorkoutPresented: Bool = false
-    @State private var newWorkout: Workout?
+    @State private var editNewWorkout: Bool = false
+    @State private var editExistingWorkout: Bool = false
+    
+    //the workout that should be edited, either as a new or existing workout
+    @State private var selectedWorkout: Workout?
     
     //View Model
     private var workoutViewModel: WorkoutViewModel {
@@ -35,7 +38,7 @@ struct LogView: View {
         NavigationView {
             List {
                 ForEach(workouts) { workout in
-                    logViewRow(for: workout)
+                    LogViewRow(workout: workout)
                         .listRowBackground(Color.clear)
                         .listRowSeparator(Visibility.hidden)
                         .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
@@ -54,37 +57,68 @@ struct LogView: View {
                             .tint(.clear)
                             
                         }
+                        .onTapGesture {
+                            print("tap workout row")
+                            //first, clear selected workout
+                            selectedWorkout = nil
+                            //then, update selected workout with the tapped workout
+                            selectedWorkout = workout
+                            //then, toggle editExistingWorkout
+                            editExistingWorkout.toggle()
+                        }
                 }
                 
             }
             //.environment(\.defaultMinListRowHeight, 0)
             .contentMargins(.horizontal,0)
             .navigationTitle("Log")
+            //Add workout plus button
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        //DispatchQueue.main.async {
-                            //TODO: update the add workout function
-                            // Create a new workout and present the AddNewWorkoutView.
-                            let createdWorkout = workoutViewModel.addWorkout(date: Date())
-                            newWorkout = createdWorkout
-                            isAddNewWorkoutPresented = true
-                            print("added workout")
-                        //}
+                        // Create a new workout
+                        let createdWorkout = workoutViewModel.addWorkout(date: Date())
+                        selectedWorkout = createdWorkout
+                        //toggle the EditWorkoutView
+                        editNewWorkout = true
+                        print("added workout")
                     } label: {
                         Image(systemName: "plus")
                     }
                 }
             }
-            .fullScreenCover(isPresented: $isAddNewWorkoutPresented) {
+            //Edit NEW workout sheet
+            .fullScreenCover(isPresented: $editNewWorkout) {
                 // Ensure newWorkout is non-nil before presenting the view.
-                if let workoutToEdit = newWorkout {
+                if let workoutToEdit = selectedWorkout {
                     NavigationStack {
-                        AddNewWorkoutView(workout: workoutToEdit)
+                        EditWorkoutView(workout: workoutToEdit)
                             .toolbar {
                                 ToolbarItem(placement: .navigationBarLeading) {
-                                    Button("X") {
-                                        isAddNewWorkoutPresented = false
+                                    Button("Finish") {
+                                        //update the end time
+                                        workoutViewModel.updateEndTime(workoutToEdit,Date())
+                                        //dismiss the Sheet
+                                        editNewWorkout = false
+                                        //clear selectedWorkout for re-use
+                                        selectedWorkout = nil
+                                    }
+                                }
+                            }
+                    }
+                    .environment(\.modelContext, modelContext)
+                }
+            }
+            //Edit EXISTING workout sheet
+            .fullScreenCover(isPresented: $editExistingWorkout) {
+                if let workoutToEdit = selectedWorkout {
+                    NavigationStack {
+                        EditWorkoutView(workout: workoutToEdit)
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarLeading) {
+                                    Button("Close") {
+                                        editExistingWorkout = false
+                                        selectedWorkout = nil
                                     }
                                 }
                             }
@@ -96,9 +130,9 @@ struct LogView: View {
     }
 }
 
-//Rows in the view
+//MARK: Workout Rows
 extension LogView {
-    
+    //date
     private func dateBlock(for workout: Workout) -> some View {
         VStack(alignment: .center) {
             let dayOfWeek = workout.startTime.formatted(.dateTime.weekday(.abbreviated))
@@ -114,7 +148,7 @@ extension LogView {
         .background(Color.secondary.opacity(0.2))
         .cornerRadius(6)
     }
-    
+    //details
     private func workoutDetails(for workout: Workout) -> some View {
         VStack(alignment: .leading) {
             //headline and date
@@ -143,7 +177,7 @@ extension LogView {
             }
         }
     }
-    
+    //date + details
     private func logViewRow(for workout: Workout) -> some View {
         HStack(alignment: .top) {
             // Date block (day-of-week and day)

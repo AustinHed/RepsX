@@ -12,7 +12,8 @@ import SwiftData
 /// Manages Workouts and provides the necessary functions
 /// - Parameters:
 /// -
-@Observable class WorkoutViewModel {
+@Observable
+class WorkoutViewModel {
     private var modelContext: ModelContext
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
@@ -29,7 +30,13 @@ import SwiftData
     }
     //delete a workout from Memory
     func deleteWorkout(_ workout: Workout) {
+        //first, iterate over the exercises
+        for exercise in workout.exercises {
+            deleteExercise(exercise, from: workout)
+        }
+        //then, delete the workout
         modelContext.delete(workout)
+        //then, save
         save()
     }
     

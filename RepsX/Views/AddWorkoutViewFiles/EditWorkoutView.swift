@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AddNewWorkoutView: View {
+struct EditWorkoutView: View {
     
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -103,9 +103,6 @@ struct AddNewWorkoutView: View {
         }
         //MARK: Toolbar & Nav Title
         .toolbar {
-            ToolbarItem(placement:.topBarLeading) {
-                Text("finish button")
-            }
             ToolbarItem(placement:.topBarTrailing) {
                 Button("Reorder") {
                     isReordering.toggle()
@@ -134,7 +131,7 @@ struct AddNewWorkoutView: View {
 
 //MARK: Workout Details
 //Name Row
-extension AddNewWorkoutView {
+extension EditWorkoutView {
     var nameEditingRow: some View {
         HStack {
             Text("Name")
@@ -164,7 +161,7 @@ extension AddNewWorkoutView {
     }
 }
 //start time row
-extension AddNewWorkoutView {
+extension EditWorkoutView {
     var startTimeRow: some View {
         HStack {
             Text("Start Time")
@@ -180,7 +177,7 @@ extension AddNewWorkoutView {
     }
 }
 //end time row
-extension AddNewWorkoutView {
+extension EditWorkoutView {
     var endTimeRow: some View {
         HStack{
             Text("End Time")
@@ -202,7 +199,7 @@ extension AddNewWorkoutView {
     }
 }
 //rating row
-extension AddNewWorkoutView {
+extension EditWorkoutView {
     var ratingRow: some View {
         HStack{
             Text("Rating")
@@ -221,7 +218,7 @@ extension AddNewWorkoutView {
 
 
 //MARK: Add Exercise Button
-extension AddNewWorkoutView{
+extension EditWorkoutView{
     func addButton(workoutViewModel:WorkoutViewModel) -> some View {
         Button {
             workoutViewModel.addExercise(to: workout)
@@ -344,9 +341,17 @@ struct WorkoutRatingSheet: View {
     let testWorkout = Workout(name: "Chest Day", startTime: Date().addingTimeInterval(-3600), endTime: Date(), weight: 150.0, notes: "Good Lift", rating: 5)
     let newWorkout = Workout(id: UUID(), startTime: Date())
     NavigationStack{
-        AddNewWorkoutView(workout: newWorkout)
+        EditWorkoutView(workout: newWorkout)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("X") {
+                        //isAddNewWorkoutPresented = false
+                    }
+                }
+            }
             .modelContainer(SampleWorkout.shared.modelContainer)
     }
+    
     
     
 }
