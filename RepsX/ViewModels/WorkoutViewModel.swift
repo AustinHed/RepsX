@@ -21,10 +21,11 @@ import SwiftData
     
     //MARK: A&D Workouts
     //add a new Workout to memory
-    func addWorkout(date: Date) {
+    func addWorkout(date: Date) -> Workout {
         let newWorkout = Workout(id: UUID(),name: "Unnamed Workout", startTime: date)
         modelContext.insert(newWorkout)
         save()
+        return newWorkout
     }
     //delete a workout from Memory
     func deleteWorkout(_ workout: Workout) {

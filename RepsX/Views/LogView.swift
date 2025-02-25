@@ -13,6 +13,10 @@ struct LogView: View {
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     @Environment(\.modelContext) private var modelContext
     
+    // New state variables to manage the new workout and full screen cover
+    @State private var isAddNewWorkoutPresented: Bool = false
+    @State private var newWorkout: Workout?
+    
     //View Model
     private var workoutViewModel: WorkoutViewModel {
         WorkoutViewModel(modelContext: modelContext)
@@ -61,12 +65,31 @@ struct LogView: View {
                     Button {
                         DispatchQueue.main.async {
                             //TODO: update the add workout function
-                            workoutViewModel.addWorkout(date: Date())
+                            // Create a new workout and present the AddNewWorkoutView.
+                            let createdWorkout = workoutViewModel.addWorkout(date: Date())
+                            newWorkout = createdWorkout
+                            isAddNewWorkoutPresented = true
                             print("added workout")
                         }
                     } label: {
                         Image(systemName: "plus")
                     }
+                }
+            }
+            .fullScreenCover(isPresented: $isAddNewWorkoutPresented) {
+                // Ensure newWorkout is non-nil before presenting the view.
+                if let workoutToEdit = newWorkout {
+                    NavigationStack {
+                        AddNewWorkoutView(workout: workoutToEdit)
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarLeading) {
+                                    Button("X") {
+                                        isAddNewWorkoutPresented = false
+                                    }
+                                }
+                            }
+                    }
+                    .environment(\.modelContext, modelContext)
                 }
             }
         }

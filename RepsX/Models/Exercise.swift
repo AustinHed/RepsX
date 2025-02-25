@@ -27,7 +27,7 @@ class Exercise {
     var sets: [Set] = []
     
     ///Read as: An exercise instance belongs to a single workout instance. This is mandatory
-    @Relationship(deleteRule: .cascade, inverse: \Workout.exercises) var workout: Workout
+    @Relationship(deleteRule: .cascade, inverse: \Workout.exercises) var workout: Workout?
     
     //initialize the instance
     init(id: UUID = UUID(),

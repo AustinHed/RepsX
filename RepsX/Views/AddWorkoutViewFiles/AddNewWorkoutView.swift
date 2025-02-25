@@ -20,6 +20,8 @@ struct AddNewWorkoutView: View {
         WorkoutViewModel(modelContext: modelContext)
     }
     
+
+
     // Focus state to detect when the name field loses focus
     @FocusState private var nameFieldFocused: Bool
     @FocusState private var startTimeFocused: Bool
@@ -31,6 +33,9 @@ struct AddNewWorkoutView: View {
     
     //rating picker
     @State private var isRatingPickerPresented: Bool = false
+    
+    //Reorder
+    @State private var isReordering: Bool = false
     
     var body: some View {
         List {
@@ -47,28 +52,51 @@ struct AddNewWorkoutView: View {
                 
                 //Rating row
                 ratingRow
+                
+                Button {
+                    isReordering.toggle()
+                } label: {
+                    Text("reorder")
+                }
+
 
             }
             
             //MARK: Exercises
             ForEach(workout.exercises.sorted {$0.order < $1.order}) { exercise in
                 Section() {
+                    //name
+                    HStack {
+                        Text(exercise.name)
+                            .font(.headline)
+                        
+                        Spacer()
+                        Button {
+                            //action
+                            //menu with two options
+                            //delete
+                            //reorder exercises
+                        } label: {
+                            Image(systemName: "ellipsis")
+                        }
+                    }
+                    .swipeActions {
+                        Button("delete", role: .destructive) {
+                           withAnimation{
+                                workoutViewModel.deleteExercise(exercise, from: workout)
+                            }
+                        }
+                    }
+                    
+                    //sets
                     ExerciseSectionView(exercise: exercise)
                     
                 }
-                //one row for the workout name
-                //for each, with each row being a set
-                //one row with an add set
             }
             
             //MARK: Add Exercise Button
             Section() {
-                Button {
-                    workoutViewModel.addExercise(to: workout)
-                    print("add exercise button")
-                } label: {
-                    Text("Add Exercise")
-                }
+                addButton(workoutViewModel: workoutViewModel)
             }
             
             
@@ -79,7 +107,9 @@ struct AddNewWorkoutView: View {
                 Text("finish button")
             }
             ToolbarItem(placement:.topBarTrailing) {
-                Text("more button")
+                Button("Reorder") {
+                    isReordering.toggle()
+                }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -95,6 +125,9 @@ struct AddNewWorkoutView: View {
         }
         .sheet(isPresented: $isRatingPickerPresented) {
             WorkoutRatingSheet(workout: workout, workoutViewModel: workoutViewModel)
+        }
+        .sheet(isPresented: $isReordering) {
+            ReorderExercisesView(workoutViewModel: workoutViewModel, workout: workout)
         }
     }
 }
@@ -183,10 +216,21 @@ extension AddNewWorkoutView {
     }
 }
 
+
 //MARK: Exercises
 
 
 //MARK: Add Exercise Button
+extension AddNewWorkoutView{
+    func addButton(workoutViewModel:WorkoutViewModel) -> some View {
+        Button {
+            workoutViewModel.addExercise(to: workout)
+            print("add exercise button")
+        } label: {
+            Text("Add Exercise")
+        }
+    }
+}
 
 
 //MARK: Date and Time
@@ -194,7 +238,6 @@ extension AddNewWorkoutView {
 enum TimePickerMode {
     case start, end
 }
-
 //dateTime picker
 struct TimePickerSheet: View {
     var workout:Workout //the workout to edit
@@ -247,6 +290,7 @@ struct TimePickerSheet: View {
     }
 }
 
+
 //MARK: Rating
 //workoutRating picker
 struct WorkoutRatingSheet: View {
@@ -294,6 +338,7 @@ struct WorkoutRatingSheet: View {
     }
     
 }
+
 
 #Preview {
     let testWorkout = Workout(name: "Chest Day", startTime: Date().addingTimeInterval(-3600), endTime: Date(), weight: 150.0, notes: "Good Lift", rating: 5)

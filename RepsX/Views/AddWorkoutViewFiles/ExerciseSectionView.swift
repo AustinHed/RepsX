@@ -25,28 +25,14 @@ struct ExerciseSectionView: View {
     
     //body
     var body: some View {
-        //name
-        Text(exercise.name)
-            .font(.headline)
-        
         
         //sets
-        //display sets in order of set.order
         ForEach(Array(exercise.sets.sorted { $0.order < $1.order }.enumerated()), id: \.element.id) { index, set in
+            ///display sets in order of set.order
             HStack  {
+                
                 //number
-                Text("\(index + 1)")
-                    .font(.caption)
-                    .bold()
-                    .frame(width: 24, height: 24)
-                    .background(
-                        Circle()
-                            .stroke(set.reps == 0 ? Color.gray : Color.blue,
-                                    lineWidth: 1.5
-                                   )
-                    )
-                    .padding(.trailing)
-                    .foregroundColor(set.reps == 0 ? Color.gray : Color.blue)
+                exerciseNumberField(index: index, set: set)
                 
                 //weight
                 setWeightField(for: set)
@@ -55,17 +41,23 @@ struct ExerciseSectionView: View {
                 setRepsField(for: set)
                 
                 //notes
-                VStack(alignment:.leading){
-                    Text("Notes")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                    Text("Empty")
-                }
-                .padding(.horizontal,8)
-                .frame(maxHeight: 15)
+                ///This is placeholder
+                notesView()
                 
             }
+            //swipe actions go here
+            .swipeActions(edge: .trailing) {
+                
+                Button("delete", role: .destructive) {
+                    withAnimation{
+                        exerciseViewModel.deleteSet(set, from: exercise)
+                    }
+                    
+                }
+
+            }
         }
+       
         
         //add button
         Button {
@@ -77,8 +69,25 @@ struct ExerciseSectionView: View {
     
 }
 
-//MARK: Weight and Rep fields
-//weight
+
+extension ExerciseSectionView {
+    func exerciseNumberField(index:Int, set: Set) -> some View {
+        Text("\(index + 1)")
+            .font(.caption)
+            .bold()
+            .frame(width: 24, height: 24)
+            .background(
+                Circle()
+                    .stroke(set.reps == 0 ? Color.gray : Color.blue,
+                            lineWidth: 1.5
+                           )
+            )
+            .padding(.trailing)
+            .foregroundColor(set.reps == 0 ? Color.gray : Color.blue)
+    }
+}
+
+//MARK: Weight
 extension ExerciseSectionView {
     /// Returns an editable weight field view for a given set.
     func setWeightField(for set: Set) -> some View {
@@ -116,7 +125,7 @@ extension ExerciseSectionView {
         
     }
 }
-//reps
+//MARK: Reps
 extension ExerciseSectionView{
     func setRepsField(for set: Set) -> some View {
         VStack(alignment: .leading) {
@@ -154,10 +163,27 @@ extension ExerciseSectionView{
     }
 }
 
+//MARK: Notes
+extension ExerciseSectionView {
+    func notesView() -> some View {
+        VStack(alignment:.leading){
+            Text("Notes")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text("Empty")
+        }
+        .padding(.horizontal,8)
+        .frame(maxHeight: 15)
+    }
+    
+}
+
 #Preview {
     let newWorkout = Workout(id: UUID(), startTime: Date())
     let newExercise = Exercise(name: "Bench Press", category: .chest, workout: newWorkout)
     List {
+        Text("Workout")
+            .bold()
         ExerciseSectionView(exercise: newExercise)
     }
     

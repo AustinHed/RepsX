@@ -17,8 +17,10 @@ struct RepsXApp: App {
     var body: some Scene {
         WindowGroup {
             //LogView()
-            AddNewWorkoutView(workout: newWorkout)
-                .globalKeyboardDoneButton()
+            NavigationStack{
+                AddNewWorkoutView(workout: newWorkout)
+                    .globalKeyboardDoneButton()
+            }
         }
         .modelContainer(for: [Workout.self, Exercise.self, Set.self])
     }

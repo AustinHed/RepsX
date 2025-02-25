@@ -25,7 +25,7 @@ class Set {
     ///read as: there can be many sets of a given exercise (in a workout)
     ///inverse: \Exercise.sets: This specifies the “inverse” side of the relationship. It tells SwiftData that on the other side of this relationship, in the Exercise model, there is a property called sets that holds the corresponding collection of Set instances.
     ///var exercise: Exercise: This declares a reference to an Exercise instance. A Set must always be associated with an Exercise.
-    @Relationship(deleteRule: .cascade, inverse:\Exercise.sets) var exercise: Exercise
+    @Relationship(deleteRule: .cascade, inverse:\Exercise.sets) var exercise: Exercise?
     
     
     //init
