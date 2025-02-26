@@ -5,14 +5,9 @@
 //  Created by Austin Hed on 2/21/25.
 //
 
+//TODO: Maybe this should also be a Model?
 import Foundation
 import SwiftData
-//@Model
-//class workoutCategory {
-//    @Attribute(.unique) var name: String
-//    @Relationship(deleteRule: .cascade, inverse: \Exercise.category)
-//    var workouts = [Exercise()]
-//}
 
 enum Category: String, CaseIterable, Codable {
     case chest = "Chest"

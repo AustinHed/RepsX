@@ -23,7 +23,7 @@ class WorkoutViewModel {
     //MARK: A&D Workouts
     //add a new Workout to memory
     func addWorkout(date: Date) -> Workout {
-        let newWorkout = Workout(id: UUID(),name: "Unnamed Workout", startTime: date)
+        let newWorkout = Workout(id: UUID(),name: "", startTime: date)
         modelContext.insert(newWorkout)
         save()
         return newWorkout

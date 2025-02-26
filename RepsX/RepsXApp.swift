@@ -11,8 +11,15 @@ import SwiftData
 @main
 struct RepsXApp: App {
     
-    //testing add workout view
-    //let newWorkout = Workout(id: UUID(), startTime: Date())
+    // Create the container and immediately initialize default exercises.
+        let container: ModelContainer = {
+            let container = try! ModelContainer(for: Workout.self, Exercise.self, Set.self, PredefinedExercise.self)
+            let context = container.mainContext
+            // Create an instance of your PredefinedExercisesViewModel and call the initializer function.
+            let predefinedVM = PredefinedExercisesViewModel(modelContext: context)
+            predefinedVM.initializeDefaultPredefinedExercisesIfNeeded()
+            return container
+        }()
     
     var body: some Scene {
         WindowGroup {
@@ -23,6 +30,6 @@ struct RepsXApp: App {
 //                    .globalKeyboardDoneButton()
 //            }
         }
-        .modelContainer(for: [Workout.self, Exercise.self, Set.self])
+        .modelContainer(for: [Workout.self, Exercise.self, Set.self, PredefinedExercise.self])
     }
 }

@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct LogView: View {
+    
     //Fetch workouts
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     @Environment(\.modelContext) private var modelContext
@@ -19,6 +20,9 @@ struct LogView: View {
     
     //the workout that should be edited, either as a new or existing workout
     @State private var selectedWorkout: Workout?
+    
+    //deleting a workout confirmation
+    @State private var workoutToDelete: Workout?
     
     //View Model
     private var workoutViewModel: WorkoutViewModel {
@@ -37,26 +41,25 @@ struct LogView: View {
     var body: some View {
         NavigationView {
             List {
+                //MARK: List
                 ForEach(workouts) { workout in
                     LogViewRow(workout: workout)
                         .listRowBackground(Color.clear)
                         .listRowSeparator(Visibility.hidden)
                         .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    //swipe to delete
                         .swipeActions {
-                            Button {
-                                DispatchQueue.main.async{
-                                    workoutViewModel.deleteWorkout(workout)
-                                    print("delete workout")
-                                }
-                                
+                            Button() {
+                                // Instead of deleting immediately, store the workout in a state variable
+                                workoutToDelete = workout
                             } label: {
                                 Image(systemName: "trash.fill")
                                     .symbolRenderingMode(.palette)
                                     .foregroundStyle(.red)
                             }
                             .tint(.clear)
-                            
                         }
+                    //open workout editor view
                         .onTapGesture {
                             print("tap workout row")
                             //first, clear selected workout
@@ -67,9 +70,8 @@ struct LogView: View {
                             editExistingWorkout.toggle()
                         }
                 }
-                
             }
-            //.environment(\.defaultMinListRowHeight, 0)
+            //MARK: Title, Add Workout, Edit Workout
             .contentMargins(.horizontal,0)
             .navigationTitle("Log")
             //Add workout plus button
@@ -98,6 +100,11 @@ struct LogView: View {
                                     Button("Finish") {
                                         //update the end time
                                         workoutViewModel.updateEndTime(workoutToEdit,Date())
+                                        //update un-named workouts
+                                        if workoutToEdit.name == "" {
+                                            let dateName = String(workoutViewModel.toolbarDate(workoutToEdit.startTime))
+                                            workoutViewModel.updateName(workoutToEdit, "Workout on \(dateName)")
+                                        }
                                         //dismiss the Sheet
                                         editNewWorkout = false
                                         //clear selectedWorkout for re-use
@@ -117,6 +124,9 @@ struct LogView: View {
                             .toolbar {
                                 ToolbarItem(placement: .navigationBarLeading) {
                                     Button("Close") {
+                                        if workoutToEdit.name == "" {
+                                            workoutViewModel.updateName(workoutToEdit, "Unnamed Workout")
+                                        }
                                         editExistingWorkout = false
                                         selectedWorkout = nil
                                     }
@@ -126,73 +136,31 @@ struct LogView: View {
                     .environment(\.modelContext, modelContext)
                 }
             }
+            
         }
+        //delete workout confirmation
+        .alert("Delete Workout?", isPresented: Binding<Bool>(
+            get: { workoutToDelete != nil },
+            set: { newValue in
+                if !newValue { workoutToDelete = nil }
+            }
+        ), presenting: workoutToDelete) { workout in
+            Button("Delete", role: .destructive) {
+                withAnimation {
+                    workoutToDelete = nil
+                    workoutViewModel.deleteWorkout(workout)
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                workoutToDelete = nil
+            }
+        } message: { workout in
+            Text("Are you sure you want to delete this workout?")
+        }
+        
     }
 }
 
-//MARK: Workout Rows
-extension LogView {
-    //date
-    private func dateBlock(for workout: Workout) -> some View {
-        VStack(alignment: .center) {
-            let dayOfWeek = workout.startTime.formatted(.dateTime.weekday(.abbreviated))
-            Text(dayOfWeek)
-                .font(.headline)
-            let day = workout.startTime.formatted(.dateTime.day())
-            Text(day)
-                .font(.subheadline)
-                .bold()
-        }
-        .frame(width: 40, height: 50)
-        .padding(1)
-        .background(Color.secondary.opacity(0.2))
-        .cornerRadius(6)
-    }
-    //details
-    private func workoutDetails(for workout: Workout) -> some View {
-        VStack(alignment: .leading) {
-            //headline and date
-            HStack {
-                Text(workout.name)
-                    .font(.headline)
-                Spacer()
-                if let endTime = workout.endTime {
-                    let duration = workout.workoutLength
-                    Text("\(Int(duration/60)) min")
-                        .font(.subheadline)
-                } else {
-                    Text("-")
-                        .font(.subheadline)
-                }
-            }
-            //reps and sets
-            ForEach(workout.exercises, id: \.id) { exercise in
-                HStack {
-                    Text("\(exercise.sets.count) x")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    Text(exercise.name)
-                        .font(.subheadline)
-                }
-            }
-        }
-    }
-    //date + details
-    private func logViewRow(for workout: Workout) -> some View {
-        HStack(alignment: .top) {
-            // Date block (day-of-week and day)
-            dateBlock(for: workout)
-            
-            // Workout details (name, duration, and exercise summary)
-            workoutDetails(for: workout)
-        }
-        .padding(.vertical)
-        .padding(.leading, 10)
-        .padding(.trailing, 20)
-        .background(Color.white)
-        .cornerRadius(8)
-    }
-}
 
 #Preview {
     LogView()

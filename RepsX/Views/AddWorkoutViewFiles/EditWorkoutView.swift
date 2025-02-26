@@ -52,13 +52,6 @@ struct EditWorkoutView: View {
                 
                 //Rating row
                 ratingRow
-                
-                Button {
-                    isReordering.toggle()
-                } label: {
-                    Text("reorder")
-                }
-
 
             }
             
@@ -66,24 +59,14 @@ struct EditWorkoutView: View {
             ForEach(workout.exercises.sorted {$0.order < $1.order}) { exercise in
                 Section() {
                     //name
-                    HStack {
-                        Text(exercise.name)
-                            .font(.headline)
-                        
-                        Spacer()
-                        Button {
-                            //action
-                            //menu with two options
-                            //delete
-                            //reorder exercises
-                        } label: {
-                            Image(systemName: "ellipsis")
-                        }
-                    }
+                    exerciseName(exercise)
+                    //delete exercise
                     .swipeActions {
                         Button("delete", role: .destructive) {
-                           withAnimation{
-                                workoutViewModel.deleteExercise(exercise, from: workout)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
+                                withAnimation{
+                                    workoutViewModel.deleteExercise(exercise, from: workout)
+                                }
                             }
                         }
                     }
@@ -136,9 +119,16 @@ extension EditWorkoutView {
         HStack {
             Text("Name")
             Spacer()
-            TextField("Name", text: Binding(
+            TextField("Unnamed Workout", text: Binding(
                 get: { workout.name },
-                set: { workout.name = $0 }
+                //set: { workout.name = $0 }
+                set: { newName in
+                    if newName == "" {
+                        workout.name = ""
+                    } else {
+                        workout.name = newName
+                    }
+                }
             ))
             .multilineTextAlignment(.trailing)
             // If the workout name is blank, the text appears in light gray (via the placeholder), otherwise in black.
@@ -215,7 +205,25 @@ extension EditWorkoutView {
 
 
 //MARK: Exercises
-
+//exercise name
+extension EditWorkoutView {
+    func exerciseName(_ exercise: Exercise) -> some View {
+        HStack {
+            Text(exercise.name)
+                .font(.headline)
+            
+            Spacer()
+            Button {
+                //action
+                //menu with two options
+                //delete
+                //reorder exercises
+            } label: {
+                Image(systemName: "ellipsis")
+            }
+        }
+    }
+}
 
 //MARK: Add Exercise Button
 extension EditWorkoutView{
@@ -337,6 +345,7 @@ struct WorkoutRatingSheet: View {
 }
 
 
+//MARK: Preview
 #Preview {
     let testWorkout = Workout(name: "Chest Day", startTime: Date().addingTimeInterval(-3600), endTime: Date(), weight: 150.0, notes: "Good Lift", rating: 5)
     let newWorkout = Workout(id: UUID(), startTime: Date())

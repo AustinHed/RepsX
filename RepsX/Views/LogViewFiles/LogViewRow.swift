@@ -77,7 +77,3 @@ extension LogViewRow{
         }
     }
 }
-
-//#Preview {
-//    LogViewRow()
-//}
