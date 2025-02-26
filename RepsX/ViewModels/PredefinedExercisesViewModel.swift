@@ -20,8 +20,8 @@ class PredefinedExercisesViewModel {
     
     // MARK: - Add Predefined Exercise
     /// Creates a new PredefinedExercise with the given name and category, inserts it into the context, saves, and returns it.
-    func addPredefinedExercise(name: String, category: Category) -> PredefinedExercise {
-        let newExercise = PredefinedExercise(name: name, category: category)
+    func addPredefinedExercise(name: String, category: CategoryModel) -> PredefinedExercise {
+        let newExercise = PredefinedExercise(name: name, category: CategoryModel(name:"other"))
         modelContext.insert(newExercise)
         save()
         return newExercise
@@ -29,7 +29,7 @@ class PredefinedExercisesViewModel {
     
     // MARK: - Update Predefined Exercise
     /// Updates the given PredefinedExercise with a new name and/or category.
-    func updatePredefinedExercise(_ exercise: PredefinedExercise, newName: String? = nil, newCategory: Category? = nil) {
+    func updatePredefinedExercise(_ exercise: PredefinedExercise, newName: String? = nil, newCategory: CategoryModel? = nil) {
         if let newName = newName {
             exercise.name = newName
         }
@@ -77,10 +77,10 @@ class PredefinedExercisesViewModel {
             let existingExercises = try modelContext.fetch(descriptor)
             if existingExercises.isEmpty {
                 let defaultExercises = [
-                    PredefinedExercise(name: "Bench Press", category: .chest),
-                    PredefinedExercise(name: "Squat", category: .legs),
-                    PredefinedExercise(name: "Deadlift", category: .back),
-                    PredefinedExercise(name: "Overhead Press", category: .shoulders)
+                    PredefinedExercise(name: "Bench Press", category: CategoryModel(name: "Chest")),
+                    PredefinedExercise(name: "Squat", category: CategoryModel(name: "Legs")),
+                    PredefinedExercise(name: "Deadlift", category: CategoryModel(name: "Back")),
+                    PredefinedExercise(name: "Overhead Press", category: CategoryModel(name: "Shoulders"))
                 ]
                 defaultExercises.forEach { modelContext.insert($0) }
                 try modelContext.save()

@@ -20,8 +20,8 @@ struct EditWorkoutView: View {
         WorkoutViewModel(modelContext: modelContext)
     }
     
-
-
+    
+    
     // Focus state to detect when the name field loses focus
     @FocusState private var nameFieldFocused: Bool
     @FocusState private var startTimeFocused: Bool
@@ -36,6 +36,9 @@ struct EditWorkoutView: View {
     
     //Reorder
     @State private var isReordering: Bool = false
+    
+    //Exercise category & exercise
+    @State private var isSelectingExercise: Bool = false
     
     var body: some View {
         List {
@@ -52,7 +55,7 @@ struct EditWorkoutView: View {
                 
                 //Rating row
                 ratingRow
-
+                
             }
             
             //MARK: Exercises
@@ -61,15 +64,15 @@ struct EditWorkoutView: View {
                     //name
                     exerciseName(exercise)
                     //delete exercise
-                    .swipeActions {
-                        Button("delete", role: .destructive) {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
-                                withAnimation{
-                                    workoutViewModel.deleteExercise(exercise, from: workout)
+                        .swipeActions {
+                            Button("delete", role: .destructive) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
+                                    withAnimation{
+                                        workoutViewModel.deleteExercise(exercise, from: workout)
+                                    }
                                 }
                             }
                         }
-                    }
                     
                     //sets
                     ExerciseSectionView(exercise: exercise)
@@ -108,6 +111,21 @@ struct EditWorkoutView: View {
         }
         .sheet(isPresented: $isReordering) {
             ReorderExercisesView(workoutViewModel: workoutViewModel, workout: workout)
+        }
+        //adding a new exercise
+        .sheet(isPresented: $isSelectingExercise) {
+            NavigationStack{
+                SelectCategoryView(
+                    isSelectingExercise: $isSelectingExercise,
+                    onExerciseSelected: {predefinedExercise in
+                        //take the selected exercise and add it to the workout
+                        workoutViewModel.addPremadeExercise(to: workout, exercise: predefinedExercise)
+                        //dismiss
+                        isSelectingExercise = false
+                    }
+                )
+            }
+            
         }
     }
 }
@@ -225,11 +243,13 @@ extension EditWorkoutView {
     }
 }
 
+
 //MARK: Add Exercise Button
 extension EditWorkoutView{
     func addButton(workoutViewModel:WorkoutViewModel) -> some View {
         Button {
-            workoutViewModel.addExercise(to: workout)
+            //workoutViewModel.addExercise(to: workout)
+            isSelectingExercise.toggle()
             print("add exercise button")
         } label: {
             Text("Add Exercise")

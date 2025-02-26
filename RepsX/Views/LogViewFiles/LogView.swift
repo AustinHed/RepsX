@@ -136,6 +136,10 @@ struct LogView: View {
                     .environment(\.modelContext, modelContext)
                 }
             }
+            //load default workouts
+            .onAppear{
+                initializeDefaultDataIfNeeded(context: modelContext)
+            }
             
         }
         //delete workout confirmation

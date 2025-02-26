@@ -43,9 +43,22 @@ class WorkoutViewModel {
     
     //MARK: A&D Exercises
     //add an exercise to a specific Workout
-    func addExercise(to workout: Workout) {
+    func addExercise(to workout: Workout, named exerciseName: String) {
         let order = workout.exercises.count
-        let newExercise = Exercise(id: UUID(), name: "Unnamed Exercise", category: .chest, workout: workout, order: order)
+        let newExercise = Exercise(id: UUID(), name: exerciseName, category: .chest, workout: workout, order: order)
+        workout.exercises.append(newExercise)
+        modelContext.insert(newExercise)
+        save()
+    }
+    
+    func addPremadeExercise(to workout: Workout, exercise: PredefinedExercise) {
+        let order = workout.exercises.count
+        let newExercise = Exercise(id: UUID(),
+                                   name: exercise.name,
+                                   category: .chest,
+                                   workout: workout,
+                                   order: order
+        )
         workout.exercises.append(newExercise)
         modelContext.insert(newExercise)
         save()

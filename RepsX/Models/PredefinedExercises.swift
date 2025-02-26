@@ -12,11 +12,11 @@ import SwiftData
 class PredefinedExercise: Identifiable {
     var id: UUID
     var name: String
-    var category: Category  
+    var category: CategoryModel
     
     init(id: UUID = UUID(),
          name: String = "Unknown Exercise",
-         category: Category = .other
+         category: CategoryModel = CategoryModel(name: "Other")
         ){
         self.id = id
         self.name = name
