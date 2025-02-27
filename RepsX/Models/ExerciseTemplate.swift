@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class PredefinedExercise: Identifiable {
+class ExerciseTemplate: Identifiable {
     var id: UUID
     var name: String
     var category: CategoryModel

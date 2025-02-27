@@ -18,12 +18,12 @@ struct SelectExerciseView: View {
     @Binding var isSelectingExercise: Bool
     
     //the passable onSelect
-    var onExerciseSelected:(PredefinedExercise) -> Void
+    var onExerciseSelected:(ExerciseTemplate) -> Void
     
     // Query all predefined exercises, sorted by name.
-    @Query(sort: \PredefinedExercise.name) var allExercises: [PredefinedExercise]
+    @Query(sort: \ExerciseTemplate.name) var allExercises: [ExerciseTemplate]
     
-    var filteredExercises: [PredefinedExercise] {
+    var filteredExercises: [ExerciseTemplate] {
         allExercises.filter { $0.category.id == category.id }
     }
     
@@ -47,28 +47,23 @@ struct SelectExerciseView: View {
         }
         .navigationTitle(category.name)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            // Add a custom back button with a static label "Back".
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("Back") {
+                    dismiss()
+                }
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    //add a new Exercise, with the category already defined based on the "category" above
+                } label: {
+                    Image(systemName:"plus.circle")
+                }
 
-//        NavigationStack{
-//            List {
-//                ForEach(filteredExercises) { exercise in
-//                    Text(exercise.name)
-//                }
-//            }
-//            .navigationTitle(chosenCategory.name)
-//            .navigationBarTitleDisplayMode(.inline)
-//        }
+            }
+        }
     }
 }
-
-
-//#Preview {
-//
-//    let defaultExercises = [
-//    ]
-//
-//    let testCategory = CategoryModel(name: "Test Category")
-//    SelectExerciseView(category: testCategory)
-//        .modelContainer(for: [Workout.self, Exercise.self, Set.self, PredefinedExercise.self, CategoryModel.self])
-//
-//
-//}

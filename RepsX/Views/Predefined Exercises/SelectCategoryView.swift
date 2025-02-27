@@ -13,7 +13,7 @@ struct SelectCategoryView: View {
     
     //dismiss var
     @Binding var isSelectingExercise: Bool
-    var onExerciseSelected: (PredefinedExercise) -> Void
+    var onExerciseSelected: (ExerciseTemplate) -> Void
     //Fetch categories
     @Query(sort: \CategoryModel.name, order: .reverse) var categories: [CategoryModel]
     @Environment(\.modelContext) private var modelContext
@@ -24,10 +24,11 @@ struct SelectCategoryView: View {
         CategoryViewModel(modelContext: modelContext)
     }
     //View Model
-    private var predefinedExerciseViewModel: PredefinedExercisesViewModel {
-        PredefinedExercisesViewModel(modelContext: modelContext)
+    private var predefinedExerciseViewModel: ExerciseTemplateViewModel {
+        ExerciseTemplateViewModel(modelContext: modelContext)
     }
     
+    @State var isAddingExercise: Bool = false
     
     //environment and context
     @Environment(\.dismiss) private var dismiss
@@ -54,24 +55,22 @@ struct SelectCategoryView: View {
                     } label: {
                         Text("Cancel")
                     }
-
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        //action - open the "add Exercise" view
+                        isAddingExercise.toggle()
+                        
+                    } label: {
+                        Image(systemName:"plus.circle")
+                    }
                 }
             }
-            
-            //test button to delete later
-            Button {
-                categoryViewModel.addCategory(name: "Chest")
-                print("add category")
-            } label: {
-                Text("add CategoryModel")
+            .sheet(isPresented: $isAddingExercise) {
+                CreateNewExerciseTemplateView()
             }
-            
-            Button {
-                predefinedExerciseViewModel.addPredefinedExercise(name: "Bench", category: CategoryModel(id: UUID(), name: "Chest"))
-            } label: {
-                Text("add PredefinedWorkout model")
-            }
-
         }
+        
     }
 }

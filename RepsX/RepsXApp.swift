@@ -17,6 +17,6 @@ struct RepsXApp: App {
             LogView()
                 .globalKeyboardDoneButton()
         }
-        .modelContainer(for: [Workout.self, Exercise.self, Set.self, PredefinedExercise.self, CategoryModel.self])
+        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self])
     }
 }

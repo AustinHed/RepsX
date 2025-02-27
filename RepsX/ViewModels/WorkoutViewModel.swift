@@ -51,7 +51,7 @@ class WorkoutViewModel {
         save()
     }
     
-    func addPremadeExercise(to workout: Workout, exercise: PredefinedExercise) {
+    func addPremadeExercise(to workout: Workout, exercise: ExerciseTemplate) {
         let order = workout.exercises.count
         let newExercise = Exercise(id: UUID(),
                                    name: exercise.name,
