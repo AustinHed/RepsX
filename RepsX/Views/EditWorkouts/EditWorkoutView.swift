@@ -40,6 +40,9 @@ struct EditWorkoutView: View {
     //Exercise category & exercise
     @State private var isSelectingExercise: Bool = false
     
+    //delete confirmation
+    @State private var showDeleteConfirmation = false
+    
     var body: some View {
         List {
             //MARK: Workout Details
@@ -90,15 +93,33 @@ struct EditWorkoutView: View {
         //MARK: Toolbar & Nav Title
         .toolbar {
             ToolbarItem(placement:.topBarTrailing) {
-                Button("Reorder") {
-                    isReordering.toggle()
+                
+                Menu {
+                    Button("Reorder") {
+                        isReordering.toggle()
+                    }
+                    Button("Delete") {
+                        showDeleteConfirmation.toggle()
+                    }.foregroundStyle(.red)
+                } label: {
+                    Image(systemName:"ellipsis.circle")
                 }
+                .confirmationDialog("Are you sure you want to delete this Workout", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
+                    Button("Delete", role: .destructive) {
+                        workoutViewModel.deleteWorkout(workout)
+                        dismiss()
+                    }
+                    Button("Cancel", role: .cancel) { }
+                }
+                
+                
             }
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(workoutViewModel.toolbarDate(workout.startTime))
         
         //MARK: Sheets
+        //Time picke
         .sheet(isPresented: $isTimePickerPresented) {
             if editingTime == .start {
                 TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .start)
@@ -106,9 +127,11 @@ struct EditWorkoutView: View {
                 TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .end)
             }
         }
+        //Rating picker
         .sheet(isPresented: $isRatingPickerPresented) {
             WorkoutRatingSheet(workout: workout, workoutViewModel: workoutViewModel)
         }
+        //Reordering
         .sheet(isPresented: $isReordering) {
             ReorderExercisesView(workoutViewModel: workoutViewModel, workout: workout)
         }
@@ -117,9 +140,9 @@ struct EditWorkoutView: View {
             NavigationStack{
                 SelectCategoryView(
                     isSelectingExercise: $isSelectingExercise,
-                    onExerciseSelected: {predefinedExercise in
+                    onExerciseSelected: {exerciseTemplate in
                         //take the selected exercise and add it to the workout
-                        workoutViewModel.addPremadeExercise(to: workout, exercise: predefinedExercise)
+                        workoutViewModel.addPremadeExercise(to: workout, exercise: exerciseTemplate)
                         //dismiss
                         isSelectingExercise = false
                     }

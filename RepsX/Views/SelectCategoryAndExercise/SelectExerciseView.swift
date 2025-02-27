@@ -17,6 +17,9 @@ struct SelectExerciseView: View {
     //the dismiss
     @Binding var isSelectingExercise: Bool
     
+    //Adding an exercise
+    @State var isAddingExercise: Bool = false
+    
     //the passable onSelect
     var onExerciseSelected:(ExerciseTemplate) -> Void
     
@@ -38,9 +41,8 @@ struct SelectExerciseView: View {
             } label: {
                 HStack{
                     Text(exercise.name)
-                    Spacer()
-                    Text(exercise.category.name)
                 }
+                .foregroundStyle(.black)
                 
             }
 
@@ -58,12 +60,16 @@ struct SelectExerciseView: View {
             
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    //add a new Exercise, with the category already defined based on the "category" above
+                    //action - open the "add Exercise" view
+                    isAddingExercise.toggle()
+                    
                 } label: {
                     Image(systemName:"plus.circle")
                 }
-
             }
+        }
+        .sheet(isPresented: $isAddingExercise) {
+            CreateNewExerciseTemplateView(category: category)
         }
     }
 }

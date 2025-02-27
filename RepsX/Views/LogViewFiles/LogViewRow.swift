@@ -23,7 +23,7 @@ struct LogViewRow: View {
         .padding(.leading, 10)
         .padding(.trailing, 20)
         .background(Color.white)
-        .cornerRadius(8)
+        .cornerRadius(12)
     }
 }
 
@@ -33,16 +33,18 @@ extension LogViewRow {
         VStack(alignment: .center) {
             let dayOfWeek = workout.startTime.formatted(.dateTime.weekday(.abbreviated))
             Text(dayOfWeek)
-                .font(.headline)
+                .bold()
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
             let day = workout.startTime.formatted(.dateTime.day())
             Text(day)
-                .font(.subheadline)
+                .font(.headline)
                 .bold()
         }
         .frame(width: 40, height: 50)
-        .padding(1)
+        .padding(2)
         .background(Color.secondary.opacity(0.2))
-        .cornerRadius(6)
+        .cornerRadius(10)
     }
 }
 

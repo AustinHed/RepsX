@@ -49,6 +49,7 @@ struct CreateNewExerciseTemplateView: View {
                     } label: {
                         HStack {
                             Text("Category")
+                                .foregroundStyle(.black)
                             Spacer()
                             if let selected = selectedCategory {
                                 Text(selected.name)
@@ -68,14 +69,14 @@ struct CreateNewExerciseTemplateView: View {
             .toolbar {
                 //close button
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Close") {
+                    Button("Cancel") {
                         dismiss()
                     }
                 }
                 
                 //done button
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Done") {
+                    Button("Add") {
                         if selectedCategory != nil {
                             exerciseTemplateViewModel.addPredefinedExercise(
                                 name: templateName,
@@ -103,10 +104,12 @@ struct CreateNewExerciseTemplateView: View {
                                 isCategoryPickerPresented = false
                             } label: {
                                 Text(cat.name)
+                                    .foregroundStyle(.black)
                             }
                         }
                     }
                     .navigationTitle("Select Category")
+                    .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
                             Button("Cancel") {
