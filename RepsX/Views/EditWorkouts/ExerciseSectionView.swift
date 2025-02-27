@@ -40,14 +40,13 @@ struct ExerciseSectionView: View {
                 //reps
                 setRepsField(for: set)
                 
-                //notes
-                ///This is placeholder
+                //notes - placeholder
                 notesView()
                 
             }
-            //swipe actions go here
+            //MARK: Swipe Actions
             .swipeActions(edge: .trailing) {
-                
+                //delete
                 Button("delete", role: .destructive) {
                     withAnimation{
                         exerciseViewModel.deleteSet(set, from: exercise)
@@ -60,16 +59,17 @@ struct ExerciseSectionView: View {
        
         
         //add button
-        Button {
-            exerciseViewModel.addSet(to: exercise, reps: 0, weight: 0)
-        } label: {
-            Text("Add Set")
-        }
+//        Button {
+//            exerciseViewModel.addSet(to: exercise, reps: 0, weight: 0)
+//        } label: {
+//            Text("Add Set")
+//        }
+        addButton()
     }
     
 }
 
-
+//MARK: Set number
 extension ExerciseSectionView {
     func exerciseNumberField(index:Int, set: Set) -> some View {
         Text("\(index + 1)")
@@ -176,6 +176,16 @@ extension ExerciseSectionView {
         .frame(maxHeight: 15)
     }
     
+}
+
+extension ExerciseSectionView {
+    func addButton() -> some View {
+        Button {
+            exerciseViewModel.addSet(to: exercise, reps: 0, weight: 0)
+        } label: {
+            Text("Add Set")
+        }
+    }
 }
 
 #Preview {

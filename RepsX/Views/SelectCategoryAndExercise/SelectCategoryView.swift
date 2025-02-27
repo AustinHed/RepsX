@@ -11,9 +11,6 @@ import Foundation
 
 struct SelectCategoryView: View {
     
-    //refreshTheViewVar
-    @State private var refreshId = UUID()
-    
     //dismiss var
     @Binding var isSelectingExercise: Bool
     var onExerciseSelected: (ExerciseTemplate) -> Void
@@ -23,11 +20,11 @@ struct SelectCategoryView: View {
     @Environment(\.modelContext) private var modelContext
     
 
-    //View Model
+    //View Model - category
     private var categoryViewModel: CategoryViewModel {
         CategoryViewModel(modelContext: modelContext)
     }
-    //View Model
+    //View Model - exerciseTemplate
     private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
@@ -54,6 +51,7 @@ struct SelectCategoryView: View {
             }
             .navigationTitle("Select Category")
             .navigationBarTitleDisplayMode(.inline)
+            //MARK: Toolbar
             .toolbar{
                 //cancel button
                 ToolbarItem(placement: .topBarLeading) {
@@ -86,13 +84,13 @@ struct SelectCategoryView: View {
                     }
                 }
             }
+            //MARK: Sheets
             .sheet(isPresented: $isAddingExercise) {
                 CreateNewExerciseTemplateView()
             }
             .sheet(isPresented: $isEditingCategories) {
                 ListOfCategoriesView()
             }
-            .id(refreshId)
         }
         
     }

@@ -43,7 +43,7 @@ struct ListOfCategoriesView: View {
             }
             .navigationTitle("Edit Categories")
             .navigationBarTitleDisplayMode(.inline)
-            //MARK: Toolbars
+            //MARK: Toolbar
             .toolbar{
                 //cancel button
                 ToolbarItem(placement: .topBarLeading) {
@@ -53,10 +53,9 @@ struct ListOfCategoriesView: View {
                         Text("Cancel")
                     }
                 }
-                
+                //add new category
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        //TODO: Add a new category function
                         isAddingNewCategory.toggle()
                     } label: {
                         Image(systemName:"plus.circle")

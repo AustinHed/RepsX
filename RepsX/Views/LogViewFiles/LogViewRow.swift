@@ -27,7 +27,7 @@ struct LogViewRow: View {
     }
 }
 
-//date
+//MARK: Date
 extension LogViewRow {
     private func dateBlock(for workout: Workout) -> some View {
         VStack(alignment: .center) {
@@ -48,7 +48,7 @@ extension LogViewRow {
     }
 }
 
-//workout details
+//MARK: Workout Details (headline, reps, set)
 extension LogViewRow{
     private func workoutDetails(for workout: Workout) -> some View {
         VStack(alignment: .leading) {

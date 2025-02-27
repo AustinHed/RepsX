@@ -50,8 +50,9 @@ struct EditCategoryView: View {
             .navigationTitle(Text("Edit Category"))
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
+            //MARK: Toolbar
             .toolbar {
-                // Add a custom back button with a static label "Back".
+                //Back button
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Back") {
                         dismiss()

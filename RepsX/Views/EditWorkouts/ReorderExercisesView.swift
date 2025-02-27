@@ -8,9 +8,13 @@
 import SwiftUI
 
 struct ReorderExercisesView: View {
+    
+    //dismiss
     @Environment(\.dismiss) private var dismiss
-    let workoutViewModel: WorkoutViewModel  // Injected view model
-    var workout: Workout                   // The workout to reorder
+    //view model
+    let workoutViewModel: WorkoutViewModel
+    //workout to move
+    var workout: Workout
     
     // Local state to hold the ordered exercises for reordering
     @State private var orderedExercises: [Exercise] = []
@@ -27,6 +31,7 @@ struct ReorderExercisesView: View {
             .environment(\.editMode, .constant(.active))
             .navigationTitle("Reorder Exercises")
             .navigationBarTitleDisplayMode(.inline)
+            //MARK: Toolbar
             .toolbar {
                 // Cancel button on the left
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -49,6 +54,7 @@ struct ReorderExercisesView: View {
         }
     }
     
+    //MARK: Local Functions
     // Called when the user drags to reorder the exercises.
     func moveExercise(from source: IndexSet, to destination: Int) {
         orderedExercises.move(fromOffsets: source, toOffset: destination)

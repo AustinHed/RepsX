@@ -33,14 +33,15 @@ struct AddNewCategoryView: View {
             .navigationTitle(Text("Create a New Category"))
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
+            //MARK: Toolbar
             .toolbar {
-                // Add a custom back button with a static label "Back".
+                //cance; button
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
                         dismiss()
                     }
                 }
-                
+                //save button
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Save") {
                         categoryViewModel.addCategory(name: newName)

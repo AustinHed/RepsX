@@ -50,14 +50,15 @@ struct SelectExerciseView: View {
         .navigationTitle(category.name)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
+        //MARK: Toolbar
         .toolbar {
-            // Add a custom back button with a static label "Back".
+            // Back button
             ToolbarItem(placement: .navigationBarLeading) {
                 Button("Back") {
                     dismiss()
                 }
             }
-            
+            //add exercise
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     //action - open the "add Exercise" view
@@ -68,6 +69,7 @@ struct SelectExerciseView: View {
                 }
             }
         }
+        //MARK: Sheets
         .sheet(isPresented: $isAddingExercise) {
             CreateNewExerciseTemplateView(category: category)
         }

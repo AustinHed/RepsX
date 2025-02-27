@@ -71,10 +71,10 @@ struct LogView: View {
                         }
                 }
             }
-            //MARK: Title, Add Workout, Edit Workout
             .contentMargins(.horizontal,0)
             .navigationTitle("Log")
             //Add workout plus button
+            //MARK: Toolbar
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
@@ -89,6 +89,7 @@ struct LogView: View {
                     }
                 }
             }
+            //MARK: Add & Edit Workouts
             //Edit NEW workout sheet
             .fullScreenCover(isPresented: $editNewWorkout) {
                 // Ensure newWorkout is non-nil before presenting the view.

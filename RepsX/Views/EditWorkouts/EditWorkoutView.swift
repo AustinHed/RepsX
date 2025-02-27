@@ -90,7 +90,9 @@ struct EditWorkoutView: View {
             
             
         }
-        //MARK: Toolbar & Nav Title
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(workoutViewModel.toolbarDate(workout.startTime))
+        //MARK: Toolbar
         .toolbar {
             ToolbarItem(placement:.topBarTrailing) {
                 
@@ -116,11 +118,8 @@ struct EditWorkoutView: View {
                 
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(workoutViewModel.toolbarDate(workout.startTime))
-        
         //MARK: Sheets
-        //Time picke
+        //Time picker
         .sheet(isPresented: $isTimePickerPresented) {
             if editingTime == .start {
                 TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .start)
@@ -136,7 +135,7 @@ struct EditWorkoutView: View {
         .sheet(isPresented: $isReordering) {
             ReorderExercisesView(workoutViewModel: workoutViewModel, workout: workout)
         }
-        //adding a new exercise
+        //add new exercise
         .sheet(isPresented: $isSelectingExercise) {
             NavigationStack{
                 SelectCategoryView(
