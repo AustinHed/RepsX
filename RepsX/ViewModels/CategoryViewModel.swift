@@ -25,20 +25,20 @@ import SwiftUI
     }
     
     //delete
-    
-    //delete a workout from Memory
     func deleteCategory(_ category: CategoryModel) {
-        //then, delete the workout
+        //first, delete category
         modelContext.delete(category)
         //then, save
         save()
     }
     
     //update name
-    //TODO: update category name
+    func updateName(_ category: CategoryModel, newName: String) {
+        category.name = newName
+        save()
+    }
     
     //fetch
-    
     func fetchCategories() -> [CategoryModel] {
         let descriptor = FetchDescriptor<CategoryModel>(sortBy: [SortDescriptor(\.name, order: .reverse)])
         do {

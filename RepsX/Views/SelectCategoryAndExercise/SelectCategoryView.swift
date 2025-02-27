@@ -11,11 +11,15 @@ import Foundation
 
 struct SelectCategoryView: View {
     
+    //refreshTheViewVar
+    @State private var refreshId = UUID()
+    
     //dismiss var
     @Binding var isSelectingExercise: Bool
     var onExerciseSelected: (ExerciseTemplate) -> Void
+    
     //Fetch categories
-    @Query(sort: \CategoryModel.name, order: .reverse) var categories: [CategoryModel]
+    @Query(sort: \CategoryModel.name) var categories: [CategoryModel]
     @Environment(\.modelContext) private var modelContext
     
 
@@ -24,11 +28,13 @@ struct SelectCategoryView: View {
         CategoryViewModel(modelContext: modelContext)
     }
     //View Model
-    private var predefinedExerciseViewModel: ExerciseTemplateViewModel {
+    private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
     
+    //toggles
     @State var isAddingExercise: Bool = false
+    @State var isEditingCategories:Bool = false
     
     //environment and context
     @Environment(\.dismiss) private var dismiss
@@ -49,6 +55,7 @@ struct SelectCategoryView: View {
             .navigationTitle("Select Category")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar{
+                //cancel button
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         dismiss()
@@ -56,20 +63,36 @@ struct SelectCategoryView: View {
                         Text("Cancel")
                     }
                 }
-                
+                //add exercise view
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        //action - open the "add Exercise" view
                         isAddingExercise.toggle()
-                        
                     } label: {
                         Image(systemName:"plus.circle")
+                    }
+                }
+                //edit exercises and categories
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button("Edit Exercises") {
+                            //move into edit exercises view
+                        }
+                        Button("Edit Categories") {
+                            //move into edit categories view
+                            isEditingCategories.toggle()
+                        }
+                    } label: {
+                        Image(systemName:"ellipsis.circle")
                     }
                 }
             }
             .sheet(isPresented: $isAddingExercise) {
                 CreateNewExerciseTemplateView()
             }
+            .sheet(isPresented: $isEditingCategories) {
+                ListOfCategoriesView()
+            }
+            .id(refreshId)
         }
         
     }

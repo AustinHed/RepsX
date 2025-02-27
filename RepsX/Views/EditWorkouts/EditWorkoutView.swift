@@ -94,6 +94,7 @@ struct EditWorkoutView: View {
         .toolbar {
             ToolbarItem(placement:.topBarTrailing) {
                 
+                //Reorder & Delete
                 Menu {
                     Button("Reorder") {
                         isReordering.toggle()
