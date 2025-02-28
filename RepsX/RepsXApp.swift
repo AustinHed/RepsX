@@ -14,6 +14,7 @@ struct RepsXApp: App {
     var body: some Scene {
         
         WindowGroup {
+            @State var intensity: Int? = nil
             LogView()
                 .globalKeyboardDoneButton()
         }

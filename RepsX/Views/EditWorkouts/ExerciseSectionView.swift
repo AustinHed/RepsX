@@ -40,8 +40,8 @@ struct ExerciseSectionView: View {
                 //reps
                 setRepsField(for: set)
                 
-                //notes - placeholder
-                notesView()
+                //Intensity
+                notesView(set:set)
                 
             }
             //MARK: Swipe Actions
@@ -53,17 +53,11 @@ struct ExerciseSectionView: View {
                     }
                     
                 }
-
+                
             }
         }
-       
         
         //add button
-//        Button {
-//            exerciseViewModel.addSet(to: exercise, reps: 0, weight: 0)
-//        } label: {
-//            Text("Add Set")
-//        }
         addButton()
     }
     
@@ -165,19 +159,20 @@ extension ExerciseSectionView{
 
 //MARK: Notes
 extension ExerciseSectionView {
-    func notesView() -> some View {
+    func notesView(set:Set) -> some View {
         VStack(alignment:.leading){
-            Text("Notes")
+            Text("Intensity")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            Text("Empty")
+            IntensityBar(set: set)
         }
         .padding(.horizontal,8)
-        .frame(maxHeight: 15)
+        .frame(maxHeight: 5)
     }
     
 }
 
+//MARK: Add Button
 extension ExerciseSectionView {
     func addButton() -> some View {
         Button {
@@ -190,7 +185,11 @@ extension ExerciseSectionView {
 
 #Preview {
     let newWorkout = Workout(id: UUID(), startTime: Date())
+    
     let newExercise = Exercise(name: "Bench Press", category: .chest, workout: newWorkout)
+    let newSet = Set(exercise: newExercise, reps: 10, weight: 10, intensity: 3)
+    //newExercise.sets.append(newSet)
+    
     List {
         Text("Workout")
             .bold()

@@ -80,6 +80,12 @@ import SwiftUI
         exercise.category = newCategory
         save()
     }
+    
+    //update exercise intensity
+    func updateExerciseIntensity(for exercise: Exercise, newIntensity: Int) {
+        exercise.intensity = newIntensity
+        save()
+    }
     //refresh exercise order
     func updateExerciseOrders(for workout: Workout) {
         //first, sort the exercises

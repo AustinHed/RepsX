@@ -53,6 +53,12 @@ import SwiftUI
         set.setWeight = newWeight
         save()
     }
+    //intensity
+    func updateIntensity(_ set: Set, newIntensity:Int) {
+        set.intensity = newIntensity
+        save()
+    }
+    
     //refresh order
     func updateSetOrders(for exercise: Exercise) {
         //first, sort the sets

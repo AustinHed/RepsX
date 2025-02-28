@@ -20,6 +20,7 @@ class Set {
     var reps: Int
     var setWeight: Double
     var order: Int
+    var intensity: Int?
     
     //relationships
     ///read as: there can be many sets of a given exercise (in a workout)
@@ -33,12 +34,14 @@ class Set {
          exercise: Exercise, //mandatory to assign a set to an exercise
          reps: Int = 0, //defaults to 0 if no value provided
          weight: Double = 0, //defaults to 0 if no value provided
-         order: Int = 0
+         order: Int = 0,
+         intensity: Int? = nil
          ) {
         self.id = id
         self.exercise = exercise
         self.reps = reps
         self.setWeight = weight
         self.order = order
+        self.intensity = intensity
     }
 }

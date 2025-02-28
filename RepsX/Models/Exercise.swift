@@ -22,6 +22,7 @@ class Exercise {
     var name: String
     var category: Category?
     var order: Int
+    var intensity: Int?
     
     //when an Exercise is initialized, it always starts with no associated sets
     var sets: [Set] = []
@@ -34,12 +35,14 @@ class Exercise {
          name: String,
          category: Category?,
          workout: Workout,
-         order: Int = 0
+         order: Int = 0,
+         intensity: Int? = nil
         ) {
         self.id = id //unique ID
         self.name = name //ex bench
         self.category = category //ex chest
         self.workout = workout //ex chest day
         self.order = order
+        self.intensity = intensity //nil, 1-3
     }
 }
