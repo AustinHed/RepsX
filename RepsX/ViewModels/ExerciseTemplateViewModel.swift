@@ -42,6 +42,8 @@ class ExerciseTemplateViewModel {
     // MARK: - Delete Predefined Exercise
     /// Deletes the provided PredefinedExercise from the context.
     func deletePredefinedExercise(_ exercise: ExerciseTemplate) {
+        //TODO: Instead of delete, just add a "hidden" property
+        
         modelContext.delete(exercise)
         save()
     }

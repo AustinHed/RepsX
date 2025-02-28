@@ -14,8 +14,8 @@ struct RepsXApp: App {
     var body: some Scene {
         
         WindowGroup {
-            @State var intensity: Int? = nil
-            LogView()
+            ContentView()
+            //LogView()
                 .globalKeyboardDoneButton()
         }
         .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self])

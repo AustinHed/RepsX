@@ -41,6 +41,7 @@ struct LogView: View {
     var body: some View {
         NavigationView {
             List {
+                //TODO: Add section for favorite routines, sliding cards
                 //MARK: List
                 ForEach(workouts) { workout in
                     LogViewRow(workout: workout)
@@ -165,7 +166,6 @@ struct LogView: View {
         
     }
 }
-
 
 #Preview {
     LogView()
