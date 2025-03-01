@@ -15,6 +15,7 @@ struct ContentView: View {
         TabView {
             //Log
             LogView()
+                .globalKeyboardDoneButton()
                 .tabItem {
                     Label("Log", systemImage: "list.bullet")
                 }

@@ -41,6 +41,8 @@ struct EditCategoryView: View {
                 Section() {
                     Button("Delete"){
                         //TODO: Fix how deletes work, currently causes a crash
+                        //one option - just prevent delete if there are exercises associated
+                        //other option - hide lmao
 //                        categoryViewModel.deleteCategory(category)
 //                        dismiss()
                     }

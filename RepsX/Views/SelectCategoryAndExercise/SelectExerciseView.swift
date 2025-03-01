@@ -24,7 +24,11 @@ struct SelectExerciseView: View {
     var onExerciseSelected:(ExerciseTemplate) -> Void
     
     // Query all predefined exercises, sorted by name.
-    @Query(sort: \ExerciseTemplate.name) var allExercises: [ExerciseTemplate]
+    //@Query(sort: \ExerciseTemplate.name) var allExercises: [ExerciseTemplate]
+    @Query(filter: #Predicate { (exercise:ExerciseTemplate) in
+        // Only include exercise templates where hidden is false.
+        return !exercise.hidden
+    }, sort: \ExerciseTemplate.name) var allExercises: [ExerciseTemplate]
     
     var filteredExercises: [ExerciseTemplate] {
         allExercises.filter { $0.category.id == category.id }
