@@ -10,7 +10,7 @@ import SwiftData
 import Foundation
 
 @Model
-class RoutineExercise: Identifiable {
+class ExerciseInRoutine: Identifiable {
     //standard UUID
     var id: UUID
     
