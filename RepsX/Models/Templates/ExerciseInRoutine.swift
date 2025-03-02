@@ -20,19 +20,21 @@ class ExerciseInRoutine: Identifiable {
     // Denormalized properties to preserve data even if the template is deleted.
     var exerciseName: String
     var exerciseCategory: CategoryModel?
+    var exerciseModality: ExerciseModality
     var setCount: Int
     
-    init(id: UUID = UUID(), exerciseTemplate: ExerciseTemplate?, setCount: Int) {
+    init(id: UUID = UUID(),
+         exerciseTemplate: ExerciseTemplate?,
+         setCount: Int
+    ) {
         self.id = id
         self.exerciseTemplate = exerciseTemplate
-    
-        
-        //can update the exerciseTemplate to fix these properties
-        
-        // Capture key properties from the template.
+        // Capture key properties from the template. Should change based on the linked ExerciseTemplate
+        /// when there is an available/linked exerciseTemplate, inherit the values
+        /// when there is no parent template, then default to "unknown" values
         self.exerciseName = exerciseTemplate?.name ?? "Unnamed Exercise" //if the exerciseTemplate is deleted, then this becomes "unnamed"
-        // Capture key properties from the template.
         self.exerciseCategory = exerciseTemplate?.category ?? CategoryModel(name: "Uncategorized")
+        self.exerciseModality = exerciseTemplate?.modality ?? .other
         self.setCount = setCount
     }
 }

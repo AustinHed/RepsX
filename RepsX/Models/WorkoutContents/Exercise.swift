@@ -23,6 +23,7 @@ class Exercise {
     var category: Category?
     var order: Int
     var intensity: Int?
+    var modality: ExerciseModality
     
     //when an Exercise is initialized, it always starts with no associated sets
     var sets: [Set] = []
@@ -36,7 +37,8 @@ class Exercise {
          category: Category?,
          workout: Workout,
          order: Int = 0,
-         intensity: Int? = nil
+         intensity: Int? = nil,
+         modality: ExerciseModality = .repetition
         ) {
         self.id = id //unique ID
         self.name = name //ex bench
@@ -44,5 +46,6 @@ class Exercise {
         self.workout = workout //ex chest day
         self.order = order
         self.intensity = intensity //nil, 1-3
+        self.modality = modality
     }
 }

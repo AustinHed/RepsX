@@ -19,13 +19,13 @@ class RoutineExerciseViewModel {
     
     //MARK: Create new
     func addRoutineExercise(routine: Routine, exercise: ExerciseTemplate, setCount: Int = 3) {
-        let newRoutineExercise = RoutineExercise(exerciseTemplate: exercise, setCount: setCount)
+        let newRoutineExercise = ExerciseInRoutine(exerciseTemplate: exercise, setCount: setCount)
         modelContext.insert(newRoutineExercise)
         save()
     }
     
     //delete
-    func deleteRoutineExercise(_ routineExercise: RoutineExercise) {
+    func deleteRoutineExercise(_ routineExercise: ExerciseInRoutine) {
         modelContext.delete(routineExercise)
         save()
     }
@@ -36,13 +36,13 @@ class RoutineExerciseViewModel {
     ///not needed, since it pulls the name directly from the ExerciseTemplate
     
     //update set count
-    func updateSetCount(_ routineExercise: RoutineExercise, newSetCount: Int) {
+    func updateSetCount(_ routineExercise: ExerciseInRoutine, newSetCount: Int) {
         routineExercise.setCount = newSetCount
         save()
     }
     
     //update exercise template
-    func updateExerciseTemplate(_ routineExercise: RoutineExercise, newExerciseTemplate: ExerciseTemplate) {
+    func updateExerciseTemplate(_ routineExercise: ExerciseInRoutine, newExerciseTemplate: ExerciseTemplate) {
         routineExercise.exerciseTemplate = newExerciseTemplate
         save()
     }

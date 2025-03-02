@@ -19,6 +19,7 @@ import SwiftUI
     //MARK: Add & Delete
     //add set
     func addSet(to exercise: Exercise, reps: Int, weight: Double) {
+        //TODO: this should differ based on exercise.modality
         let order = exercise.sets.count
         let newSet = Set(id: UUID(), exercise: exercise, reps: reps, weight: weight, order: order)
         exercise.sets.append(newSet)
@@ -43,6 +44,28 @@ import SwiftUI
     
     
     //MARK: Update
+    //global update
+    func updateSet(_ set: Set, newReps: Int?, newWeight: Double?, newIntensity: Int?) {
+        //reps
+        if let newReps = newReps {
+            set.reps = newReps
+        }
+        
+        //weight
+        if let newWeight = newWeight {
+            set.setWeight = newWeight
+        }
+        
+        //intensity
+        if let newIntensity = newIntensity {
+            set.intensity = newIntensity
+        }
+        
+        //placeholder - update time
+        
+        save()
+    }
+    
     //reps
     func updateReps(_ set: Set, newReps: Int) {
         set.reps = newReps

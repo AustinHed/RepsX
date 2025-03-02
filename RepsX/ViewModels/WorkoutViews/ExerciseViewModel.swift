@@ -10,18 +10,39 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-@Observable class ExerciseViewModel {
+//MARK: Core functions
+@Observable
+class ExerciseViewModel {
+    
     private var modelContext: ModelContext
     
+    //init
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
     
-    //MARK: A&D Exercises
+    //Save
+    func save() {
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error saving exercise: \(error.localizedDescription)")
+        }
+    }
+    //Fetch function
+    func fetchExercises(for workout: Workout) -> [Exercise] {
+        return workout.exercises
+    }
+    
+}
+
+//MARK: Exercise Functions
+extension ExerciseViewModel {
+    //MARK: Add and Delete
     //add an exercise to a workout
-    func addExercise(to workout: Workout, name: String, category: Category) {
+    func addExercise(to workout: Workout, name: String, category: Category, modality: ExerciseModality) {
         let order = workout.exercises.count
-        let newExercise = Exercise(id: UUID(), name: name, category: category, workout: workout, order: order)
+        let newExercise = Exercise(id: UUID(), name: name, category: category, workout: workout, order: order, modality: modality)
         workout.exercises.append(newExercise)
         modelContext.insert(newExercise)
         save()
@@ -41,35 +62,25 @@ import SwiftUI
         
         save()
     }
+
     
-    
-    //MARK: A&D Sets
-    //add a Set to an exercise
-    func addSet(to exercise: Exercise, reps: Int, weight: Double) {
-        let order = exercise.sets.count
-        let newSet = Set(id: UUID(), exercise: exercise, reps: reps, weight: weight, order: order)
-        exercise.sets.append(newSet)
-        modelContext.insert(newSet)
-        save()
-    }
-    //delete a Set from an exercise
-    func deleteSet(_ set: Set, from exercise: Exercise) {
-        //1. remove the set from the Exercies's set array
-        if let index = exercise.sets.firstIndex(where: { $0.id == set.id }) {
-            exercise.sets.remove(at: index)
+    //MARK: Update
+    //global update function for clenliness
+    func updateExercise(_ exercise: Exercise, newName: String?, newCategory: Category?, newIntensity: Int?, newModality: ExerciseModality?) {
+        if let newName = newName {
+            exercise.name = newName
         }
-        //2. then delete from memory
-        modelContext.delete(set)
-        
-        //3. update the setOrder properties
-        updateSetOrders(for: exercise)
-        
+        if let newCategory = newCategory {
+            exercise.category = newCategory
+        }
+        if let newIntensity = newIntensity {
+            exercise.intensity = newIntensity
+        }
+        if let newModality = newModality {
+            exercise.modality = newModality
+        }
         save()
-        
     }
-    
-    
-    //MARK: Update exercises
     //name exercise name
     func updateName(_ exercise: Exercise, newName: String) {
         exercise.name = newName
@@ -97,9 +108,49 @@ import SwiftUI
         //then save
         save()
     }
+}
+
+//MARK: Set Functions
+extension ExerciseViewModel {
+    //MARK: Add and Delete
+    //add a Set to an exercise
+    func addSet(to exercise: Exercise, reps: Int, weight: Double) {
+        let order = exercise.sets.count
+        let newSet = Set(id: UUID(), exercise: exercise, reps: reps, weight: weight, order: order)
+        exercise.sets.append(newSet)
+        modelContext.insert(newSet)
+        save()
+    }
+    
+    //delete a Set from an exercise
+    func deleteSet(_ set: Set, from exercise: Exercise) {
+        //1. remove the set from the Exercies's set array
+        if let index = exercise.sets.firstIndex(where: { $0.id == set.id }) {
+            exercise.sets.remove(at: index)
+        }
+        //2. then delete from memory
+        modelContext.delete(set)
+        
+        //3. update the setOrder properties
+        updateSetOrders(for: exercise)
+        
+        save()
+        
+    }
+    
+    //MARK: Update
+    //global update sets function
+    func updateSet(_ set: Set, newReps: Int?, newWeight: Double?) {
+        if let newReps = newReps {
+            set.reps = newReps
+        }
+        if let newWeight = newWeight {
+            set.setWeight = newWeight
+        }
+        save()
+    }
     
     
-    //MARK: Update sets
     //update set reps
     func updateReps(_ set: Set, newReps: Int) {
         set.reps = newReps
@@ -121,20 +172,6 @@ import SwiftUI
         //then save
         save()
     }
-    
-    
-    //MARK: Save and Fetch
-    //Save
-    func save() {
-        do {
-            try modelContext.save()
-        } catch {
-            print("Error saving exercise: \(error.localizedDescription)")
-        }
-    }
-    //Fetch function
-    func fetchExercises(for workout: Workout) -> [Exercise] {
-        return workout.exercises
-    }
-    
 }
+
+

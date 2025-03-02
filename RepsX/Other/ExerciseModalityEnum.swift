@@ -8,13 +8,15 @@
 import Foundation
 import SwiftData
 
+//tracks the modality of a workout (how it is performed)
 enum ExerciseModality: String, CaseIterable, Codable {
-    case repetition = "repetition"
-    case tension = "tension"
-    case endurance = "endurance"
+    case repetition = "repetition" //ex bench, which is reps and weight
+    case tension = "tension" //ex. weighted plank, which is weight and time
+    case endurance = "endurance" //ex. running, which is time and distance
+    case other = "other"
     
     //init
     init() {
-        self = .repetition
+        self = .repetition //default to reps and weight
     }
 }

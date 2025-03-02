@@ -18,41 +18,47 @@ class ExerciseTemplateViewModel {
     }
     
     
-    // MARK: - Add Predefined Exercise
+    // MARK: Add
     /// Creates a new PredefinedExercise with the given name and category, inserts it into the context, saves, and returns it.
-    func addPredefinedExercise(name: String, category: CategoryModel) -> ExerciseTemplate {
-        let newExercise = ExerciseTemplate(name: name, category: category)
-        modelContext.insert(newExercise)
+    func addExerciseTemplate(name: String, category: CategoryModel, modality: ExerciseModality) -> ExerciseTemplate {
+        let newExerciseTemplate = ExerciseTemplate(name: name, category: category, modality: modality)
+        modelContext.insert(newExerciseTemplate)
         save()
-        return newExercise
+        return newExerciseTemplate
     }
     
-    // MARK: - Update Predefined Exercise
-    /// Updates the given PredefinedExercise with a new name and/or category.
-    func updatePredefinedExercise(_ exercise: ExerciseTemplate, newName: String? = nil, newCategory: CategoryModel? = nil) {
+    // MARK: Update
+    /// Updates the given PredefinedExercise with a new name and/or category and/or modality
+    func updateExerciseTemplate(_ exerciseTemplate: ExerciseTemplate, newName: String? = nil, newCategory: CategoryModel? = nil, newModality: ExerciseModality? = nil) {
+        //update name if available
         if let newName = newName {
-            exercise.name = newName
+            exerciseTemplate.name = newName
         }
+        //update category if available
         if let newCategory = newCategory {
-            exercise.category = newCategory
+            exerciseTemplate.category = newCategory
+        }
+        //update modality if available
+        if let newModality = newModality {
+            exerciseTemplate.modality = newModality
         }
         save()
     }
     
-    // MARK: - Delete Predefined Exercise
+    // MARK: Delete
     /// Deletes the provided PredefinedExercise from the context.
-    func deletePredefinedExercise(_ exercise: ExerciseTemplate) {
+    func deleteExerciseTemplate(_ exerciseTemplate: ExerciseTemplate) {
         //does not delete, but instead marks the exercise as "hidden"
-        exercise.hidden = true
+        exerciseTemplate.hidden = true
         //updates the name to include hidden
-        exercise.name += " (deleted)"
+        exerciseTemplate.name += " (deleted)"
         //modelContext.delete(exercise)
         save()
     }
     
     // MARK: - Fetch Predefined Exercises
     /// Returns all stored PredefinedExercises, sorted alphabetically by name.
-    func fetchPredefinedExercises() -> [ExerciseTemplate] {
+    func fetchExerciseTemplate() -> [ExerciseTemplate] {
         let descriptor = FetchDescriptor<ExerciseTemplate>(sortBy: [SortDescriptor(\.name)])
         do {
             return try modelContext.fetch(descriptor)
@@ -75,7 +81,7 @@ class ExerciseTemplateViewModel {
     
     //MARK: Default Exercises
     ///creates default exercises if none are available
-    func initializeDefaultPredefinedExercisesIfNeeded() {
+    func initializeDefaultExerciseTemplatesIfNeeded() {
         let descriptor = FetchDescriptor<ExerciseTemplate>()
         do {
             let existingExercises = try modelContext.fetch(descriptor)

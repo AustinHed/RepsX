@@ -20,7 +20,39 @@ class WorkoutViewModel {
     }
 
     
-    //MARK: A&D Workouts
+
+    
+    
+
+    
+    
+    //MARK: Save & Fetch
+    //save
+    func save() {
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error saving workout: \(error.localizedDescription)")
+        }
+        
+    }
+    //fetch
+    func fetchWorkouts() -> [Workout] {
+        let descriptor = FetchDescriptor<Workout>(sortBy: [SortDescriptor(\.startTime, order: .reverse)])
+        do {
+            return try modelContext.fetch(descriptor)
+        } catch {
+            print("Error fetching workouts: \(error)")
+            return []
+        }
+    }
+    
+    
+
+}
+
+//MARK: Workouts
+extension WorkoutViewModel {
     //add a new Workout to memory
     func addWorkout(date: Date) -> Workout {
         let newWorkout = Workout(id: UUID(),name: "", startTime: date)
@@ -41,45 +73,38 @@ class WorkoutViewModel {
     }
     
     
-    //MARK: A&D Exercises
-    //add an exercise to a specific Workout
-    func addExercise(to workout: Workout, named exerciseName: String) {
-        let order = workout.exercises.count
-        let newExercise = Exercise(id: UUID(), name: exerciseName, category: .chest, workout: workout, order: order)
-        workout.exercises.append(newExercise)
-        modelContext.insert(newExercise)
-        save()
-    }
-    
-    func addPremadeExercise(to workout: Workout, exercise: ExerciseTemplate) {
-        let order = workout.exercises.count
-        let newExercise = Exercise(id: UUID(),
-                                   name: exercise.name,
-                                   category: .chest,
-                                   workout: workout,
-                                   order: order
-        )
-        workout.exercises.append(newExercise)
-        modelContext.insert(newExercise)
-        save()
-    }
-    //delete exercise
-    func deleteExercise(_ exercise: Exercise, from workout: Workout) {
-        //1. Remove the exercise from the workout's exercises array. This is to avoid potential UI issues where a view depends on the array
-        if let index = workout.exercises.firstIndex(where: { $0.id == exercise.id }) {
-            workout.exercises.remove(at: index)  // Remove the exercise from the workout
-        }
-        
-        // 2. Now safely delete the exercise from the context
-        modelContext.delete(exercise)
-        
-        //3. refresh exercise order property
-        updateExerciseOrders(for: workout)
-        save()
-    }
+
     
     
     //MARK: Update Workout functions
+    //global update
+    func updateWorkout(_ workout: Workout, newName: String?, newStartTime: Date?, newEndTime:Date?, newNotes: String?, newRating: Int?) {
+        //update name
+        if let newName = newName {
+            workout.name = newName
+        }
+        
+        //update start time
+        if let newStartTime = newStartTime {
+            workout.startTime = newStartTime
+        }
+        //update end time
+        if let newEndTime = newEndTime {
+            workout.endTime = newEndTime
+        }
+        //update notes
+        if let newNotes = newNotes {
+            workout.notes = newNotes
+        }
+        //update rating
+        if let newRating = newRating {
+            workout.rating = max(1, min(5, newRating))
+        }
+        //save
+        save()
+    }
+    
+    //TODO: deprecate the below and use the global update
     //name
     func updateName(_ workout: Workout, _ newName: String) {
         workout.name = newName
@@ -114,9 +139,49 @@ class WorkoutViewModel {
         }
         save()
     }
+}
+
+//MARK: Exercises
+extension WorkoutViewModel {
+    //add an exercise to a specific Workout
+    func addExercise(to workout: Workout, named exerciseName: String) {
+        let order = workout.exercises.count
+        let newExercise = Exercise(id: UUID(), name: exerciseName, category: .chest, workout: workout, order: order)
+        workout.exercises.append(newExercise)
+        modelContext.insert(newExercise)
+        save()
+    }
     
+    //add a pre-defined exercise
+    func addPremadeExercise(to workout: Workout, exercise: ExerciseTemplate) {
+        let order = workout.exercises.count
+        let newExercise = Exercise(id: UUID(),
+                                   name: exercise.name,
+                                   category: .chest,
+                                   workout: workout,
+                                   order: order,
+                                   modality: exercise.modality
+        )
+        workout.exercises.append(newExercise)
+        modelContext.insert(newExercise)
+        save()
+    }
+    //delete exercise
+    func deleteExercise(_ exercise: Exercise, from workout: Workout) {
+        //1. Remove the exercise from the workout's exercises array. This is to avoid potential UI issues where a view depends on the array
+        if let index = workout.exercises.firstIndex(where: { $0.id == exercise.id }) {
+            workout.exercises.remove(at: index)  // Remove the exercise from the workout
+        }
+        
+        // 2. Now safely delete the exercise from the context
+        modelContext.delete(exercise)
+        
+        //3. refresh exercise order property
+        updateExerciseOrders(for: workout)
+        save()
+    }
     
-    //MARK: Update Exercise
+    //ensure exercises are in the right order
     func updateExerciseOrders(for workout: Workout) {
         //first, sort the exercises
         let sortedExercises = workout.exercises.sorted { $0.order < $1.order }
@@ -128,29 +193,10 @@ class WorkoutViewModel {
         save()
     }
     
-    
-    //MARK: Save & Fetch
-    //save
-    func save() {
-        do {
-            try modelContext.save()
-        } catch {
-            print("Error saving workout: \(error.localizedDescription)")
-        }
-        
-    }
-    //fetch
-    func fetchWorkouts() -> [Workout] {
-        let descriptor = FetchDescriptor<Workout>(sortBy: [SortDescriptor(\.startTime, order: .reverse)])
-        do {
-            return try modelContext.fetch(descriptor)
-        } catch {
-            print("Error fetching workouts: \(error)")
-            return []
-        }
-    }
-    
-    
+}
+
+//MARK: Date & Time Helpers
+extension WorkoutViewModel {
     //MARK: Date & Time helpers
     //Workout Details format - Returns a formatted date string like "Fri, Feb 21 @ 9:03AM"
     func formattedDate(_ date: Date) -> String {
