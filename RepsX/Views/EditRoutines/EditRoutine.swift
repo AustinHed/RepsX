@@ -32,6 +32,9 @@ struct EditRoutine: View {
     //defaults to gray, unless there is already an incoming value
     @State var selectedColor:String = "#808080"
     
+    //add exercise toggle
+    @State private var isSelectingExercise: Bool = false
+    
     var body: some View {
         NavigationStack{
             List {
@@ -78,8 +81,8 @@ struct EditRoutine: View {
                 //exercises
                 Section{
                     ForEach(routine.exercises, id: \.self) { exercise in
-                        Button {
-                            //edit the given ExerciseInRoutine
+                        NavigationLink {
+                            EditExerciseInRoutineView(exerciseInRoutine: exercise)
                         } label: {
                             VStack(alignment:.leading){
                                 Text(exercise.exerciseName)
@@ -96,8 +99,7 @@ struct EditRoutine: View {
                 //add exercise button
                 Section{
                     Button {
-                        //add a new ExerciseInRoutine
-                        //open the ExerciseInRoutine view
+                        isSelectingExercise.toggle()
                     } label: {
                         Text("Add Exercise")
                     }
@@ -153,6 +155,7 @@ struct EditRoutine: View {
                 }
             }
             //MARK: Sheets
+            //color picker
             .sheet(isPresented: $toggleColorPicker) {
                 ColorPickerGrid(selectedColor: selectedColor) { color in
                     selectedColor = color
@@ -162,6 +165,23 @@ struct EditRoutine: View {
                 .presentationDragIndicator(.visible)
                 .presentationBackground(.clear)
             }
+            //add exercise
+            .sheet(isPresented: $isSelectingExercise) {
+                NavigationStack{
+                    SelectCategoryView(
+                        isSelectingExercise: $isSelectingExercise,
+                        onExerciseSelected: { exerciseTemplate in
+                            //take the selected Exercise and add an ExerciseTemplate
+                            routineViewModel.addExerciseInRoutine(to: routine, exercise: exerciseTemplate)
+                            print(exerciseTemplate)
+                            //dismiss
+                            isSelectingExercise = false
+                            
+                        }
+                    )
+                }
+            }
+            
         }
         .onAppear {
             if routine.colorHex != nil {

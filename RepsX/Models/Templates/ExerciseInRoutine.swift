@@ -23,6 +23,9 @@ class ExerciseInRoutine: Identifiable {
     var exerciseModality: ExerciseModality
     var setCount: Int
     
+    // relationship to the routine it belongs in
+    @Relationship(deleteRule: .cascade, inverse: \Routine.exercises) var routine: Routine?
+    
     init(id: UUID = UUID(),
          exerciseTemplate: ExerciseTemplate?,
          setCount: Int

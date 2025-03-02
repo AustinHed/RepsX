@@ -16,7 +16,7 @@ class RoutineViewModel {
         self.modelContext = modelContext
     }
     
-    //MARK: Add
+    //MARK: Create new Routine
     func addRoutine(name:String) -> Routine {
         let newRoutine = Routine(name: name)
         modelContext.insert(newRoutine)
@@ -53,9 +53,19 @@ class RoutineViewModel {
         save()
     }
     
-    //addExerciseTemplates
+    //Add new ExerciseInRoutines
+    func addExerciseInRoutine(to routine: Routine, exercise: ExerciseTemplate, setCount: Int = 3) {
+        let newExerciseInRoutine = ExerciseInRoutine(id: UUID(), exerciseTemplate: exercise, setCount: setCount)
+        routine.exercises.append(newExerciseInRoutine)
+        modelContext.insert(newExerciseInRoutine)
+        save()
+    }
     
     //deleteExerciseTemplates
+    func deleteExerciseInRoutine(_ exerciseInRoutine: ExerciseInRoutine) {
+        modelContext.delete(exerciseInRoutine)
+        save()
+    }
     
     //MARK: Save
     func save() {
