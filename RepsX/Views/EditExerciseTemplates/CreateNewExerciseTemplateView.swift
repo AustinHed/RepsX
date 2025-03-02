@@ -26,6 +26,7 @@ struct CreateNewExerciseTemplateView: View {
     //Select Category
     @State var selectedCategory: CategoryModel? = nil
     @State var isCategoryPickerPresented: Bool = false
+    
     //Select Modality
     @State var selectedModality: ExerciseModality = .repetition
     @State var isModalityPickerPresented: Bool = false
@@ -34,75 +35,12 @@ struct CreateNewExerciseTemplateView: View {
         NavigationStack{
             
             List {
-                // Row 1: Exercise Name
-                Section {
-                    HStack {
-                        Text("Name")
-                        Spacer()
-                        TextField("Unnamed Exercise", text: $templateName)
-                            .multilineTextAlignment(.trailing)
-                    }
-                }
-                
-                // Row 2: Category Selection
-                Section {
-                    Button {
-                        isCategoryPickerPresented = true
-                    } label: {
-                        HStack {
-                            Text("Category")
-                                .foregroundStyle(.black)
-                            Spacer()
-                            if let selected = selectedCategory {
-                                Text(selected.name)
-                                    .foregroundColor(.primary)
-                            } else {
-                                Text("Select a category")
-                                    .foregroundColor(.gray)
-                            }
-                        }
-                    }
-                }
-                
-                //Row 3: Exercise Modality Selection
-                Section {
-                    Button {
-                        isModalityPickerPresented.toggle()
-                    } label: {
-                        HStack {
-                            Text("Modality")
-                                .foregroundStyle(.black)
-                            Spacer()
-                            VStack (alignment:.leading){
-                                Text(selectedModality.rawValue.capitalized)
-                                    .foregroundColor(.primary)
-                                switch selectedModality {
-                                case .repetition:
-                                    Text("Weight, Reps")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                case .tension:
-                                    Text("Weight, Time")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                case .endurance:
-                                    Text("Distance, Time")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                default:
-                                    Text("Other")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            
-                        }
-                    }
-                    
-                }
-                footer: {
-                    Text("How an exercise is performed, and how measures are used to track performance (Weight, Reps, Time)")
-                }
+                //exercise name
+                exerciseNameSection
+                //category select
+                categorySelectionSection
+                //modality select
+                modalitySelectionSection
             }
             .listStyle(InsetGroupedListStyle())
             .navigationTitle("Add Exercise")
@@ -123,7 +61,7 @@ struct CreateNewExerciseTemplateView: View {
                             exerciseTemplateViewModel.addExerciseTemplate(
                                 name: templateName,
                                 category: selectedCategory!,
-                                modality: .repetition
+                                modality: selectedModality
                             )
                             dismiss()
                         }
@@ -141,89 +79,182 @@ struct CreateNewExerciseTemplateView: View {
             //MARK: Sheets
             //category picker
             .sheet(isPresented: $isCategoryPickerPresented) {
-                NavigationStack {
-                    List {
-                        ForEach(categories.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }) { cat in
-                            Button {
-                                selectedCategory = cat
-                                isCategoryPickerPresented = false
-                            } label: {
-                                Text(cat.name)
-                                    .foregroundStyle(.black)
-                            }
-                        }
-                    }
-                    .navigationTitle("Select Category")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button("Cancel") {
-                                isCategoryPickerPresented = false
-                            }
-                        }
-                    }
-                }
-                .environment(\.modelContext, modelContext)
+                categoryPickerSheet
             }
             //modality picker
             .sheet(isPresented: $isModalityPickerPresented) {
-                NavigationStack {
-                    List {
-                        //reps
-                        Section {
-                            Button("Repetition") {
-                                selectedModality = .repetition
-                                isModalityPickerPresented = false
-                            }
-                            .foregroundStyle(.black)
-                        } footer: {
-                            Text("For exercises measured in Weight and Reps \nex. Bench Press, Squats, Deadlift, etc.")
-                        }
+                modalityPickerSheet()
+            }
+        }
+    }
+}
 
-                        //tension
-                        Section {
-                            Button("Tension") {
-                                selectedModality = .tension
-                                isModalityPickerPresented = false
-                            }
-                            .foregroundStyle(.black)
-                        } footer: {
-                            Text("For exercises measured in Weight and Time \nex. Wallsits, Weighted Plank, etc.")
-                        }
-                        
-                        //endurance
-                        Section {
-                            Button("Endurance") {
-                                selectedModality = .endurance
-                                isModalityPickerPresented = false
-                            }
-                            .foregroundStyle(.black)
-                        } footer: {
-                            Text("For exercises measured in Distance and Time \nex. Running, Rowing, Cycling, etc.")
-                        }
-                        
-                        //other
-                        Section {
-                            Button("Other") {
-                                selectedModality = .other
-                                isModalityPickerPresented = false
-                            }
-                            .foregroundStyle(.black)
-                        } footer: {
-                            Text("For exercises not measured as the above \nex. Yoga, Pilates, etc. ")
-                        }
-                    }
-                    .navigationTitle("Select Modality")
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            Button("Cancel") {
-                                isModalityPickerPresented = false
-                            }
-                        }
+//MARK: Name
+extension CreateNewExerciseTemplateView {
+    private var exerciseNameSection: some View {
+        Section {
+            HStack {
+                Text("Name")
+                Spacer()
+                TextField("Unnamed Exercise", text: $templateName)
+                    .multilineTextAlignment(.trailing)
+            }
+        }
+    }
+}
+
+//MARK: Category
+extension CreateNewExerciseTemplateView {
+    //select category button
+    private var categorySelectionSection: some View {
+        Section {
+            Button {
+                isCategoryPickerPresented = true
+            } label: {
+                HStack {
+                    Text("Category")
+                        .foregroundStyle(.black)
+                    Spacer()
+                    if let selected = selectedCategory {
+                        Text(selected.name)
+                            .foregroundColor(.primary)
+                    } else {
+                        Text("Select a category")
+                            .foregroundColor(.gray)
                     }
                 }
-                .environment(\.modelContext, modelContext)
+            }
+        }
+    }
+    
+    //category picker
+    private var categoryPickerSheet: some View {
+        NavigationStack {
+            List {
+                ForEach(categories.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }) { cat in
+                    Button {
+                        selectedCategory = cat
+                        isCategoryPickerPresented = false
+                    } label: {
+                        Text(cat.name)
+                            .foregroundStyle(.black)
+                    }
+                }
+            }
+            .navigationTitle("Select Category")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isCategoryPickerPresented = false
+                    }
+                }
+            }
+        }
+        .environment(\.modelContext, modelContext)
+    }
+}
+
+//MARK: Modality
+extension CreateNewExerciseTemplateView {
+    
+    private var modalitySelectionSection: some View {
+        Section {
+            Button {
+                isModalityPickerPresented.toggle()
+            } label: {
+                HStack {
+                    Text("Modality")
+                        .foregroundStyle(.black)
+                    Spacer()
+                    VStack(alignment: .leading) {
+                        Text(selectedModality.rawValue.capitalized)
+                            .foregroundColor(.primary)
+                        modalityDetail
+                    }
+                }
+            }
+        } footer: {
+            Text("How an exercise is performed, and how measures are used to track performance (Weight, Reps, Time)")
+        }
+    }
+    
+    private var modalityDetail: some View {
+        switch selectedModality {
+        case .repetition:
+            return Text("Weight, Reps")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        case .tension:
+            return Text("Weight, Time")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        case .endurance:
+            return Text("Distance, Time")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        case .other:
+            return Text("Other")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+    }
+    
+    func modalityPickerSheet() -> some View {
+        NavigationStack {
+            List {
+                //reps
+                Section {
+                    Button("Repetition") {
+                        selectedModality = .repetition
+                        isModalityPickerPresented = false
+                    }
+                    .foregroundStyle(.black)
+                } footer: {
+                    Text("For exercises measured in Weight and Reps \nex. Bench Press, Squats, Deadlift, etc.")
+                }
+                
+                //tension
+                Section {
+                    Button("Tension") {
+                        selectedModality = .tension
+                        isModalityPickerPresented = false
+                    }
+                    .foregroundStyle(.black)
+                } footer: {
+                    Text("For exercises measured in Weight and Time \nex. Wallsits, Weighted Plank, etc.")
+                }
+                
+                //endurance
+                Section {
+                    Button("Endurance") {
+                        selectedModality = .endurance
+                        isModalityPickerPresented = false
+                    }
+                    .foregroundStyle(.black)
+                } footer: {
+                    Text("For exercises measured in Distance and Time \nex. Running, Rowing, Cycling, etc.")
+                }
+                
+                //other
+                Section {
+                    Button("Other") {
+                        selectedModality = .other
+                        isModalityPickerPresented = false
+                    }
+                    .foregroundStyle(.black)
+                } footer: {
+                    Text("For exercises not measured as the above \nex. Yoga, Pilates, etc. ")
+                }
+            }
+            .navigationTitle("Select Modality")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        isModalityPickerPresented = false
+                    }
+                }
             }
         }
     }

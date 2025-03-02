@@ -18,7 +18,9 @@ class Set {
     //the basic params of a set
     var id: UUID
     var reps: Int
-    var setWeight: Double
+    var weight: Double
+    var time: Double
+    var distance: Double
     var order: Int
     var intensity: Int?
     
@@ -34,13 +36,17 @@ class Set {
          exercise: Exercise, //mandatory to assign a set to an exercise
          reps: Int = 0, //defaults to 0 if no value provided
          weight: Double = 0, //defaults to 0 if no value provided
+         time: Double = 0,
+         distance: Double = 0,
          order: Int = 0,
          intensity: Int? = nil
          ) {
         self.id = id
         self.exercise = exercise
         self.reps = reps
-        self.setWeight = weight
+        self.weight = weight
+        self.time = time
+        self.distance = distance
         self.order = order
         self.intensity = intensity
     }

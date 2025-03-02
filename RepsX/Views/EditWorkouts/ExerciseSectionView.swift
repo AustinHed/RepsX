@@ -35,13 +35,21 @@ struct ExerciseSectionView: View {
                 exerciseNumberField(index: index, set: set)
                 
                 //weight
-                setWeightField(for: set)
-                
-                //reps
-                setRepsField(for: set)
+                if set.exercise?.modality == .repetition {
+                    setWeightField(for: set)
+                    setRepsField(for: set)
+                } else if set.exercise?.modality == .tension {
+                    setWeightField(for: set)
+                    setTimeField(for: set)
+                } else if set.exercise?.modality == .endurance {
+                    setDistanceField(for: set)
+                    setTimeField(for: set)
+                } else {
+                    setNotesField(for: set)
+                }
                 
                 //Intensity
-                notesView(set:set)
+                intensityBar(set:set)
                 
             }
             //MARK: Swipe Actions
@@ -65,6 +73,7 @@ struct ExerciseSectionView: View {
 
 //MARK: Set number
 extension ExerciseSectionView {
+    //TODO: Make this a button?
     func exerciseNumberField(index:Int, set: Set) -> some View {
         Text("\(index + 1)")
             .font(.caption)
@@ -80,7 +89,6 @@ extension ExerciseSectionView {
             .foregroundColor(set.reps == 0 ? Color.gray : Color.blue)
     }
 }
-
 //MARK: Weight
 extension ExerciseSectionView {
     /// Returns an editable weight field view for a given set.
@@ -92,18 +100,18 @@ extension ExerciseSectionView {
             
             TextField("0", text: Binding(
                 get: {
-                    let formatted = String(format: "%.0f", set.setWeight)
+                    let formatted = String(format: "%.0f", set.weight)
                     return formatted == "0" ? "" : formatted
                 },
                 set: { newValue in
                     if newValue.isEmpty {
-                        set.setWeight = 0
+                        set.weight = 0
                         print("update setWeight with an empty value, use 0")
                     } else if let number = Double(newValue) {
-                        set.setWeight = number
+                        set.weight = number
                         print("update setWeight with valid value")
                     } else {
-                        set.setWeight = 0
+                        set.weight = 0
                         print("update setWeight with invalid value, use 0")
                     }
                 }
@@ -113,7 +121,8 @@ extension ExerciseSectionView {
             .keyboardType(.decimalPad)
             .submitLabel(.done)
             .onSubmit {
-                exerciseViewModel.updateWeight(set, newWeight: set.setWeight)
+                exerciseViewModel.updateSet(set, newWeight: set.weight)
+                //exerciseViewModel.updateWeight(set, newWeight: set.weight)
             }
         }
         
@@ -150,16 +159,98 @@ extension ExerciseSectionView{
             .keyboardType(.numberPad)
             .submitLabel(.done)
             .onSubmit {
-                exerciseViewModel.updateReps(set, newReps: set.reps)
+                exerciseViewModel.updateSet(set, newReps: set.reps)
+                //exerciseViewModel.updateReps(set, newReps: set.reps)
             }
         }
         
     }
 }
-
+//MARK: Time
+extension ExerciseSectionView {
+    func setTimeField(for set: Set) -> some View {
+        VStack(alignment: .leading) {
+            Text("Minutes")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            
+            TextField("0", text: Binding(
+                get: {
+                    let formatted = String(format: "%.0f", set.time)
+                    return formatted == "0" ? "" : formatted
+                },
+                set: { newValue in
+                    if newValue.isEmpty {
+                        set.time = 0
+                        print("update setTime with an empty value, use 0")
+                    } else if let number = Double(newValue) {
+                        set.time = number
+                        print("update setTime with valid value")
+                    } else {
+                        set.time = 0
+                        print("update setTime with invalid value, use 0")
+                    }
+                }
+            ))
+            .frame(maxWidth: 50, maxHeight: 15)
+            .focused($isKeyboardActive)
+            .keyboardType(.decimalPad)
+            .submitLabel(.done)
+            .onSubmit {
+                exerciseViewModel.updateSet(set, newTime: set.time)
+            }
+        }
+        
+    }
+}
+//MARK: Distance
+extension ExerciseSectionView {
+    func setDistanceField(for set: Set) -> some View {
+        VStack(alignment: .leading) {
+            Text("Miles")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            
+            TextField("0", text: Binding(
+                get: {
+                    let formatted = String(format: "%.0f", set.time)
+                    return formatted == "0" ? "" : formatted
+                },
+                set: { newValue in
+                    if newValue.isEmpty {
+                        set.time = 0
+                        print("update setDistance with an empty value, use 0")
+                    } else if let number = Double(newValue) {
+                        set.time = number
+                        print("update setDistance with valid value")
+                    } else {
+                        set.time = 0
+                        print("update setDistance with invalid value, use 0")
+                    }
+                }
+            ))
+            .frame(maxWidth: 50, maxHeight: 15)
+            .focused($isKeyboardActive)
+            .keyboardType(.decimalPad)
+            .submitLabel(.done)
+            .onSubmit {
+                exerciseViewModel.updateSet(set, newDistance: set.distance)
+            }
+        }
+        
+    }
+}
 //MARK: Notes
 extension ExerciseSectionView {
-    func notesView(set:Set) -> some View {
+    func setNotesField(for set: Set) -> some View {
+        Text("notes")
+    }
+}
+
+
+//MARK: Intensity
+extension ExerciseSectionView {
+    func intensityBar(set:Set) -> some View {
         VStack(alignment:.leading){
             Text("Intensity")
                 .font(.caption)
@@ -172,11 +263,12 @@ extension ExerciseSectionView {
     
 }
 
+
 //MARK: Add Button
 extension ExerciseSectionView {
     func addButton() -> some View {
         Button {
-            exerciseViewModel.addSet(to: exercise, reps: 0, weight: 0)
+            exerciseViewModel.addSet(to: exercise, reps: 0, weight: 0, time: 0, distance: 0)
         } label: {
             Text("Add Set")
         }
@@ -186,14 +278,35 @@ extension ExerciseSectionView {
 #Preview {
     let newWorkout = Workout(id: UUID(), startTime: Date())
     
-    let newExercise = Exercise(name: "Bench Press", category: .chest, workout: newWorkout)
+    let newExercise = Exercise(name: "Bench Press", category: .chest, workout: newWorkout, modality: .repetition)
+    let newExercise2 = Exercise(name: "Tension Hold", category: .chest, workout: newWorkout, modality: .tension)
+    let newExercise3 = Exercise(name: "Run", category: .chest, workout: newWorkout, modality:.endurance)
+    let newExercise4 = Exercise(name: "Other", category: .chest, workout: newWorkout, modality:.other)
     let newSet = Set(exercise: newExercise, reps: 10, weight: 10, intensity: 3)
-    //newExercise.sets.append(newSet)
     
     List {
-        Text("Workout")
-            .bold()
-        ExerciseSectionView(exercise: newExercise)
+        Section {
+            Text("Bench Press")
+                .bold()
+            ExerciseSectionView(exercise: newExercise)
+        }
+        Section {
+            Text("Tension Hold")
+                .bold()
+            ExerciseSectionView(exercise: newExercise2)
+        }
+        
+        Section{
+            Text("Run")
+                .bold()
+            ExerciseSectionView(exercise: newExercise3)
+        }
+        Section{
+            Text("Other")
+                .bold()
+            ExerciseSectionView(exercise: newExercise4)
+        }
+        
     }
     
 }

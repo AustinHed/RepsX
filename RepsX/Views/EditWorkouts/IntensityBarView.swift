@@ -22,7 +22,7 @@ struct IntensityBar: View {
 
     var body: some View {
         HStack(spacing: gapWidth) {
-            ForEach(0..<3, id: \.self) { index in
+            ForEach(0..<5, id: \.self) { index in
                 Rectangle()
                     .foregroundColor(colorForSegment(at: index))
                     .onTapGesture {
@@ -44,13 +44,17 @@ struct IntensityBar: View {
             return Color.gray.opacity(0.5)
         case 1:
             // Only the first segment is red
-            return index == 0 ? Color.red : Color.gray.opacity(0.5)
+            return index == 0 ? Color.green.opacity(0.2) : Color.gray.opacity(0.5)
         case 2:
             // The first two segments are green
-            return index < 2 ? Color.green : Color.gray.opacity(0.5)
+            return index < 2 ? Color.green.opacity(0.4) : Color.gray.opacity(0.5)
         case 3:
             // All segments are blue
-            return Color.blue
+            return index < 3 ? Color.green.opacity(0.6) : Color.gray.opacity(0.5)
+        case 4:
+            return index < 4 ? Color.green.opacity(0.8) : Color.gray.opacity(0.5)
+        case 5:
+            return index < 5 ? Color.green.opacity(1.0) : Color.gray.opacity(1.5)
         default:
             return Color.gray.opacity(0.5)
         }
