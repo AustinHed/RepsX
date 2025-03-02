@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct LogViewRow: View {
     
@@ -29,8 +30,9 @@ struct LogViewRow: View {
         .overlay(
             UnevenRoundedRectangle(topLeadingRadius: 12, bottomLeadingRadius: 12)
                 .foregroundStyle(
-                    colorForRating(workout.rating)
-                    //Color.mint
+                    //colorForRating(workout.rating)
+                    Color(UIColor(hex: workout.color ?? "#808080") ?? .clear)
+                    
                 )
                 .frame(width:12),
             alignment: .leading
@@ -94,29 +96,7 @@ extension LogViewRow{
 }
 
 //MARK: Color function
-extension LogViewRow {
-    // Helper function to map rating to color
-    func colorForRating(_ rating: Int?) -> Color {
-        guard let rating = rating else {
-            return Color.gray
-        }
-        
-        switch rating {
-        case 5:
-            return Color(hex: "3E7CB2")
-        case 4:
-            return Color(hex: "6BAC66")
-        case 3:
-            return Color(hex: "DFD764")
-        case 2:
-            return Color(hex: "F99246")
-        case 1:
-            return Color(hex: "BF4448")
-        default:
-            return Color.gray
-        }
-    }
-}
+
 
 // Hex initializer for Color
 extension Color {
@@ -139,7 +119,7 @@ extension Color {
 }
 
 #Preview {
-    let testWorkout:Workout = Workout(id: UUID(), name: "Test Workout", startTime: Date(), endTime: nil, rating: 4, exercises: [])
+    let testWorkout:Workout = Workout(id: UUID(), name: "Test Workout", startTime: Date(), endTime: nil, rating: 4, exercises: [], color: "#EB5545")
     List{
         LogViewRow(workout: testWorkout)
             .listRowBackground(Color.clear)

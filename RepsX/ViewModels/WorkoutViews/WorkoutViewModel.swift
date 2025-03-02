@@ -78,7 +78,7 @@ extension WorkoutViewModel {
     
     //MARK: Update Workout functions
     //global update
-    func updateWorkout(_ workout: Workout, newName: String?, newStartTime: Date?, newEndTime:Date?, newNotes: String?, newRating: Int?) {
+    func updateWorkout(_ workout: Workout, newName: String? = nil, newStartTime: Date? = nil, newEndTime:Date? = nil, newNotes: String? = nil, newRating: Int? = nil, newColor: String? = nil) {
         //update name
         if let newName = newName {
             workout.name = newName
@@ -99,6 +99,10 @@ extension WorkoutViewModel {
         //update rating
         if let newRating = newRating {
             workout.rating = max(1, min(5, newRating))
+        }
+        
+        if let newColor = newColor{
+            workout.color = newColor
         }
         //save
         save()

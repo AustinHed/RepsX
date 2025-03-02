@@ -34,6 +34,10 @@ struct EditWorkoutView: View {
     //rating picker
     @State private var isRatingPickerPresented: Bool = false
     
+    //color picker
+    @State private var isColorPickerPresented: Bool = false
+    @State private var selectedColor: String = "#808080"
+    
     //Reorder
     @State private var isReordering: Bool = false
     
@@ -57,7 +61,13 @@ struct EditWorkoutView: View {
                 endTimeRow
                 
                 //Rating row
-                ratingRow
+                //ratingRow
+                colorRow
+                    .onAppear {
+                        if workout.color != nil {
+                            selectedColor = workout.color!
+                        }
+                    }
                 
             }
             
@@ -163,6 +173,17 @@ struct EditWorkoutView: View {
             }
             
         }
+        //color picker
+        .sheet(isPresented: $isColorPickerPresented) {
+            ColorPickerGrid(selectedColor: selectedColor) { color in
+                selectedColor = color
+                workoutViewModel.updateWorkout(workout, newColor: color)
+            }
+            .presentationDetents([.height(200)])
+            .presentationDragIndicator(.visible)
+            .presentationBackground(.clear)
+        }
+        
     }
 }
 
@@ -253,6 +274,24 @@ extension EditWorkoutView {
             } label: {
                 Text(workout.rating.map(String.init) ?? "-")
             }
+        }
+    }
+}
+//color row
+extension EditWorkoutView {
+    var colorRow: some View {
+        HStack{
+            Text("Workout Color ")
+            Spacer()
+            Button {
+                isColorPickerPresented.toggle()
+            } label: {
+                Circle()
+                    .frame(width: 20, height: 20)
+                    .foregroundStyle(Color(UIColor(hex:selectedColor) ?? .gray))
+            }
+
+            
         }
     }
 }
@@ -351,7 +390,6 @@ struct TimePickerSheet: View {
     }
 }
 
-
 //MARK: Rating
 //workoutRating picker
 struct WorkoutRatingSheet: View {
@@ -399,6 +437,8 @@ struct WorkoutRatingSheet: View {
     }
     
 }
+
+
 
 
 //MARK: Preview
