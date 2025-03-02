@@ -98,12 +98,25 @@ struct EditWorkoutView: View {
                 
                 //Reorder & Delete
                 Menu {
-                    Button("Reorder") {
+                    Button {
                         isReordering.toggle()
+                    } label: {
+                        HStack{
+                            Text("Reorder")
+                            Spacer()
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                        }
                     }
-                    Button("Delete") {
+                    Button(role: .destructive) {
                         showDeleteConfirmation.toggle()
-                    }.foregroundStyle(.red)
+                    } label: {
+                        HStack{
+                            Text("Delete")
+                            Spacer()
+                            Image(systemName: "trash")
+                        }
+                    }
+
                 } label: {
                     Image(systemName:"ellipsis.circle")
                 }

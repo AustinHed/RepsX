@@ -18,17 +18,20 @@ class Routine: Identifiable {
     var id: UUID
     var name: String
     var colorHex: String?
-    var exercises: [ExerciseTemplate]
+    var exercises: [ExerciseInRoutine]
+    var favorite: Bool
     
     init(id: UUID = UUID(),
          name: String = "Unknown Exercise",
          colorHex: String? = nil,
-         exercises: [ExerciseTemplate] = []
+         exercises: [ExerciseInRoutine] = [],
+         favorite: Bool = false
         ){
         self.id = id
         self.name = name
         self.colorHex = colorHex
         self.exercises = exercises
+        self.favorite = favorite
     }
     
     //computed color property that turns a hex into a color for usage

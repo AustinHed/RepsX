@@ -31,7 +31,23 @@ class RoutineViewModel {
         save()
     }
     
-    //MARK: Update Name
+    //MARK: Update
+    func updateRoutine(_ routine: Routine, newName: String? = nil, newColor: String? = nil) {
+        if let newName = newName {
+            routine.name = newName
+        }
+        
+        if let newColor = newColor {
+            routine.colorHex = newColor
+        }
+    }
+    
+    func favoriteRoutine(_ routine: Routine) {
+        routine.favorite.toggle()
+        save()
+    }
+    
+    //deprecate
     func updateRoutineName(_ routine: Routine, newName: String) {
         routine.name = newName
         save()

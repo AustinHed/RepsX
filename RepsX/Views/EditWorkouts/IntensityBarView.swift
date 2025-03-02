@@ -27,7 +27,10 @@ struct IntensityBar: View {
                     .foregroundColor(colorForSegment(at: index))
                     .onTapGesture {
                         // Update the intensity property based on the tapped segment (1-indexed)
-                        setViewModel.updateIntensity(set, newIntensity: index + 1)
+                        withAnimation(.bouncy) {
+                            setViewModel.updateIntensity(set, newIntensity: index + 1)
+                        }
+                        
                     }
             }
         }

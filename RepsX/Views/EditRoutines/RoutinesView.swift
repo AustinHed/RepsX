@@ -11,17 +11,47 @@ import Foundation
 
 struct RoutinesView: View {
     
-    //Fetch workouts
-    //@Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
+    //Fetch all existing routines
+    //TODO: ensure there are default routines on app launch
+    //TODO: local button to add routines to memory for this view
+    @Query(sort: \Routine.name, order: .reverse) var routines: [Routine]
     @Environment(\.modelContext) private var modelContext
+    
+    //routines view model
+    private var routineViewModel:RoutineViewModel {
+        RoutineViewModel(modelContext: modelContext)
+    }
     
     var body: some View {
         NavigationStack{
             List {
-                Text("Hat")
-                Text("Hat")
-                Text("Hat")
-                Text("Hat")
+//                Section(header: Text("Favorites")) {
+//                    ForEach(routines) {routine in
+//                        if routine.favorite {
+//                            Text(routine.name)
+//                        }
+//                    }
+//                }
+                
+                ForEach(routines) { routine in
+                    HStack{
+                        Circle()
+                            .frame(width: 20, height: 20)
+                            .foregroundStyle(Color(UIColor(hex:routine.colorHex ?? "") ?? .gray))
+                        NavigationLink(routine.name) {
+                            EditRoutine(routine: routine)
+                        }
+                    }
+                    
+                }
+                
+                Section {
+                    Button {
+                        routineViewModel.addRoutine(name: "Test Routine")
+                    } label: {
+                        Text("Add test routines")
+                    }
+                }
             }
             .navigationTitle("Routines")
             .toolbar {
@@ -42,4 +72,5 @@ struct RoutinesView: View {
 
 #Preview {
     RoutinesView()
+        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self, Routine.self])
 }
