@@ -19,13 +19,6 @@ class WorkoutViewModel {
         self.modelContext = modelContext
     }
 
-    
-
-    
-    
-
-    
-    
     //MARK: Save & Fetch
     //save
     func save() {
@@ -53,6 +46,7 @@ class WorkoutViewModel {
 
 //MARK: Workouts
 extension WorkoutViewModel {
+    
     //add a new Workout to memory
     func addWorkout(date: Date) -> Workout {
         let newWorkout = Workout(id: UUID(),name: "", startTime: date)
@@ -60,6 +54,29 @@ extension WorkoutViewModel {
         save()
         return newWorkout
     }
+    
+    //add a new workout using a Routine
+    func addWorkoutFromRoutine(_ routine: Routine, date: Date) -> Workout {
+        //first, create the Workout
+        let newWorkout = Workout(id: UUID(),name: routine.name, startTime: date, color: routine.colorHex)
+        modelContext.insert(newWorkout)
+        
+        //then, create the Exercises in the workout
+        for exerciseInRoutine in routine.exercises {
+            //create the individual Exercise
+            let newExercise = addPremadeExercise(to: newWorkout, exercise: exerciseInRoutine.exerciseTemplate!)
+            let setCount = exerciseInRoutine.setCount
+            //need to also create the sets
+            for _ in 0..<setCount {
+                addSet(to: newExercise, reps: 0, weight: 0, time: 0, distance: 0)
+            }
+        }
+        save()
+        return newWorkout
+    }
+    
+
+    
     //delete a workout from Memory
     func deleteWorkout(_ workout: Workout) {
         //first, iterate over the exercises
@@ -71,10 +88,6 @@ extension WorkoutViewModel {
         //then, save
         save()
     }
-    
-    
-
-    
     
     //MARK: Update Workout functions
     //global update
@@ -157,7 +170,7 @@ extension WorkoutViewModel {
     }
     
     //add a pre-defined exercise
-    func addPremadeExercise(to workout: Workout, exercise: ExerciseTemplate) {
+    func addPremadeExercise(to workout: Workout, exercise: ExerciseTemplate) -> Exercise {
         let order = workout.exercises.count
         let newExercise = Exercise(id: UUID(),
                                    name: exercise.name,
@@ -168,8 +181,10 @@ extension WorkoutViewModel {
         )
         workout.exercises.append(newExercise)
         modelContext.insert(newExercise)
+        return newExercise
         save()
     }
+    
     //delete exercise
     func deleteExercise(_ exercise: Exercise, from workout: Workout) {
         //1. Remove the exercise from the workout's exercises array. This is to avoid potential UI issues where a view depends on the array
@@ -197,6 +212,17 @@ extension WorkoutViewModel {
         save()
     }
     
+}
+
+//MARK: Sets
+extension WorkoutViewModel {
+    func addSet(to exercise: Exercise, reps: Int, weight: Double, time: Double, distance: Double) {
+        let order = exercise.sets.count
+        let newSet = Set(id: UUID(), exercise: exercise, reps: reps, weight: weight, time: time, distance: distance, order: order)
+        exercise.sets.append(newSet)
+        modelContext.insert(newSet)
+        save()
+    }
 }
 
 //MARK: Date & Time Helpers

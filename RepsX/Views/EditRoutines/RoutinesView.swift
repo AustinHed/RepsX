@@ -12,8 +12,6 @@ import Foundation
 struct RoutinesView: View {
     
     //Fetch all existing routines
-    //TODO: ensure there are default routines on app launch
-    //TODO: local button to add routines to memory for this view
     @Query(sort: \Routine.name, order: .reverse) var routines: [Routine]
     @Environment(\.modelContext) private var modelContext
     
@@ -21,6 +19,9 @@ struct RoutinesView: View {
     private var routineViewModel:RoutineViewModel {
         RoutineViewModel(modelContext: modelContext)
     }
+    
+    //Routing around
+    @Binding var selectedTab: ContentView.Tab
     
     var body: some View {
         NavigationStack{
@@ -39,18 +40,10 @@ struct RoutinesView: View {
                             .frame(width: 20, height: 20)
                             .foregroundStyle(Color(UIColor(hex:routine.colorHex ?? "") ?? .gray))
                         NavigationLink(routine.name) {
-                            EditRoutine(routine: routine)
+                            EditRoutine(routine: routine, selectedTab: $selectedTab)
                         }
                     }
                     
-                }
-                
-                Section {
-                    Button {
-                        routineViewModel.addRoutine(name: "Test Routine")
-                    } label: {
-                        Text("Add test routines")
-                    }
                 }
             }
             .navigationTitle("Routines")
@@ -71,6 +64,6 @@ struct RoutinesView: View {
 }
 
 #Preview {
-    RoutinesView()
+    RoutinesView(selectedTab: .constant(.routines))
         .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self, Routine.self])
 }

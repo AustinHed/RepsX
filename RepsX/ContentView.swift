@@ -9,34 +9,45 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    
+    @State private var selectedTab: Tab = .log
+        
+        enum Tab {
+            case log, routines, stats, settings
+        }
+    
     @Environment(\.modelContext) private var modelContext
     
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             //Log
-            LogView()
+            LogView(selectedTab: $selectedTab)
                 .globalKeyboardDoneButton()
                 .tabItem {
                     Label("Log", systemImage: "list.bullet")
                 }
+                .tag(Tab.log)
             
             //Routines
-            RoutinesView()
+            RoutinesView(selectedTab: $selectedTab)
                 .tabItem {
                     Label("Routines", systemImage: "list.bullet.rectangle")
                 }
+                .tag(Tab.routines)
             
             //Stats
             Text("StatsView")
                 .tabItem {
                     Label("Stats", systemImage: "chart.bar")
                 }
+                .tag(Tab.stats)
             
             //Settings
             Text("SettingsView")
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
+                .tag(Tab.settings)
         }
     }
 }

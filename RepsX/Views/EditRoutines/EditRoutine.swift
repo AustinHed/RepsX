@@ -10,12 +10,17 @@ import UIKit
 
 struct EditRoutine: View {
     
-    
     //the routine to edit
     var routine: Routine
     
+    //routing around the tab view
+    @Binding var selectedTab: ContentView.Tab
+    
     //model context
     @Environment(\.modelContext) private var modelContext
+    
+    @Environment(\.dismiss) private var dismiss
+    
     //workout view model
     private var workoutViewModel: WorkoutViewModel {
         WorkoutViewModel(modelContext: modelContext)
@@ -41,70 +46,26 @@ struct EditRoutine: View {
                 //start button
                 Section {
                     Button("Start Workout"){
-                        //start workout, insert new workout instance
+                        //first, create a new workout from the current routine
+                        let newWorkout = workoutViewModel.addWorkoutFromRoutine(routine, date: Date())
+                        //then, pass that workout to the singleton WorkoutCoordinator to be used in LogView
+                        WorkoutCoordinator.shared.currentWorkout = newWorkout
+                        WorkoutCoordinator.shared.showEditWorkout = true
+                        //then, tell the TabView to navigate to .log
+                        selectedTab = .log
+                        //finally, dismiss the EditRoutineView
+                        dismiss()
                     }.bold()
                 }
                 
-                Section{
-                    
-                    //Edit Name
-                    TextField("Name this Routine", text: Binding(
-                        get: {routine.name},
-                        set: { newName in
-                            if newName.isEmpty {
-                                routine.name = ""
-                            } else {
-                                routine.name = newName
-                            }
-                        }
-                    ))
-                    .onSubmit{
-                        routineViewModel.updateRoutine(routine, newName: routine.name)
-                    }
-                    
-                    //Edit Color
-                    Button {
-                        toggleColorPicker = true
-                    } label: {
-                        HStack {
-                            Text("Change Routine Color")
-                                .foregroundStyle(Color(UIColor(hex:selectedColor) ?? .gray))
-                            Spacer()
-                            Circle()
-                                .foregroundStyle(Color(UIColor(hex:selectedColor) ?? .gray))
-                                .frame(width: 20, height: 20)
-                        }
-                    }
-                    
-                }
+                //name and color
+                nameAndColorSection(routine: routine, routineViewModel: routineViewModel, toggleColorPicker: $toggleColorPicker, selectedColor: selectedColor)
                 
                 //exercises
-                Section{
-                    ForEach(routine.exercises, id: \.self) { exercise in
-                        NavigationLink {
-                            EditExerciseInRoutineView(exerciseInRoutine: exercise)
-                        } label: {
-                            VStack(alignment:.leading){
-                                Text(exercise.exerciseName)
-                                    .foregroundStyle(.black)
-                                Text("\(exercise.setCount) Sets")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.gray)
-                                    
-                            }
-                        }
-                    }
-                }
+                exercisesSection(for: routine)
                 
                 //add exercise button
-                Section{
-                    Button {
-                        isSelectingExercise.toggle()
-                    } label: {
-                        Text("Add Exercise")
-                    }
-
-                }
+                addExerciseButton(isSelectingExercise: $isSelectingExercise)
                 
             }
             .navigationTitle(routine.name == "" ? "New Routine" : routine.name)
@@ -192,6 +153,84 @@ struct EditRoutine: View {
     }
 }
 
+//MARK: Start button
+extension EditRoutine {
+    //TODO
+}
+
+//MARK: Name and Color
+extension EditRoutine {
+    func nameAndColorSection(
+            routine: Routine,
+            routineViewModel: RoutineViewModel,
+            toggleColorPicker: Binding<Bool>,
+            selectedColor: String
+        ) -> some View {
+            Section {
+                // Edit Name
+                TextField("Name this Routine", text: Binding(
+                    get: { routine.name },
+                    set: { newName in
+                        routine.name = newName.isEmpty ? "" : newName
+                    }
+                ))
+                .onSubmit {
+                    routineViewModel.updateRoutine(routine, newName: routine.name)
+                }
+                
+                // Edit Color
+                Button {
+                    toggleColorPicker.wrappedValue = true
+                } label: {
+                    HStack {
+                        Text("Change Routine Color")
+                            .foregroundStyle(Color(UIColor(hex: selectedColor) ?? .gray))
+                        Spacer()
+                        Circle()
+                            .foregroundStyle(Color(UIColor(hex: selectedColor) ?? .gray))
+                            .frame(width: 20, height: 20)
+                    }
+                }
+            }
+        }
+}
+
+//MARK: Exercise Rows
+extension EditRoutine {
+    func exercisesSection(for routine: Routine) -> some View {
+        Section{
+            ForEach(routine.exercises, id: \.self) { exercise in
+                NavigationLink {
+                    EditExerciseInRoutineView(exerciseInRoutine: exercise)
+                } label: {
+                    VStack(alignment:.leading){
+                        Text(exercise.exerciseName)
+                            .foregroundStyle(.black)
+                        Text("\(exercise.setCount) Sets")
+                            .font(.subheadline)
+                            .foregroundStyle(.gray)
+                            
+                    }
+                }
+            }
+        }
+    }
+}
+
+//MARK: Add Exercise button
+extension EditRoutine {
+    func addExerciseButton(isSelectingExercise: Binding <Bool>) -> some View{
+        Section{
+            Button {
+                isSelectingExercise.wrappedValue.toggle()
+            } label: {
+                Text("Add Exercise")
+            }
+        }
+    }
+}
+
+
 #Preview {
     let eTemplate = ExerciseTemplate(name: "Bench Press", category:CategoryModel(name: "category"), modality: .repetition)
     
@@ -199,5 +238,5 @@ struct EditRoutine: View {
     
     let routine2 = Routine(name: "Push Day", colorHex: "#808080", exercises: [template])
     
-    EditRoutine(routine: routine2)
+    //EditRoutine(routine: routine2)
 }

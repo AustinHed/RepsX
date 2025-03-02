@@ -29,6 +29,9 @@ struct LogView: View {
         WorkoutViewModel(modelContext: modelContext)
     }
     
+    @Binding var selectedTab: ContentView.Tab
+    @State var coordinator = WorkoutCoordinator.shared
+    
     // Group workouts by month and year (e.g., "February 2025")
     private var groupedWorkouts: [String: [Workout]] {
         let dateFormatter = DateFormatter()
@@ -39,7 +42,7 @@ struct LogView: View {
     }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
                 //TODO: Add section for favorite routines, sliding cards
                 //MARK: List
@@ -142,6 +145,23 @@ struct LogView: View {
             .onAppear{
                 initializeDefaultDataIfNeeded(context: modelContext)
             }
+            .fullScreenCover(isPresented: $coordinator.showEditWorkout) {
+                if let workout = coordinator.currentWorkout {
+                    NavigationStack{
+                        EditWorkoutView(workout: workout)
+                            .toolbar {
+                                ToolbarItem(placement: .navigationBarLeading) {
+                                    Button("Finish") {
+                                        //update the end time
+                                        workoutViewModel.updateEndTime(workout,Date())
+                                        //dismiss the Sheet
+                                        coordinator.showEditWorkout.toggle()
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
             
         }
         //delete workout confirmation
@@ -168,6 +188,6 @@ struct LogView: View {
 }
 
 #Preview {
-    LogView()
+    LogView(selectedTab: .constant(.log))
         .modelContainer(SampleData.shared.modelContainer)
 }
