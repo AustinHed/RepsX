@@ -30,7 +30,7 @@ struct LogViewRow: View {
         .overlay(
             UnevenRoundedRectangle(topLeadingRadius: 12, bottomLeadingRadius: 12)
                 .foregroundStyle(
-                    //colorForRating(workout.rating)
+                    
                     Color(UIColor(hex: workout.color ?? "#808080") ?? .clear)
                     
                 )
@@ -95,7 +95,6 @@ extension LogViewRow{
     }
 }
 
-//MARK: Color function
 
 
 // Hex initializer for Color

@@ -13,31 +13,26 @@ struct EditRoutine: View {
     //the routine to edit
     var routine: Routine
     
-    //routing around the tab view
+    //Tab View
     @Binding var selectedTab: ContentView.Tab
     
-    //model context
+    //Environment
     @Environment(\.modelContext) private var modelContext
-    
     @Environment(\.dismiss) private var dismiss
     
-    //workout view model
+    //ViewModels
     private var workoutViewModel: WorkoutViewModel {
         WorkoutViewModel(modelContext: modelContext)
     }
-    
-    //routine view model
     private var routineViewModel: RoutineViewModel {
         RoutineViewModel(modelContext: modelContext)
     }
     
-    //show color picker
+    //Color Picker
     @State var toggleColorPicker: Bool = false
-    
-    //defaults to gray, unless there is already an incoming value
     @State var selectedColor:String = "#808080"
     
-    //add exercise toggle
+    //Add Exercise
     @State private var isSelectingExercise: Bool = false
     
     var body: some View {

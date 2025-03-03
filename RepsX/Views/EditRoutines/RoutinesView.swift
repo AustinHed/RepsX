@@ -26,14 +26,7 @@ struct RoutinesView: View {
     var body: some View {
         NavigationStack{
             List {
-//                Section(header: Text("Favorites")) {
-//                    ForEach(routines) {routine in
-//                        if routine.favorite {
-//                            Text(routine.name)
-//                        }
-//                    }
-//                }
-                
+//favorites section
                 ForEach(routines) { routine in
                     HStack{
                         Circle()
@@ -47,8 +40,8 @@ struct RoutinesView: View {
                 }
             }
             .navigationTitle("Routines")
+            //MARK: Toolbar
             .toolbar {
-                
                 //Edit Button
                 ToolbarItem(placement: .topBarLeading) {
                     Text("Edit")
@@ -56,7 +49,12 @@ struct RoutinesView: View {
                 
                 //Plus button
                 ToolbarItem(placement: .topBarTrailing) {
-                    Text("plus")
+                    Button {
+                        //new Routine
+                    } label: {
+                        Image(systemName:"plus")
+                    }
+
                 }
             }
         }
