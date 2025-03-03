@@ -39,7 +39,7 @@ struct EditCategoryView: View {
                 
                 //delete button
                 Section() {
-                    Button("Delete"){
+                    Button("Delete (WIP)"){
                         //TODO: Fix how deletes work, currently causes a crash
                         //one option - just prevent delete if there are exercises associated
                         //would need to show all associated Exercises

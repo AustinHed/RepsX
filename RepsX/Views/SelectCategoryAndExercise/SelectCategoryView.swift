@@ -72,12 +72,16 @@ struct SelectCategoryView: View {
                 //edit exercises and categories
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        Button("Edit Exercises") {
-                            //move into edit exercises view
+//                        Button("Edit Exercises") {
+//                            ListOfExerciseTemplatesView()
+//                        }
+                        
+                        NavigationLink("Edit Exercises NL") {
+                            ListOfExerciseTemplatesView()
                         }
-                        Button("Edit Categories") {
-                            //move into edit categories view
-                            isEditingCategories.toggle()
+                        
+                        NavigationLink("Edit Categories") {
+                            ListOfCategoriesView()
                         }
                     } label: {
                         Image(systemName:"ellipsis.circle")

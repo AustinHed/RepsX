@@ -30,7 +30,7 @@ struct SettingsView: View {
                         ListOfExerciseTemplatesView()
                     }
                     NavigationLink("Edit Categories") {
-                        //tos
+                        ListOfCategoriesView()
                     }
                 }
                 

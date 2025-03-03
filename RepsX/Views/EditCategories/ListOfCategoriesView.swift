@@ -34,12 +34,16 @@ struct ListOfCategoriesView: View {
         NavigationStack {
             List {
                 ForEach(categories) { category in
-                    Button {
-                        selectedCategory = category
-                    } label: {
-                        Text(category.name)
-                            .foregroundStyle(.black)
+                    NavigationLink(category.name) {
+                        EditCategoryView(category: category)
                     }
+                    
+//                    Button {
+//                        selectedCategory = category
+//                    } label: {
+//                        Text(category.name)
+//                            .foregroundStyle(.black)
+//                    }
 
                 }
             }
@@ -47,14 +51,6 @@ struct ListOfCategoriesView: View {
             .navigationBarTitleDisplayMode(.inline)
             //MARK: Toolbar
             .toolbar{
-                //cancel button
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Cancel")
-                    }
-                }
                 //add new category
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
