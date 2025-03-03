@@ -23,6 +23,7 @@ struct RoutinesView: View {
     //Routing around
     @Binding var selectedTab: ContentView.Tab
     
+    
     var body: some View {
         NavigationStack{
             List {
@@ -32,9 +33,15 @@ struct RoutinesView: View {
                         Circle()
                             .frame(width: 20, height: 20)
                             .foregroundStyle(Color(UIColor(hex:routine.colorHex ?? "") ?? .gray))
-                        NavigationLink(routine.name) {
+//                        NavigationLink(routine.name) {
+//                            EditRoutine(routine: routine, selectedTab: $selectedTab)
+//                        }
+                        NavigationLink {
                             EditRoutine(routine: routine, selectedTab: $selectedTab)
+                        } label: {
+                            RoutineLabel(routine: routine)
                         }
+
                     }
                     
                 }
@@ -55,6 +62,28 @@ struct RoutinesView: View {
                         Image(systemName:"plus")
                     }
 
+                }
+            }
+        }
+    }
+}
+
+//star on favorited Routines
+extension RoutinesView{
+    struct RoutineLabel: View {
+        let routine: Routine
+
+        var body: some View {
+            Group {
+                if routine.favorite {
+                    HStack {
+                        Text(routine.name)
+                        Spacer()
+                        // If you're using SF Symbols, use systemName
+                        Image(systemName: "star.fill")
+                    }
+                } else {
+                    Text(routine.name)
                 }
             }
         }

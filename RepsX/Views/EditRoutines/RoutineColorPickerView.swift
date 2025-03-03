@@ -27,14 +27,14 @@ struct ColorPickerGrid: View {
         ZStack {
             // Dark, rounded background
             RoundedRectangle(cornerRadius: 20)
-                .fill(Color(white: 0.1))
+                .fill(.thinMaterial)
                 .frame(height: 140) // Enough height for two rows of circles
 
             HStack(spacing: 16) {
                 // Large rectangle showing the currently selected color
                 RoundedRectangle(cornerRadius: 20)
                     .fill(Color(UIColor(hex: selectedColor) ?? .gray))
-                    .frame(width: 90, height: 90)
+                    .frame(width: 80, height: 80)
                     .padding(.leading, 16)
 
 
@@ -70,7 +70,7 @@ struct ColorPickerGrid: View {
         } label: {
             Circle()
                 .fill(Color(UIColor(hex: hex) ?? .gray))
-                .frame(width: 40, height: 40)
+                .frame(width: 35, height: 35)
                 // Outline the circle if it’s the currently selected color
                 .overlay(
                     Circle()
@@ -83,8 +83,12 @@ struct ColorPickerGrid: View {
 struct ColorPickerGrid_Previews: PreviewProvider {
     static var previews: some View {
         let selectedColor:String = "#808080"
-        ColorPickerGrid(selectedColor: selectedColor) { chosenHex in
-            print("Selected color: \(chosenHex)")
+        ZStack{
+            Color.gray
+            ColorPickerGrid(selectedColor: selectedColor) { chosenHex in
+                print("Selected color: \(chosenHex)")
+            }
         }
+        
     }
 }

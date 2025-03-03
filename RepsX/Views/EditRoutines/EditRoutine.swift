@@ -117,8 +117,8 @@ struct EditRoutine: View {
                     selectedColor = color
                     routineViewModel.updateRoutine(routine, newColor: color)
                 }
-                .presentationDetents([.height(200)])
-                .presentationDragIndicator(.visible)
+                .presentationDetents([.height(150)])
+                //.presentationDragIndicator(.visible)
                 .presentationBackground(.clear)
             }
             //add exercise
@@ -179,7 +179,7 @@ extension EditRoutine {
                 } label: {
                     HStack {
                         Text("Change Routine Color")
-                            .foregroundStyle(Color(UIColor(hex: selectedColor) ?? .gray))
+                            .foregroundStyle(.black)
                         Spacer()
                         Circle()
                             .foregroundStyle(Color(UIColor(hex: selectedColor) ?? .gray))
@@ -233,5 +233,5 @@ extension EditRoutine {
     
     let routine2 = Routine(name: "Push Day", colorHex: "#808080", exercises: [template])
     
-    //EditRoutine(routine: routine2)
+    EditRoutine(routine: routine2, selectedTab: .constant(.routines))
 }
