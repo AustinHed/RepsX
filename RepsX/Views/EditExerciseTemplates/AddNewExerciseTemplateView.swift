@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-struct CreateNewExerciseTemplateView: View {
+struct AddNewExerciseTemplateView: View {
     // Optionally provided default category
     var category: CategoryModel?
     
@@ -90,7 +90,7 @@ struct CreateNewExerciseTemplateView: View {
 }
 
 //MARK: Name
-extension CreateNewExerciseTemplateView {
+extension AddNewExerciseTemplateView {
     private var exerciseNameSection: some View {
         Section {
             HStack {
@@ -104,7 +104,7 @@ extension CreateNewExerciseTemplateView {
 }
 
 //MARK: Category
-extension CreateNewExerciseTemplateView {
+extension AddNewExerciseTemplateView {
     //select category button
     private var categorySelectionSection: some View {
         Section {
@@ -156,7 +156,7 @@ extension CreateNewExerciseTemplateView {
 }
 
 //MARK: Modality
-extension CreateNewExerciseTemplateView {
+extension AddNewExerciseTemplateView {
     
     private var modalitySelectionSection: some View {
         Section {
@@ -261,7 +261,7 @@ extension CreateNewExerciseTemplateView {
 }
 
 #Preview {
-    CreateNewExerciseTemplateView()
+    AddNewExerciseTemplateView()
 }
 
 

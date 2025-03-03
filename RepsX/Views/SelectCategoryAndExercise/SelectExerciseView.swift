@@ -75,7 +75,7 @@ struct SelectExerciseView: View {
         }
         //MARK: Sheets
         .sheet(isPresented: $isAddingExercise) {
-            CreateNewExerciseTemplateView(category: category)
+            AddNewExerciseTemplateView(category: category)
         }
     }
 }

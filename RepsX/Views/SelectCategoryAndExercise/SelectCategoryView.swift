@@ -86,7 +86,7 @@ struct SelectCategoryView: View {
             }
             //MARK: Sheets
             .sheet(isPresented: $isAddingExercise) {
-                CreateNewExerciseTemplateView()
+                AddNewExerciseTemplateView()
             }
             .sheet(isPresented: $isEditingCategories) {
                 ListOfCategoriesView()
