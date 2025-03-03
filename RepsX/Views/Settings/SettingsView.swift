@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SettingsView: View {
+    
+    @Binding var selectedTab: ContentView.Tab
     var body: some View {
         NavigationStack{
             List{
@@ -25,7 +27,7 @@ struct SettingsView: View {
                 Section("Exercises and Categories"){
                     
                     NavigationLink("Edit Exercises") {
-                        //tos
+                        ListOfExerciseTemplatesView()
                     }
                     NavigationLink("Edit Categories") {
                         //tos
@@ -63,5 +65,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView()
+    SettingsView(selectedTab: .constant(.settings))
 }

@@ -43,7 +43,7 @@ struct ContentView: View {
                 .tag(Tab.stats)
             
             //Settings
-            Text("SettingsView")
+            SettingsView(selectedTab: $selectedTab)
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
