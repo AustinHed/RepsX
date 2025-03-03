@@ -10,18 +10,22 @@ import SwiftData
 
 struct LogView: View {
     
-    //Fetch workouts
+    //Fetch all workouts
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     @Environment(\.modelContext) private var modelContext
     
-    // New state variables to manage the new workout and full screen cover
+    //Fetch favorited routines
+    @Query(filter: #Predicate{(routine:Routine) in
+        return routine.favorite}, sort: \Routine.name) var favoriteRoutines: [Routine]
+    
+    //toggle to edit workouts, existing or new
     @State private var editNewWorkout: Bool = false
     @State private var editExistingWorkout: Bool = false
     
-    //the workout that should be edited, either as a new or existing workout
+    //workout to edit, new or existing
     @State private var selectedWorkout: Workout?
     
-    //deleting a workout confirmation
+    //deleting workout confirmation
     @State private var workoutToDelete: Workout?
     
     //View Model
@@ -29,6 +33,7 @@ struct LogView: View {
         WorkoutViewModel(modelContext: modelContext)
     }
     
+    //binding cars
     @Binding var selectedTab: ContentView.Tab
     @State var coordinator = WorkoutCoordinator.shared
     
@@ -77,93 +82,25 @@ struct LogView: View {
             }
             .contentMargins(.horizontal,0)
             .navigationTitle("Log")
-            //Add workout plus button
             //MARK: Toolbar
+            //add workout button
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        // Create a new workout
-                        let createdWorkout = workoutViewModel.addWorkout(date: Date())
-                        selectedWorkout = createdWorkout
-                        //toggle the EditWorkoutView
-                        editNewWorkout = true
-                        print("added workout")
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                }
+                addWorkoutToolbarItem
+                menuToolbarItem
             }
-            //MARK: Add & Edit Workouts
-            //Edit NEW workout sheet
-            .fullScreenCover(isPresented: $editNewWorkout) {
-                // Ensure newWorkout is non-nil before presenting the view.
-                if let workoutToEdit = selectedWorkout {
-                    NavigationStack {
-                        EditWorkoutView(workout: workoutToEdit)
-                            .toolbar {
-                                ToolbarItem(placement: .navigationBarLeading) {
-                                    Button("Finish") {
-                                        //update the end time
-                                        workoutViewModel.updateEndTime(workoutToEdit,Date())
-                                        //update un-named workouts
-                                        if workoutToEdit.name == "" {
-                                            let dateName = String(workoutViewModel.toolbarDate(workoutToEdit.startTime))
-                                            workoutViewModel.updateName(workoutToEdit, "Workout on \(dateName)")
-                                        }
-                                        //dismiss the Sheet
-                                        editNewWorkout = false
-                                        //clear selectedWorkout for re-use
-                                        selectedWorkout = nil
-                                    }
-                                }
-                            }
-                    }
-                    .environment(\.modelContext, modelContext)
-                }
-            }
-            //Edit EXISTING workout sheet
-            .fullScreenCover(isPresented: $editExistingWorkout) {
-                if let workoutToEdit = selectedWorkout {
-                    NavigationStack {
-                        EditWorkoutView(workout: workoutToEdit)
-                            .toolbar {
-                                ToolbarItem(placement: .navigationBarLeading) {
-                                    Button("Close") {
-                                        if workoutToEdit.name == "" {
-                                            workoutViewModel.updateName(workoutToEdit, "Unnamed Workout")
-                                        }
-                                        editExistingWorkout = false
-                                        selectedWorkout = nil
-                                    }
-                                }
-                            }
-                    }
-                    .environment(\.modelContext, modelContext)
-                }
-            }
-            //load default workouts
+            //MARK: Full Screen Covers
+            //show edit workout views
+            .fullScreenCover(isPresented: $editNewWorkout) { newWorkoutEditor }
+            .fullScreenCover(isPresented: $editExistingWorkout) { existingWorkoutEditor }
+            .fullScreenCover(isPresented: $coordinator.showEditWorkout) { coordinatorWorkoutEditor }
+            //MARK: On Appear
+            //load default workout tempaltes if needed
             .onAppear{
                 initializeDefaultDataIfNeeded(context: modelContext)
             }
-            .fullScreenCover(isPresented: $coordinator.showEditWorkout) {
-                if let workout = coordinator.currentWorkout {
-                    NavigationStack{
-                        EditWorkoutView(workout: workout)
-                            .toolbar {
-                                ToolbarItem(placement: .navigationBarLeading) {
-                                    Button("Finish") {
-                                        //update the end time
-                                        workoutViewModel.updateEndTime(workout,Date())
-                                        //dismiss the Sheet
-                                        coordinator.showEditWorkout.toggle()
-                                    }
-                                }
-                            }
-                    }
-                }
-            }
             
         }
+        //MARK: Alert
         //delete workout confirmation
         .alert("Delete Workout?", isPresented: Binding<Bool>(
             get: { workoutToDelete != nil },
@@ -184,6 +121,133 @@ struct LogView: View {
             Text("Are you sure you want to delete this workout?")
         }
         
+    }
+}
+
+//MARK: Toolbar contents
+extension LogView {
+    //add new workout button
+    private var addWorkoutToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    let createdWorkout = workoutViewModel.addWorkout(date: Date())
+                    selectedWorkout = createdWorkout
+                    editNewWorkout = true
+                    print("added workout")
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
+    }
+    
+    //add workout menu
+    private var menuToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Menu {
+                //net new workout
+                Section {
+                    Button("New Workout") {
+                        let createdWorkout = workoutViewModel.addWorkout(date: Date())
+                        selectedWorkout = createdWorkout
+                        editNewWorkout = true
+                    }
+                }
+                
+                //favorite workouts
+                Section("Favorite Routines") {
+                    ForEach(favoriteRoutines) { routine in
+                        Button(routine.name) {
+                            let createdWorkout = workoutViewModel.addWorkoutFromRoutine(routine, date: Date())
+                            selectedWorkout = createdWorkout
+                            editNewWorkout = true
+                            print("added workout from Routine")
+                        }
+                    }
+                }
+                
+                //cancel button
+                Section {
+                    Button(role: .destructive) {
+                        //no action
+                    } label: {
+                        Text("Cancel")
+                    }
+                }
+                
+            } label: {
+                Image(systemName: "plus.circle")
+            }
+        }
+    }
+}
+
+//MARK: Fullscreen Covers
+extension LogView {
+    //new workout editor
+    private var newWorkoutEditor: some View {
+        Group {
+            if let workoutToEdit = selectedWorkout {
+                NavigationStack {
+                    EditWorkoutView(workout: workoutToEdit)
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button("Finish") {
+                                    workoutViewModel.updateWorkout(workoutToEdit, newEndTime: Date())
+                                    if workoutToEdit.name.isEmpty {
+                                        let dateName = String(workoutViewModel.toolbarDate(workoutToEdit.startTime))
+                                        workoutViewModel.updateWorkout(workoutToEdit, newName:"Workout on \(dateName)")
+                                    }
+                                    editNewWorkout = false
+                                    selectedWorkout = nil
+                                }
+                            }
+                        }
+                }
+                .environment(\.modelContext, modelContext)
+            }
+        }
+    }
+
+    //existing workout editor
+    private var existingWorkoutEditor: some View {
+        Group {
+            if let workoutToEdit = selectedWorkout {
+                NavigationStack {
+                    EditWorkoutView(workout: workoutToEdit)
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button("Close") {
+                                    if workoutToEdit.name.isEmpty {
+                                        workoutViewModel.updateWorkout(workoutToEdit, newName: "Unnamed Workout")
+                                    }
+                                    editExistingWorkout = false
+                                    selectedWorkout = nil
+                                }
+                            }
+                        }
+                }
+                .environment(\.modelContext, modelContext)
+            }
+        }
+    }
+
+    //workout coordinator
+    private var coordinatorWorkoutEditor: some View {
+        Group {
+            if let workout = coordinator.currentWorkout {
+                NavigationStack {
+                    EditWorkoutView(workout: workout)
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button("Finish") {
+                                    workoutViewModel.updateWorkout(workout, newEndTime: Date())
+                                    coordinator.showEditWorkout.toggle()
+                                }
+                            }
+                        }
+                }
+            }
+        }
     }
 }
 

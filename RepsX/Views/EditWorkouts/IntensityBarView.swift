@@ -28,7 +28,7 @@ struct IntensityBar: View {
                     .onTapGesture {
                         // Update the intensity property based on the tapped segment (1-indexed)
                         withAnimation(.bouncy) {
-                            setViewModel.updateIntensity(set, newIntensity: index + 1)
+                            setViewModel.updateSet(set, newIntensity: index + 1)
                         }
                         
                     }

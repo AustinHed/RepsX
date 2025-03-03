@@ -66,7 +66,7 @@ extension ExerciseViewModel {
     
     //MARK: Update
     //global update function for clenliness
-    func updateExercise(_ exercise: Exercise, newName: String?, newCategory: Category?, newIntensity: Int?, newModality: ExerciseModality?) {
+    func updateExercise(_ exercise: Exercise, newName: String? = nil, newCategory: Category? = nil, newIntensity: Int? = nil, newModality: ExerciseModality? = nil) {
         if let newName = newName {
             exercise.name = newName
         }
@@ -81,22 +81,7 @@ extension ExerciseViewModel {
         }
         save()
     }
-    //name exercise name
-    func updateName(_ exercise: Exercise, newName: String) {
-        exercise.name = newName
-        save()
-    }
-    //update exercise category
-    func updateCategory(_ exercise: Exercise, newCategory: Category) {
-        exercise.category = newCategory
-        save()
-    }
-    
-    //update exercise intensity
-    func updateExerciseIntensity(for exercise: Exercise, newIntensity: Int) {
-        exercise.intensity = newIntensity
-        save()
-    }
+
     //refresh exercise order
     func updateExerciseOrders(for workout: Workout) {
         //first, sort the exercises
@@ -158,17 +143,6 @@ extension ExerciseViewModel {
         save()
     }
     
-    
-    //update set reps
-    func updateReps(_ set: Set, newReps: Int) {
-        set.reps = newReps
-        save()
-    }
-    //update set weight
-    func updateWeight(_ set: Set, newWeight: Double) {
-        set.weight = newWeight
-        save()
-    }
     //refresh set order
     func updateSetOrders(for exercise: Exercise) {
         //first, sort the sets

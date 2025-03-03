@@ -30,20 +30,20 @@ class ExerciseInRoutineViewModel {
         save()
     }
     
-    //update set count
-    func updateSetCount(_ newExerciseInRoutine: ExerciseInRoutine, newSetCount: Int) {
-        newExerciseInRoutine.setCount = newSetCount
+    //MARK: Update
+    func updateExerciseInRoutine(_ exerciseInRoutine: ExerciseInRoutine, newSetCount: Int? = nil, newExerciseTemplate: ExerciseTemplate? = nil) {
+        if let newSetCount = newSetCount {
+            exerciseInRoutine.setCount = newSetCount
+        }
+        
+        if let newExerciseTemplate = newExerciseTemplate {
+            exerciseInRoutine.exerciseTemplate = newExerciseTemplate
+        }
+        
         save()
     }
     
-    //update exercise template
-    func updateExerciseTemplate(_ newExerciseInRoutine: ExerciseInRoutine, newExerciseTemplate: ExerciseTemplate) {
-        let newExerciseTemplate = newExerciseTemplate
-        newExerciseInRoutine.exerciseTemplate = newExerciseTemplate
-        save()
-    }
-    
-    //save
+    //MARK: Save
     func save() {
         do {
             try modelContext.save()

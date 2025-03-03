@@ -211,15 +211,13 @@ extension EditWorkoutView {
             .focused($nameFieldFocused)
             .onSubmit {
                 // Called when the user taps Return
-                workoutViewModel.updateName(workout, workout.name)
+                workoutViewModel.updateWorkout(workout, newName: workout.name)
                 print("updated name returned, workoutName \(workout.name)")
             }
-            .onChange(of: nameFieldFocused) { isFocused in
-                // When focus is lost, update the workout name.
-                if !isFocused {
-                    workoutViewModel.updateName(workout, workout.name)
+            .onChange(of: nameFieldFocused) {
+                if !nameFieldFocused {
+                    workoutViewModel.updateWorkout(workout, newName: workout.name)
                     print("updated name not focused, workoutName \(workout.name)")
-                    
                 }
             }
         }
@@ -369,9 +367,9 @@ struct TimePickerSheet: View {
                     Button("Done") {
                         switch mode {
                         case .start:
-                            workoutViewModel.updateStartTime(workout, tempDate)
+                            workoutViewModel.updateWorkout(workout, newStartTime: tempDate)
                         case .end:
-                            workoutViewModel.updateEndTime(workout, tempDate)
+                            workoutViewModel.updateWorkout(workout, newEndTime: tempDate)
                         }
                         dismiss()
                     }
@@ -423,7 +421,7 @@ struct WorkoutRatingSheet: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
                         //action to update the ratings value
-                        workoutViewModel.updateRating(workout, tempRating)
+                        workoutViewModel.updateWorkout(workout, newRating: tempRating)
                         print("updated rating")
                         dismiss()
                     }

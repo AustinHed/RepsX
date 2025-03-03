@@ -122,7 +122,6 @@ extension ExerciseSectionView {
             .submitLabel(.done)
             .onSubmit {
                 exerciseViewModel.updateSet(set, newWeight: set.weight)
-                //exerciseViewModel.updateWeight(set, newWeight: set.weight)
             }
         }
         
@@ -160,7 +159,6 @@ extension ExerciseSectionView{
             .submitLabel(.done)
             .onSubmit {
                 exerciseViewModel.updateSet(set, newReps: set.reps)
-                //exerciseViewModel.updateReps(set, newReps: set.reps)
             }
         }
         

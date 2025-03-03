@@ -32,9 +32,11 @@ import SwiftUI
         save()
     }
     
-    //update name
-    func updateName(_ category: CategoryModel, newName: String) {
-        category.name = newName
+    //update
+    func updateCategory(_ category: CategoryModel, newName:String? = nil) {
+        if let newName = newName {
+            category.name = newName
+        }
         save()
     }
     

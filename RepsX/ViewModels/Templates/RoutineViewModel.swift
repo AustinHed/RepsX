@@ -41,15 +41,9 @@ class RoutineViewModel {
             routine.colorHex = newColor
         }
     }
-    
+    //favorite
     func favoriteRoutine(_ routine: Routine) {
         routine.favorite.toggle()
-        save()
-    }
-    
-    //deprecate
-    func updateRoutineName(_ routine: Routine, newName: String) {
-        routine.name = newName
         save()
     }
     

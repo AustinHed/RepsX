@@ -34,7 +34,7 @@ struct EditExerciseInRoutineView: View {
                             .multilineTextAlignment(.trailing)
                             .onChange(of: exerciseInRoutine.setCount) { oldValue, newValue in
                                 if oldValue != newValue {
-                                    exerciseInRoutineViewModel.updateSetCount(exerciseInRoutine, newSetCount: Int(newValue))
+                                    exerciseInRoutineViewModel.updateExerciseInRoutine(exerciseInRoutine, newSetCount: Int(newValue))
                                 }
                             }
                             

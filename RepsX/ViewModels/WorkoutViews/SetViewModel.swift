@@ -9,7 +9,8 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-@Observable class SetViewModel {
+@Observable
+class SetViewModel {
     private var modelContext: ModelContext
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
@@ -44,7 +45,7 @@ import SwiftUI
     
     //MARK: Update
     //global update
-    func updateSet(_ set: Set, newReps: Int?, newWeight: Double?, newTime: Double?, newIntensity: Int?) {
+    func updateSet(_ set: Set, newReps: Int? = nil, newWeight: Double? = nil, newTime: Double? = nil, newIntensity: Int? = nil) {
         //reps
         if let newReps = newReps {
             set.reps = newReps
@@ -65,22 +66,6 @@ import SwiftUI
             set.time = newTime
         }
         
-        save()
-    }
-    
-    //reps
-    func updateReps(_ set: Set, newReps: Int) {
-        set.reps = newReps
-        save()
-    }
-    //weight
-    func updateWeight(_ set: Set, newWeight: Double) {
-        set.weight = newWeight
-        save()
-    }
-    //intensity
-    func updateIntensity(_ set: Set, newIntensity:Int) {
-        set.intensity = newIntensity
         save()
     }
     

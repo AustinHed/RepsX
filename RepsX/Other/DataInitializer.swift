@@ -122,7 +122,7 @@ func initializeDefaultDataIfNeeded(context: ModelContext) {
             ]
             let upperBodyRoutine = Routine(
                 name: "Upper Body",
-                colorHex: "#FF5733",
+                colorHex: "#4AA9F0",
                 exercises: upperBodyExercises,
                 favorite: false
             )
@@ -136,7 +136,7 @@ func initializeDefaultDataIfNeeded(context: ModelContext) {
             ]
             let lowerBodyRoutine = Routine(
                 name: "Lower Body",
-                colorHex: "#33FF57",
+                colorHex: "#59C76C",
                 exercises: lowerBodyExercises,
                 favorite: false
             )
@@ -150,7 +150,7 @@ func initializeDefaultDataIfNeeded(context: ModelContext) {
             ]
             let pushRoutine = Routine(
                 name: "Push",
-                colorHex: "#3357FF",
+                colorHex: "#946CD6",
                 exercises: pushExercises,
                 favorite: false
             )
@@ -164,7 +164,7 @@ func initializeDefaultDataIfNeeded(context: ModelContext) {
             ]
             let pullRoutine = Routine(
                 name: "Pull",
-                colorHex: "#FF33A8",
+                colorHex: "#EB5545",
                 exercises: pullExercises,
                 favorite: false
             )
@@ -178,7 +178,7 @@ func initializeDefaultDataIfNeeded(context: ModelContext) {
             ]
             let fullBodyRoutine = Routine(
                 name: "Full Body",
-                colorHex: "#8D33FF",
+                colorHex: "#FBD24E",
                 exercises: fullBodyExercises,
                 favorite: false
             )

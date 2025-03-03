@@ -121,41 +121,6 @@ extension WorkoutViewModel {
         save()
     }
     
-    //TODO: deprecate the below and use the global update
-    //name
-    func updateName(_ workout: Workout, _ newName: String) {
-        workout.name = newName
-        save()
-    }
-    //start time
-    func updateStartTime(_ workout: Workout, _ newStartTime: Date) {
-        workout.startTime = newStartTime
-        save()
-    }
-    //end time
-    func updateEndTime(_ workout: Workout, _ newEndTime: Date?) {
-        workout.endTime = newEndTime
-        save()
-    }
-    //bodyweight
-    func updateWeight(_ workout: Workout, _ newWeight: Double?) {
-        workout.weight = newWeight
-        save()
-    }
-    //notes
-    func updateNotes(_ workout: Workout, _ newNotes: String?) {
-        workout.notes = newNotes
-        save()
-    }
-    //rating
-    func updateRating(_ workout: Workout, _ newRating: Int) {
-        if newRating == 0 {
-            workout.rating = nil
-        } else {
-            workout.rating = newRating
-        }
-        save()
-    }
 }
 
 //MARK: Exercises
@@ -181,8 +146,8 @@ extension WorkoutViewModel {
         )
         workout.exercises.append(newExercise)
         modelContext.insert(newExercise)
-        return newExercise
         save()
+        return newExercise
     }
     
     //delete exercise

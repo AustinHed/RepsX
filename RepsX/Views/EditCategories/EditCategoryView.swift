@@ -31,7 +31,8 @@ struct EditCategoryView: View {
                     TextField("Category", text: $category.name)
                     // Called when the user taps Return
                         .onSubmit {
-                            categoryViewModel.updateName(category, newName: category.name)
+                            categoryViewModel.updateCategory(category, newName: category.name)
+                            
                         }
                         .foregroundStyle(.black)
                     
