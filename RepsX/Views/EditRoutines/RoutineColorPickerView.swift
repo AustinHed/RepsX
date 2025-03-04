@@ -33,7 +33,8 @@ struct ColorPickerGrid: View {
             HStack(spacing: 16) {
                 // Large rectangle showing the currently selected color
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(UIColor(hex: selectedColor) ?? .gray))
+                    .fill(Color(hexString: selectedColor))
+                    //.fill(Color(UIColor(hex: selectedColor) ?? .gray))
                     .frame(width: 80, height: 80)
                     .padding(.leading, 16)
 
@@ -69,7 +70,8 @@ struct ColorPickerGrid: View {
             dismiss()
         } label: {
             Circle()
-                .fill(Color(UIColor(hex: hex) ?? .gray))
+                //.fill(Color(UIColor(hex: hex) ?? .gray))
+                .fill(Color(hexString: hex))
                 .frame(width: 35, height: 35)
                 // Outline the circle if it’s the currently selected color
                 .overlay(

@@ -36,8 +36,9 @@ class Routine: Identifiable {
     
     //computed color property that turns a hex into a color for usage
     var color: Color {
-        if let hex = colorHex, let uiColor = UIColor(hex: hex) {
-            return Color(uiColor)
+        if colorHex != nil {
+            let color = Color(hexString: colorHex!)
+            return Color(color)
         } else {
             return Color.gray
         }

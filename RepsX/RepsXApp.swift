@@ -17,6 +17,6 @@ struct RepsXApp: App {
             ContentView()
                 .globalKeyboardDoneButton()
         }
-        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self, Routine.self, ExerciseInRoutine.self])
+        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self, Routine.self, ExerciseInRoutine.self, UserTheme.self])
     }
 }

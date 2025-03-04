@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
+    
+    @Environment(\.modelContext) private var modelContext
     
     @Binding var selectedTab: ContentView.Tab
     var body: some View {
@@ -15,7 +18,7 @@ struct SettingsView: View {
             List{
                 Section("Personalization"){
                     NavigationLink("Themes") {
-                        //tos
+                        SelectThemeView()
                     }
                     
                     NavigationLink("App Icon") {
@@ -60,6 +63,9 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+        }
+        .onAppear{
+            initializeDefaultThemes(in: modelContext)
         }
     }
 }

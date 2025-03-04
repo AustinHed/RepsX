@@ -76,7 +76,14 @@ struct LogView: View {
                             //then, update selected workout with the tapped workout
                             selectedWorkout = workout
                             //then, toggle editExistingWorkout
-                            editExistingWorkout.toggle()
+                            if let selectedWorkout = selectedWorkout {
+                                editExistingWorkout.toggle()
+                                print("selected workout:")
+                                print(selectedWorkout.id)
+                            } else {
+                                print("workout was nil fuck you")
+                            }
+                            
                         }
                 }
             }

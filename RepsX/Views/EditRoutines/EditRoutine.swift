@@ -182,7 +182,8 @@ extension EditRoutine {
                             .foregroundStyle(.black)
                         Spacer()
                         Circle()
-                            .foregroundStyle(Color(UIColor(hex: selectedColor) ?? .gray))
+                            //.foregroundStyle(Color(UIColor(hex: selectedColor) ?? .gray))
+                            .foregroundStyle(Color(hexString: selectedColor))
                             .frame(width: 20, height: 20)
                     }
                 }

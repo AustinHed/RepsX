@@ -31,7 +31,8 @@ struct LogViewRow: View {
             UnevenRoundedRectangle(topLeadingRadius: 12, bottomLeadingRadius: 12)
                 .foregroundStyle(
                     
-                    Color(UIColor(hex: workout.color ?? "#808080") ?? .clear)
+                    //Color(UIColor(hex: workout.color ?? "#808080") ?? .clear)
+                    Color(hexString: workout.color ?? "#808080")
                     
                 )
                 .frame(width:12),
@@ -92,28 +93,6 @@ extension LogViewRow{
             }
         }
         
-    }
-}
-
-
-
-// Hex initializer for Color
-extension Color {
-    init(hex: String) {
-        // Remove any non-alphanumeric characters (like '#' or spaces)
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let r = (int >> 16) & 0xFF
-        let g = (int >> 8) & 0xFF
-        let b = int & 0xFF
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue: Double(b) / 255,
-            opacity: 1.0
-        )
     }
 }
 

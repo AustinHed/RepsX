@@ -319,7 +319,8 @@ extension EditWorkoutView {
             } label: {
                 Circle()
                     .frame(width: 20, height: 20)
-                    .foregroundStyle(Color(UIColor(hex:selectedColor) ?? .gray))
+                    //.foregroundStyle(Color(UIColor(hex:selectedColor) ?? .gray))
+                    .foregroundStyle(Color(hexString: selectedColor))
             }
             
             
