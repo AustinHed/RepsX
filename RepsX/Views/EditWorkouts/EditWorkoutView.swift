@@ -20,8 +20,6 @@ struct EditWorkoutView: View {
         WorkoutViewModel(modelContext: modelContext)
     }
     
-    
-    
     // Focus state to detect when the name field loses focus
     @FocusState private var nameFieldFocused: Bool
     @FocusState private var startTimeFocused: Bool
@@ -30,9 +28,6 @@ struct EditWorkoutView: View {
     //time picker
     @State private var isTimePickerPresented: Bool = false
     @State private var editingTime: TimePickerMode = .start
-    
-    //rating picker
-    @State private var isRatingPickerPresented: Bool = false
     
     //color picker
     @State private var isColorPickerPresented: Bool = false
@@ -47,7 +42,11 @@ struct EditWorkoutView: View {
     //delete confirmation
     @State private var showDeleteConfirmation = false
     
+    //show timer
+    @State private var showTimer:Bool = false
+    
     var body: some View {
+        
         List {
             //MARK: Workout Details
             Section() {
@@ -61,7 +60,6 @@ struct EditWorkoutView: View {
                 endTimeRow
                 
                 //Rating row
-                //ratingRow
                 colorRow
                     .onAppear {
                         if workout.color != nil {
@@ -104,9 +102,21 @@ struct EditWorkoutView: View {
         .navigationTitle(workoutViewModel.toolbarDate(workout.startTime))
         //MARK: Toolbar
         .toolbar {
-            ToolbarItem(placement:.topBarTrailing) {
+            
+            //Timer
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    withAnimation(.easeInOut){
+                        showTimer.toggle()
+                    }
+                    
+                } label: {
+                    Image(systemName: "timer")
+                }
                 
-                //Reorder & Delete
+            }
+            //Reorder & Delete
+            ToolbarItem(placement:.topBarTrailing) {
                 Menu {
                     Button {
                         isReordering.toggle()
@@ -126,7 +136,7 @@ struct EditWorkoutView: View {
                             Image(systemName: "trash")
                         }
                     }
-
+                    
                 } label: {
                     Image(systemName:"ellipsis.circle")
                 }
@@ -140,6 +150,7 @@ struct EditWorkoutView: View {
                 
                 
             }
+            
         }
         //MARK: Sheets
         //Time picker
@@ -150,11 +161,7 @@ struct EditWorkoutView: View {
                 TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .end)
             }
         }
-        //Rating picker
-        .sheet(isPresented: $isRatingPickerPresented) {
-            WorkoutRatingSheet(workout: workout, workoutViewModel: workoutViewModel)
-        }
-        //Reordering
+        //Reorder / Delete
         .sheet(isPresented: $isReordering) {
             ReorderExercisesView(workoutViewModel: workoutViewModel, workout: workout)
         }
@@ -179,13 +186,21 @@ struct EditWorkoutView: View {
                 selectedColor = color
                 workoutViewModel.updateWorkout(workout, newColor: color)
             }
-            .presentationDetents([.height(200)])
-            .presentationDragIndicator(.visible)
+            .presentationDetents([.height(150)])
             .presentationBackground(.clear)
         }
-        
+        //Timer
+        .sheet(isPresented: $showTimer) {
+            Spacer()
+            ExerciseTimer()
+                .padding(.bottom, 10)
+                .presentationDetents([.height(70)])
+                .presentationBackgroundInteraction(.enabled)
+        }
     }
+    
 }
+
 
 //MARK: Workout Details
 //Name Row
@@ -261,20 +276,6 @@ extension EditWorkoutView {
         }
     }
 }
-//rating row
-extension EditWorkoutView {
-    var ratingRow: some View {
-        HStack{
-            Text("Rating")
-            Spacer()
-            Button {
-                isRatingPickerPresented.toggle()
-            } label: {
-                Text(workout.rating.map(String.init) ?? "-")
-            }
-        }
-    }
-}
 //color row
 extension EditWorkoutView {
     var colorRow: some View {
@@ -288,7 +289,7 @@ extension EditWorkoutView {
                     .frame(width: 20, height: 20)
                     .foregroundStyle(Color(UIColor(hex:selectedColor) ?? .gray))
             }
-
+            
             
         }
     }
@@ -388,56 +389,6 @@ struct TimePickerSheet: View {
     }
 }
 
-//MARK: Rating
-//workoutRating picker
-struct WorkoutRatingSheet: View {
-    var workout: Workout
-    let workoutViewModel: WorkoutViewModel
-    
-    @Environment(\.dismiss) private var dismiss //dismiss
-    @State private var tempRating:Int = 5
-    
-    var body: some View {
-        NavigationStack {
-            VStack {
-                Picker("Rating", selection: $tempRating) {
-                    //nil, disguised as a 0
-                    Text("NA").tag(0)
-                    //options 1 through 5
-                    ForEach(1...5, id: \.self) { rating in
-                        Text("\(rating)")
-                    }
-                }
-                .pickerStyle(WheelPickerStyle())
-            }
-            .navigationTitle("Rating")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        //action to update the ratings value
-                        workoutViewModel.updateWorkout(workout, newRating: tempRating)
-                        print("updated rating")
-                        dismiss()
-                    }
-                }
-            }
-        }
-        .presentationDetents([.fraction(0.5)])
-        .onAppear{
-            tempRating = workout.rating ?? 0
-        }
-    }
-    
-}
-
-
-
 
 //MARK: Preview
 #Preview {
@@ -454,7 +405,4 @@ struct WorkoutRatingSheet: View {
             }
             .modelContainer(SampleWorkout.shared.modelContainer)
     }
-    
-    
-    
 }

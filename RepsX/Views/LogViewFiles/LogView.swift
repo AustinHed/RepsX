@@ -251,6 +251,39 @@ extension LogView {
     }
 }
 
+//MARK: Alert
+//TODO: Fix this so it can be used
+extension LogView {
+    func deleteWorkoutAlert(
+        workoutToDelete: Binding<Workout?>,
+        workoutViewModel: WorkoutViewModel
+    ) -> some View {
+        self.alert("Delete Workout?",
+                   isPresented: Binding<Bool>(
+                    get: { workoutToDelete.wrappedValue != nil },
+                    set: { newValue in
+                        if !newValue {
+                            workoutToDelete.wrappedValue = nil
+                        }
+                    }),
+                   presenting: workoutToDelete.wrappedValue,
+                   actions: { workout in
+                       Button("Delete", role: .destructive) {
+                           withAnimation {
+                               workoutToDelete.wrappedValue = nil
+                               workoutViewModel.deleteWorkout(workout)
+                           }
+                       }
+                       Button("Cancel", role: .cancel) {
+                           workoutToDelete.wrappedValue = nil
+                       }
+                   },
+                   message: { workout in
+                       Text("Are you sure you want to delete this workout?")
+                   })
+    }
+}
+
 #Preview {
     LogView(selectedTab: .constant(.log))
         .modelContainer(SampleData.shared.modelContainer)

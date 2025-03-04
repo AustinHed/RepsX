@@ -118,8 +118,8 @@ struct EditRoutine: View {
                     routineViewModel.updateRoutine(routine, newColor: color)
                 }
                 .presentationDetents([.height(150)])
-                //.presentationDragIndicator(.visible)
                 .presentationBackground(.clear)
+                .presentationBackgroundInteraction(.disabled)
             }
             //add exercise
             .sheet(isPresented: $isSelectingExercise) {

@@ -33,9 +33,6 @@ struct RoutinesView: View {
                         Circle()
                             .frame(width: 20, height: 20)
                             .foregroundStyle(Color(UIColor(hex:routine.colorHex ?? "") ?? .gray))
-//                        NavigationLink(routine.name) {
-//                            EditRoutine(routine: routine, selectedTab: $selectedTab)
-//                        }
                         NavigationLink {
                             EditRoutine(routine: routine, selectedTab: $selectedTab)
                         } label: {
@@ -81,6 +78,7 @@ extension RoutinesView{
                         Spacer()
                         // If you're using SF Symbols, use systemName
                         Image(systemName: "star.fill")
+                            .foregroundStyle(.yellow.opacity(0.5))
                     }
                 } else {
                     Text(routine.name)
