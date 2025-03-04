@@ -76,7 +76,7 @@ struct SelectCategoryView: View {
 //                            ListOfExerciseTemplatesView()
 //                        }
                         
-                        NavigationLink("Edit Exercises NL") {
+                        NavigationLink("Edit Exercises") {
                             ListOfExerciseTemplatesView()
                         }
                         

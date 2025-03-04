@@ -15,6 +15,9 @@ struct EditWorkoutView: View {
     //the initialized workout
     @State var workout: Workout
     
+    
+    @State var exerciseToReplace: Exercise?
+    
     //viewModel
     private var workoutViewModel: WorkoutViewModel {
         WorkoutViewModel(modelContext: modelContext)
@@ -36,8 +39,11 @@ struct EditWorkoutView: View {
     //Reorder
     @State private var isReordering: Bool = false
     
-    //Exercise category & exercise
+    //add new exercise
     @State private var isSelectingExercise: Bool = false
+    
+    //replace existing exercise
+    @State private var isReplacingExercise: Bool = false
     
     //delete confirmation
     @State private var showDeleteConfirmation = false
@@ -180,6 +186,32 @@ struct EditWorkoutView: View {
             }
             
         }
+        //swap existing exercise
+        .sheet(isPresented: $isReplacingExercise){
+            NavigationStack{
+                SelectCategoryView(
+                    isSelectingExercise: $isReplacingExercise,
+                    onExerciseSelected: {exerciseTemplate in
+                        if exerciseToReplace != nil{
+                            workoutViewModel.replaceExercise(in: workout, exerciseToRemove: exerciseToReplace!, exerciseToAdd: exerciseTemplate)
+                            isReplacingExercise = false
+                        } else {
+                            print("can't find the exercise to replace")
+                        }
+                        
+                    }
+                )
+            }
+        }
+        .sheet(isPresented: $isReplacingExercise, content: {
+            SelectCategoryView(
+                isSelectingExercise: $isReplacingExercise,
+                onExerciseSelected: {exerciseTemplate in
+                    
+                }
+            )
+        }
+        )
         //color picker
         .sheet(isPresented: $isColorPickerPresented) {
             ColorPickerGrid(selectedColor: selectedColor) { color in
@@ -305,11 +337,43 @@ extension EditWorkoutView {
                 .font(.headline)
             
             Spacer()
-            Button {
-                //action
-                //menu with two options
+            Menu {
+                //replace
+                Button {
+                    exerciseToReplace = exercise
+                    isReplacingExercise.toggle()
+                } label: {
+                    HStack{
+                        Text("Replace")
+                        Spacer()
+                        Image(systemName: "rectangle.2.swap")
+                    }
+                }
+                //reorder
+                Button {
+                    isReordering.toggle()
+                } label: {
+                    HStack{
+                        Text("Reorder")
+                        Spacer()
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                    }
+                }
                 //delete
-                //reorder exercises
+                Button(role:.destructive) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1){
+                        withAnimation{
+                            workoutViewModel.deleteExercise(exercise, from: workout)
+                        }
+                    }
+                } label: {
+                    HStack{
+                        Text("Delete")
+                        Spacer()
+                        Image(systemName: "trash")
+                    }
+                    
+                }
             } label: {
                 Image(systemName: "ellipsis")
             }
@@ -322,7 +386,6 @@ extension EditWorkoutView {
 extension EditWorkoutView{
     func addButton(workoutViewModel:WorkoutViewModel) -> some View {
         Button {
-            //workoutViewModel.addExercise(to: workout)
             isSelectingExercise.toggle()
             print("add exercise button")
         } label: {
@@ -394,6 +457,8 @@ struct TimePickerSheet: View {
 #Preview {
     let testWorkout = Workout(name: "Chest Day", startTime: Date().addingTimeInterval(-3600), endTime: Date(), weight: 150.0, notes: "Good Lift", rating: 5)
     let newWorkout = Workout(id: UUID(), startTime: Date())
+    
+    
     NavigationStack{
         EditWorkoutView(workout: newWorkout)
             .toolbar {

@@ -275,11 +275,13 @@ extension ExerciseSectionView {
 
 #Preview {
     let newWorkout = Workout(id: UUID(), startTime: Date())
-    
-    let newExercise = Exercise(name: "Bench Press", category: .chest, workout: newWorkout, modality: .repetition)
-    let newExercise2 = Exercise(name: "Tension Hold", category: .chest, workout: newWorkout, modality: .tension)
-    let newExercise3 = Exercise(name: "Run", category: .chest, workout: newWorkout, modality:.endurance)
-    let newExercise4 = Exercise(name: "Other", category: .chest, workout: newWorkout, modality:.other)
+    let category = CategoryModel(name: "chest")
+    let category2 = CategoryModel(name: "arms")
+    let category3 = CategoryModel(name:"cardio")
+    let newExercise = Exercise(name: "Bench Press", category: category, workout: newWorkout, modality: .repetition)
+    let newExercise2 = Exercise(name: "Tension Hold", category: category2, workout: newWorkout, modality: .tension)
+    let newExercise3 = Exercise(name: "Run", category: category3, workout: newWorkout, modality:.endurance)
+    let newExercise4 = Exercise(name: "Other", category: category3, workout: newWorkout, modality:.other)
     let newSet = Set(exercise: newExercise, reps: 10, weight: 10, intensity: 3)
     
     List {

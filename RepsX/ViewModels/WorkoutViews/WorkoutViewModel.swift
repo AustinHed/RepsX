@@ -126,9 +126,10 @@ extension WorkoutViewModel {
 //MARK: Exercises
 extension WorkoutViewModel {
     //add an exercise to a specific Workout
-    func addExercise(to workout: Workout, named exerciseName: String) {
+    //note: deprecated
+    func addNewExercise(to workout: Workout, named exerciseName: String) {
         let order = workout.exercises.count
-        let newExercise = Exercise(id: UUID(), name: exerciseName, category: .chest, workout: workout, order: order)
+        let newExercise = Exercise(id: UUID(), name: exerciseName, category: nil, workout: workout, order: order)
         workout.exercises.append(newExercise)
         modelContext.insert(newExercise)
         save()
@@ -139,7 +140,7 @@ extension WorkoutViewModel {
         let order = workout.exercises.count
         let newExercise = Exercise(id: UUID(),
                                    name: exercise.name,
-                                   category: .chest,
+                                   category: exercise.category,
                                    workout: workout,
                                    order: order,
                                    modality: exercise.modality
@@ -148,6 +149,27 @@ extension WorkoutViewModel {
         modelContext.insert(newExercise)
         save()
         return newExercise
+    }
+    
+    func replaceExercise(in workout: Workout, exerciseToRemove: Exercise, exerciseToAdd: ExerciseTemplate) {
+        //find the index of the exercise to remove
+        if let index = workout.exercises.firstIndex(where: {$0.id == exerciseToRemove.id}) {
+            //get that index
+            let exerciseOrder = exerciseToRemove.order
+            //create a new exercise using the exercise template
+            let newExercise = Exercise(name: exerciseToAdd.name, category: exerciseToAdd.category, workout: workout)
+            newExercise.order = exerciseOrder
+            //swap that exercise into the array
+            workout.exercises[index] = newExercise
+            //count how many sets need to be added
+            let setCount = exerciseToRemove.sets.count
+            for _ in 0..<setCount {
+                addSet(to: newExercise, reps: 0, weight: 0, time: 0, distance: 0)
+            }
+            //delete the removed exercise
+            deleteExercise(exerciseToRemove, from: workout)
+            save()
+        }
     }
     
     //delete exercise

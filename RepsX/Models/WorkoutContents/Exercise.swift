@@ -20,7 +20,7 @@ class Exercise {
     //standard variables
     var id: UUID
     var name: String
-    var category: Category?
+    var category: CategoryModel?
     var order: Int
     var intensity: Int?
     var modality: ExerciseModality
@@ -34,7 +34,7 @@ class Exercise {
     //initialize the instance
     init(id: UUID = UUID(),
          name: String,
-         category: Category?,
+         category: CategoryModel? = nil,
          workout: Workout,
          order: Int = 0,
          intensity: Int? = nil,

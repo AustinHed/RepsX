@@ -37,12 +37,12 @@ class SampleData {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }
-    
-    let sampleExercises: [(name: String, category: Category)] = [
-        ("Bench Press", .chest),
-        ("Squat", .legs),
-        ("Deadlift", .back),
-        ("Overhead Press", .shoulders)
+    let categoryModel = CategoryModel(name: "test")
+    let sampleExercises: [(name: String, category: CategoryModel)] = [
+        ("Bench Press", CategoryModel(name: "test")),
+        ("Squat", CategoryModel(name: "test")),
+        ("Deadlift", CategoryModel(name: "test")),
+        ("Overhead Press", CategoryModel(name: "test"))
     ]
     
     let sampleSets: [(reps: Int, weight: Double)] = [

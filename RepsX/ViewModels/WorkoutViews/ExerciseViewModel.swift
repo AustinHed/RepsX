@@ -40,7 +40,7 @@ class ExerciseViewModel {
 extension ExerciseViewModel {
     //MARK: Add and Delete
     //add an exercise to a workout
-    func addExercise(to workout: Workout, name: String, category: Category, modality: ExerciseModality) {
+    func addExercise(to workout: Workout, name: String, category: CategoryModel, modality: ExerciseModality) {
         let order = workout.exercises.count
         let newExercise = Exercise(id: UUID(), name: name, category: category, workout: workout, order: order, modality: modality)
         workout.exercises.append(newExercise)
@@ -66,7 +66,7 @@ extension ExerciseViewModel {
     
     //MARK: Update
     //global update function for clenliness
-    func updateExercise(_ exercise: Exercise, newName: String? = nil, newCategory: Category? = nil, newIntensity: Int? = nil, newModality: ExerciseModality? = nil) {
+    func updateExercise(_ exercise: Exercise, newName: String? = nil, newCategory: CategoryModel? = nil, newIntensity: Int? = nil, newModality: ExerciseModality? = nil) {
         if let newName = newName {
             exercise.name = newName
         }
