@@ -109,6 +109,7 @@ struct EditWorkoutView: View {
             
             
         }
+        .tint(userThemeViewModel.primaryColor)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(workoutViewModel.toolbarDate(workout.startTime))
         //MARK: Toolbar

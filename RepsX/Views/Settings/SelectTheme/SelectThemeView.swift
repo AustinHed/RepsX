@@ -221,6 +221,7 @@ struct SelectThemeView: View {
             .navigationTitle("Select Theme")
             
         }
+        .tint(userThemeViewModel.primaryColor)
     }
 }
 

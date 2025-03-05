@@ -18,6 +18,11 @@ struct ContentView: View {
     
     @Environment(\.modelContext) private var modelContext
     
+    //View Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
+    
     var body: some View {
         TabView(selection: $selectedTab) {
             //Log
@@ -49,6 +54,13 @@ struct ContentView: View {
                 }
                 .tag(Tab.settings)
         }
+        
+        .onChange(of: userThemeViewModel.primaryColor) { newColor in
+            UITabBar.appearance().tintColor = UIColor(newColor)
+        }
+        .id(userThemeViewModel.primaryColor.hashValue)
+        .tint(userThemeViewModel.primaryColor)
+        
     }
 }
 

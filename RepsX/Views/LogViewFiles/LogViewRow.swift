@@ -6,105 +6,79 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct LogViewRow: View {
-    
     var workout: Workout
-    
-    var body: some View {
-        HStack(alignment: .top) {
-            // Date block (day-of-week and day)
-            dateBlock(for: workout)
-                .padding(.leading)
-            
-            // Workout details (name, duration, and exercise summary)
-            workoutDetails(for: workout)
-        }
-        .padding(.vertical)
-        .padding(.leading, 10)
-        .padding(.trailing, 20)
-        .background(Color.white)
-        .cornerRadius(12)
-        //ratings overlay color
-        .overlay(
-            UnevenRoundedRectangle(topLeadingRadius: 12, bottomLeadingRadius: 12)
-                .foregroundStyle(
-                    
-                    //Color(UIColor(hex: workout.color ?? "#808080") ?? .clear)
-                    Color(hexString: workout.color ?? "#808080")
-                    
-                )
-                .frame(width:12),
-            alignment: .leading
-        )
-        
-    }
-}
 
-//MARK: Date
-extension LogViewRow {
-    private func dateBlock(for workout: Workout) -> some View {
-        VStack(alignment: .center) {
-            let dayOfWeek = workout.startTime.formatted(.dateTime.weekday(.abbreviated))
-            Text(dayOfWeek)
-                .bold()
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            let day = workout.startTime.formatted(.dateTime.day())
-            Text(day)
-                .font(.headline)
-                .bold()
+    var body: some View {
+        VStack(spacing: 0) {
+            accentLine
+            contentStack
         }
-        .frame(width: 40, height: 50)
-        .padding(2)
-        .background(Color.secondary.opacity(0.2))
+        .background(Color.white)
         .cornerRadius(10)
     }
 }
 
-//MARK: Workout Details (headline, reps, set)
-extension LogViewRow{
-    private func workoutDetails(for workout: Workout) -> some View {
-        VStack(alignment: .leading) {
-            //headline and date
+extension LogViewRow {
+    // Accent bar at the top
+    private var accentLine: some View {
+        Rectangle()
+            .fill(Color(hexString: workout.color ?? ""))
+            .frame(height: 7)
+    }
+
+    // Main content container
+    private var contentStack: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            headerView
+            Divider()
+                .padding(.bottom,5)
+                .padding(.top, 5)
+            exerciseList
+        }
+        .padding()
+    }
+
+    // Header view containing the workout name and date/time info
+    private var headerView: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(workout.name)
+                .font(.headline)
+            Text(dateText)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                
+        }
+    }
+
+    // Composes the formatted date with workout length (if applicable)
+    private var dateText: String {
+        let formattedDate = workout.startTime.formatted(
+            Date.FormatStyle()
+                .locale(.current)
+                .month(.abbreviated)
+                .day(.twoDigits)
+                .year(.defaultDigits)
+        )
+        return formattedDate + (workout.workoutLength != 0 ? " • \(Int(workout.workoutLength/60)) min" : "")
+    }
+
+    // Exercise list view: For each exercise, display the sets count and name
+    private var exerciseList: some View {
+        ForEach(workout.exercises, id: \.self) { exercise in
             HStack {
-                Text(workout.name)
-                    .font(.headline)
-                Spacer()
-                if let endTime = workout.endTime {
-                    let duration = workout.workoutLength
-                    Text("\(Int(duration/60)) min")
-                        .font(.subheadline)
-                } else {
-                    Text("-")
-                        .font(.subheadline)
-                }
-            }
-            //reps and sets
-            ForEach(workout.exercises, id: \.id) { exercise in
-                HStack {
-                    Text("\(exercise.sets.count) x")
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                    Text(exercise.name)
-                        .font(.subheadline)
-                }
+                Text("\(exercise.sets.count) x")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                Text(exercise.name)
+                    .font(.subheadline)
             }
         }
-        
     }
 }
 
 #Preview {
     let testWorkout:Workout = Workout(id: UUID(), name: "Test Workout", startTime: Date(), endTime: nil, rating: 4, exercises: [], color: "#EB5545")
-    List{
-        LogViewRow(workout: testWorkout)
-            .listRowBackground(Color.clear)
-            .listRowSeparator(Visibility.hidden)
-            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-    }
-    .contentMargins(.horizontal,0)
-    .navigationTitle("Log")
-    .modelContainer(SampleData.shared.modelContainer)
+    LogViewRow(workout: testWorkout)
 }
