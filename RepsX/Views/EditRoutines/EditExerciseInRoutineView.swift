@@ -22,6 +22,11 @@ struct EditExerciseInRoutineView: View {
         ExerciseInRoutineViewModel(modelContext: modelContext)
     }
     
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
+    
     var body: some View {
         NavigationStack{
             List{
@@ -48,7 +53,7 @@ struct EditExerciseInRoutineView: View {
                         //replace
                     } label: {
                         Text("Replace")
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(userThemeViewModel.primaryColor)
                     }
 
                     

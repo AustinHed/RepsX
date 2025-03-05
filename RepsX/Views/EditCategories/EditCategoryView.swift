@@ -19,6 +19,11 @@ struct EditCategoryView: View {
         CategoryViewModel(modelContext: modelContext)
     }
     
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
+    
     //dismiss
     @Environment(\.dismiss) private var dismiss
     
@@ -61,6 +66,7 @@ struct EditCategoryView: View {
                     Button("Back") {
                         dismiss()
                     }
+                    .foregroundStyle(userThemeViewModel.primaryColor)
                 }
             }
         }

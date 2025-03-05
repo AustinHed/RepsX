@@ -21,6 +21,7 @@ class UserThemeViewModel {
     func addUserTheme(name: String, primaryHex: String, secondaryHex: String) {
         let newUserTheme = UserTheme(name: name, primaryHex: primaryHex, secondaryHex: secondaryHex)
         modelContext.insert(newUserTheme)
+        save()
     }
     
     //delete
@@ -60,6 +61,36 @@ class UserThemeViewModel {
         }
     }
     
+    //computed selected theme
+    var selectedTheme: UserTheme {
+        fetchThemes().first(where: { $0.isSelected }) ?? UserTheme(
+            name: "Default Theme",
+            primaryHex: "#007AFF",
+            secondaryHex: "#8E8E93",
+            isSelected: true
+        )
+    }
+    
+    var primaryColor: Color {
+        let theme = fetchThemes().first(where: { $0.isSelected }) ?? UserTheme(
+            name: "Default Theme",
+            primaryHex: "#007AFF",
+            secondaryHex: "#8E8E93",
+            isSelected: true
+        )
+        return Color(hexString: theme.primaryHex)
+    }
+    
+    var secondaryColor: Color {
+        let theme = fetchThemes().first(where: { $0.isSelected }) ?? UserTheme(
+            name: "Default Theme",
+            primaryHex: "#007AFF",
+            secondaryHex: "#8E8E93",
+            isSelected: true
+        )
+        return Color(hexString: theme.secondaryHex)
+    }
+    
     //save
     func save() {
         do {
@@ -70,4 +101,46 @@ class UserThemeViewModel {
     }
     
     
+}
+
+@Observable
+final class ThemeManager {
+    var userThemes: [UserTheme] = []
+    var selectedTheme: UserTheme = UserTheme(name: "Default Theme",
+                                              primaryHex: "#007AFF", //#007AFF
+                                              secondaryHex: "#8E8E93") //#8E8E93
+    var modelContext: ModelContext
+
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+        refreshThemes()
+    }
+    
+    // Computed property for easier access to the primaryHex value
+    var primaryHex: String {
+        selectedTheme.primaryHex
+    }
+    
+    // Computed property for easier access to the secondaryHex value
+    var secondaryHex: String {
+        selectedTheme.secondaryHex
+    }
+    
+    func refreshThemes() {
+        let descriptor = FetchDescriptor<UserTheme>(sortBy: [SortDescriptor(\.name)])
+        if let themes = try? modelContext.fetch(descriptor), !themes.isEmpty {
+            userThemes = themes
+            if let current = themes.first(where: { $0.isSelected }) {
+                selectedTheme = current
+            }
+        }
+    }
+    
+    func selectTheme(_ theme: UserTheme) {
+        for t in userThemes {
+            t.isSelected = (t.id == theme.id)
+        }
+        try? modelContext.save()
+        refreshThemes() // Refresh after saving changes
+    }
 }

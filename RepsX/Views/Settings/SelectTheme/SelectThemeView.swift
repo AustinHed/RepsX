@@ -23,10 +23,14 @@ struct SelectThemeView: View {
     
     //modelContext
     @Environment(\.modelContext) private var modelContext
+    
     //View Model
     private var userThemeViewModel: UserThemeViewModel {
         UserThemeViewModel(modelContext: modelContext)
     }
+    
+    //access the themes
+    
     
     var body: some View {
         NavigationStack{

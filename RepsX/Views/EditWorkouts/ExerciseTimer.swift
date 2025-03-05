@@ -13,6 +13,7 @@ struct ExerciseTimer: View {
     @State private var remainingTime: Double = 90.0
     @State private var isRunning: Bool = false
     @Environment(\.dismiss) private var dismiss
+    var primaryColor:Color
     
     // Timer publisher that ticks every 0.1 second for smoother animation.
     private let timer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
@@ -23,7 +24,7 @@ struct ExerciseTimer: View {
             Button(action: toggleTimer) {
                 Text(isRunning ? "Stop" : "Start")
                     .font(.headline)
-                    .foregroundColor(.blue)
+                    .foregroundColor(primaryColor)
                     .padding(.leading, 50)
             }
             
@@ -43,7 +44,7 @@ struct ExerciseTimer: View {
                 // The progress circle using .trim to reflect the remaining time smoothly
                 Circle()
                     .trim(from: 0, to: CGFloat(progress))
-                    .stroke(Color.blue, lineWidth: 5)
+                    .stroke(primaryColor, lineWidth: 5)
                     .rotationEffect(.degrees(-90))
                     .frame(width: 60, height: 60)
                 
@@ -98,5 +99,5 @@ struct ExerciseTimer: View {
 }
 
 #Preview {
-    ExerciseTimer()
+    ExerciseTimer(primaryColor:.red)
 }

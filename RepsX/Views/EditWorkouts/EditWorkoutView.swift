@@ -23,6 +23,11 @@ struct EditWorkoutView: View {
         WorkoutViewModel(modelContext: modelContext)
     }
     
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
+    
     // Focus state to detect when the name field loses focus
     @FocusState private var nameFieldFocused: Bool
     @FocusState private var startTimeFocused: Bool
@@ -119,6 +124,7 @@ struct EditWorkoutView: View {
                 } label: {
                     Image(systemName: "timer")
                 }
+                .foregroundStyle(userThemeViewModel.primaryColor)
                 
             }
             //Reorder & Delete
@@ -146,6 +152,7 @@ struct EditWorkoutView: View {
                 } label: {
                     Image(systemName:"ellipsis.circle")
                 }
+                .foregroundStyle(userThemeViewModel.primaryColor)
                 .confirmationDialog("Are you sure you want to delete this Workout", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
                     Button("Delete", role: .destructive) {
                         workoutViewModel.deleteWorkout(workout)
@@ -162,14 +169,14 @@ struct EditWorkoutView: View {
         //Time picker
         .sheet(isPresented: $isTimePickerPresented) {
             if editingTime == .start {
-                TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .start)
+                TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .start, primaryColor: userThemeViewModel.primaryColor)
             } else {
-                TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .end)
+                TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .end, primaryColor: userThemeViewModel.primaryColor)
             }
         }
         //Reorder / Delete
         .sheet(isPresented: $isReordering) {
-            ReorderExercisesView(workoutViewModel: workoutViewModel, workout: workout)
+            ReorderExercisesView(workoutViewModel: workoutViewModel, workout: workout, primaryColor: userThemeViewModel.primaryColor)
         }
         //add new exercise
         .sheet(isPresented: $isSelectingExercise) {
@@ -224,7 +231,7 @@ struct EditWorkoutView: View {
         //Timer
         .sheet(isPresented: $showTimer) {
             Spacer()
-            ExerciseTimer()
+            ExerciseTimer(primaryColor:userThemeViewModel.primaryColor)
                 .padding(.bottom, 10)
                 .presentationDetents([.height(70)])
                 .presentationBackgroundInteraction(.enabled)
@@ -283,6 +290,7 @@ extension EditWorkoutView {
             } label: {
                 Text("\(workoutViewModel.formattedDate(workout.startTime))")
             }
+            .foregroundStyle(userThemeViewModel.primaryColor)
         }
     }
 }
@@ -303,6 +311,7 @@ extension EditWorkoutView {
                     Text("-")
                 }
             }
+            .foregroundStyle(userThemeViewModel.primaryColor)
             
             
         }
@@ -378,6 +387,7 @@ extension EditWorkoutView {
             } label: {
                 Image(systemName: "ellipsis")
             }
+            .foregroundStyle(userThemeViewModel.primaryColor)
         }
     }
 }
@@ -392,6 +402,7 @@ extension EditWorkoutView{
         } label: {
             Text("Add Exercise")
         }
+        .foregroundStyle(userThemeViewModel.primaryColor)
     }
 }
 
@@ -406,6 +417,7 @@ struct TimePickerSheet: View {
     var workout:Workout //the workout to edit
     let workoutViewModel: WorkoutViewModel //the viewModel to use
     var mode: TimePickerMode //determine start or end time
+    let primaryColor:Color
     
     @Environment(\.dismiss) private var dismiss //dismiss
     @State private var tempDate: Date = Date() //value to play with
@@ -427,6 +439,7 @@ struct TimePickerSheet: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .foregroundStyle(primaryColor)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
@@ -438,6 +451,7 @@ struct TimePickerSheet: View {
                         }
                         dismiss()
                     }
+                    .foregroundStyle(primaryColor)
                 }
             }
         }

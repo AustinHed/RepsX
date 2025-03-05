@@ -28,6 +28,10 @@ struct EditRoutine: View {
         RoutineViewModel(modelContext: modelContext)
     }
     
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
     //Color Picker
     @State var toggleColorPicker: Bool = false
     @State var selectedColor:String = "#808080"
@@ -50,7 +54,9 @@ struct EditRoutine: View {
                         selectedTab = .log
                         //finally, dismiss the EditRoutineView
                         dismiss()
-                    }.bold()
+                    }
+                    .foregroundStyle(userThemeViewModel.primaryColor)
+                    
                 }
                 
                 //name and color
@@ -107,6 +113,7 @@ struct EditRoutine: View {
                     } label: {
                         Image(systemName: "ellipsis.circle")
                     }
+                    .foregroundStyle(userThemeViewModel.primaryColor)
                     
                 }
             }
@@ -139,6 +146,7 @@ struct EditRoutine: View {
             }
             
         }
+        .tint(userThemeViewModel.primaryColor)
         .onAppear {
             if routine.colorHex != nil {
                 selectedColor = routine.colorHex!
@@ -222,6 +230,7 @@ extension EditRoutine {
             } label: {
                 Text("Add Exercise")
             }
+            .foregroundStyle(userThemeViewModel.primaryColor)
         }
     }
 }

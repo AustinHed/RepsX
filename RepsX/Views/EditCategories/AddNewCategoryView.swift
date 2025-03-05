@@ -11,6 +11,11 @@ struct AddNewCategoryView: View {
     
     //model context
     @Environment(\.modelContext) private var modelContext
+
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
     
     //view model
     private var categoryViewModel:CategoryViewModel {
@@ -40,6 +45,7 @@ struct AddNewCategoryView: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .foregroundStyle(userThemeViewModel.primaryColor)
                 }
                 //save button
                 ToolbarItem(placement: .topBarTrailing) {
@@ -47,6 +53,7 @@ struct AddNewCategoryView: View {
                         categoryViewModel.addCategory(name: newName)
                         dismiss()
                     }
+                    .foregroundStyle(newName.isEmpty ? Color.gray: userThemeViewModel.primaryColor)
                     .disabled(Bool(newName.isEmpty))
                 }
             }
@@ -57,5 +64,7 @@ struct AddNewCategoryView: View {
 }
 
 #Preview {
+    
     AddNewCategoryView()
+    
 }

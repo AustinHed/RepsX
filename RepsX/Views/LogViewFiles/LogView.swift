@@ -33,6 +33,11 @@ struct LogView: View {
         WorkoutViewModel(modelContext: modelContext)
     }
     
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
+    
     //binding cars
     @Binding var selectedTab: ContentView.Tab
     @State var coordinator = WorkoutCoordinator.shared
@@ -92,7 +97,6 @@ struct LogView: View {
             //MARK: Toolbar
             //add workout button
             .toolbar {
-                addWorkoutToolbarItem
                 menuToolbarItem
             }
             //MARK: Full Screen Covers
@@ -133,7 +137,7 @@ struct LogView: View {
 
 //MARK: Toolbar contents
 extension LogView {
-    //add new workout button
+    //TODO: delete this
     private var addWorkoutToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -144,6 +148,7 @@ extension LogView {
                 } label: {
                     Image(systemName: "plus")
                 }
+                .foregroundStyle(userThemeViewModel.primaryColor)
             }
     }
     
@@ -184,6 +189,7 @@ extension LogView {
             } label: {
                 Image(systemName: "plus.circle")
             }
+            .foregroundStyle(userThemeViewModel.primaryColor)
         }
     }
 }
@@ -207,6 +213,7 @@ extension LogView {
                                     editNewWorkout = false
                                     selectedWorkout = nil
                                 }
+                                .foregroundStyle(userThemeViewModel.primaryColor)
                             }
                         }
                 }
@@ -230,6 +237,7 @@ extension LogView {
                                     editExistingWorkout = false
                                     selectedWorkout = nil
                                 }
+                                .foregroundStyle(userThemeViewModel.primaryColor)
                             }
                         }
                 }
@@ -250,6 +258,7 @@ extension LogView {
                                     workoutViewModel.updateWorkout(workout, newEndTime: Date())
                                     coordinator.showEditWorkout.toggle()
                                 }
+                                .foregroundStyle(userThemeViewModel.primaryColor)
                             }
                         }
                 }

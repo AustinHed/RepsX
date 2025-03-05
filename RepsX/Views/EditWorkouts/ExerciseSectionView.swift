@@ -19,6 +19,11 @@ struct ExerciseSectionView: View {
         ExerciseViewModel(modelContext: modelContext)
     }
     
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
+    
     //focus states
     @FocusState var isKeyboardActive: Bool //to dismiss the keyboard
     @FocusState private var setWeightFocused: Bool
@@ -32,7 +37,7 @@ struct ExerciseSectionView: View {
             HStack  {
                 
                 //number
-                exerciseNumberField(index: index, set: set)
+                exerciseNumberField(index: index, set: set, primaryColor: userThemeViewModel.primaryColor)
                 
                 //weight
                 if set.exercise?.modality == .repetition {
@@ -66,7 +71,7 @@ struct ExerciseSectionView: View {
         }
         
         //add button
-        addButton()
+        addButton(primaryColor:userThemeViewModel.primaryColor)
     }
     
 }
@@ -74,19 +79,19 @@ struct ExerciseSectionView: View {
 //MARK: Set number
 extension ExerciseSectionView {
     //TODO: Make this a button?
-    func exerciseNumberField(index:Int, set: Set) -> some View {
+    func exerciseNumberField(index:Int, set: Set, primaryColor:Color) -> some View {
         Text("\(index + 1)")
             .font(.caption)
             .bold()
             .frame(width: 24, height: 24)
             .background(
                 Circle()
-                    .stroke(set.reps == 0 ? Color.gray : Color.blue,
+                    .stroke(set.reps == 0 ? Color.gray : primaryColor,
                             lineWidth: 1.5
                            )
             )
             .padding(.trailing)
-            .foregroundColor(set.reps == 0 ? Color.gray : Color.blue)
+            .foregroundColor(set.reps == 0 ? Color.gray : primaryColor)
     }
 }
 //MARK: Weight
@@ -264,12 +269,13 @@ extension ExerciseSectionView {
 
 //MARK: Add Button
 extension ExerciseSectionView {
-    func addButton() -> some View {
+    func addButton(primaryColor:Color) -> some View {
         Button {
             exerciseViewModel.addSet(to: exercise, reps: 0, weight: 0, time: 0, distance: 0)
         } label: {
             Text("Add Set")
         }
+        .foregroundStyle(primaryColor)
     }
 }
 

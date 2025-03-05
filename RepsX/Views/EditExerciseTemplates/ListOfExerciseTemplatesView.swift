@@ -23,6 +23,11 @@ struct ListOfExerciseTemplatesView: View {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
     
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
+    
     //Add new category
     @State private var isAddingNewExercise: Bool = false
     
@@ -45,7 +50,9 @@ struct ListOfExerciseTemplatesView: View {
                         isAddingNewExercise.toggle()
                     } label: {
                         Image(systemName:"plus.circle")
+                        
                     }
+                    .foregroundStyle(userThemeViewModel.primaryColor)
 
                 }
             }

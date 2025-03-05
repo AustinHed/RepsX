@@ -20,6 +20,11 @@ struct RoutinesView: View {
         RoutineViewModel(modelContext: modelContext)
     }
     
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
+    
     //Routing around
     @Binding var selectedTab: ContentView.Tab
     
@@ -27,7 +32,6 @@ struct RoutinesView: View {
     var body: some View {
         NavigationStack{
             List {
-//favorites section
                 ForEach(routines) { routine in
                     HStack{
                         Circle()
@@ -37,7 +41,7 @@ struct RoutinesView: View {
                         NavigationLink {
                             EditRoutine(routine: routine, selectedTab: $selectedTab)
                         } label: {
-                            RoutineLabel(routine: routine)
+                            RoutineLabel(routine: routine, color: userThemeViewModel.primaryColor)
                         }
 
                     }
@@ -49,7 +53,8 @@ struct RoutinesView: View {
             .toolbar {
                 //Edit Button
                 ToolbarItem(placement: .topBarLeading) {
-                    Text("Edit")
+                    Text("Edit(WIP)")
+                        .foregroundStyle(userThemeViewModel.primaryColor)
                 }
                 
                 //Plus button
@@ -59,10 +64,12 @@ struct RoutinesView: View {
                     } label: {
                         Image(systemName:"plus")
                     }
+                    .foregroundStyle(userThemeViewModel.primaryColor)
 
                 }
             }
         }
+        .tint(userThemeViewModel.primaryColor)
     }
 }
 
@@ -70,6 +77,7 @@ struct RoutinesView: View {
 extension RoutinesView{
     struct RoutineLabel: View {
         let routine: Routine
+        let color:Color
 
         var body: some View {
             Group {
@@ -79,7 +87,7 @@ extension RoutinesView{
                         Spacer()
                         // If you're using SF Symbols, use systemName
                         Image(systemName: "star.fill")
-                            .foregroundStyle(.yellow.opacity(0.5))
+                            .foregroundStyle(color)
                     }
                 } else {
                     Text(routine.name)

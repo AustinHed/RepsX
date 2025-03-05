@@ -15,6 +15,7 @@ struct ReorderExercisesView: View {
     let workoutViewModel: WorkoutViewModel
     //workout to move
     var workout: Workout
+    var primaryColor:Color
     
     // Local state to hold the ordered exercises for reordering
     @State private var orderedExercises: [Exercise] = []
@@ -38,6 +39,7 @@ struct ReorderExercisesView: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .foregroundStyle(primaryColor)
                 }
                 // Done button on the right
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -45,6 +47,7 @@ struct ReorderExercisesView: View {
                         updateExerciseOrder()
                         dismiss()
                     }
+                    .foregroundStyle(primaryColor)
                 }
             }
         }

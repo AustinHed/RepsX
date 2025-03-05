@@ -17,6 +17,11 @@ struct AddNewExerciseTemplateView: View {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
     
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
+    
     //dismiss
     @Environment(\.dismiss) private var dismiss
     
@@ -52,6 +57,7 @@ struct AddNewExerciseTemplateView: View {
                     Button("Cancel") {
                         dismiss()
                     }
+                    .foregroundStyle(userThemeViewModel.primaryColor)
                 }
                 
                 //done button
@@ -67,6 +73,7 @@ struct AddNewExerciseTemplateView: View {
                         }
                     }
                     .disabled(templateName.isEmpty || selectedCategory == nil)
+                    .foregroundStyle((templateName.isEmpty || selectedCategory == nil) ? Color.gray : userThemeViewModel.primaryColor)
                 }
             }
             //MARK: On Appear
@@ -86,6 +93,7 @@ struct AddNewExerciseTemplateView: View {
                 modalityPickerSheet()
             }
         }
+        .tint(userThemeViewModel.primaryColor)
     }
 }
 
@@ -120,7 +128,7 @@ extension AddNewExerciseTemplateView {
                             .foregroundColor(.primary)
                     } else {
                         Text("Select a category")
-                            .foregroundColor(.gray)
+                            .foregroundColor(.secondary)
                     }
                 }
             }

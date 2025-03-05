@@ -22,6 +22,11 @@ struct ListOfCategoriesView: View {
         CategoryViewModel(modelContext: modelContext)
     }
     
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
+    
     //selected category
     @State private var selectedCategory:CategoryModel? = nil
     
@@ -37,14 +42,6 @@ struct ListOfCategoriesView: View {
                     NavigationLink(category.name) {
                         EditCategoryView(category: category)
                     }
-                    
-//                    Button {
-//                        selectedCategory = category
-//                    } label: {
-//                        Text(category.name)
-//                            .foregroundStyle(.black)
-//                    }
-
                 }
             }
             .navigationTitle("Edit Categories")
@@ -58,6 +55,7 @@ struct ListOfCategoriesView: View {
                     } label: {
                         Image(systemName:"plus.circle")
                     }
+                    .foregroundStyle(userThemeViewModel.primaryColor)
 
                 }
             }
@@ -71,6 +69,7 @@ struct ListOfCategoriesView: View {
                 AddNewCategoryView()
             }
         }
+        .tint(userThemeViewModel.primaryColor)
     }
 }
 

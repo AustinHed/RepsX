@@ -20,6 +20,11 @@ struct EditExerciseTemplateView: View {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
     
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
+    
     //dismiss
     @Environment(\.dismiss) private var dismiss
     
@@ -81,6 +86,10 @@ struct ChooseNewCategoryView: View {
     private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
+    //theme view Model
+    private var userThemeViewModel: UserThemeViewModel {
+        UserThemeViewModel(modelContext: modelContext)
+    }
     
     var exerciseTemplate:ExerciseTemplate
     
@@ -91,7 +100,7 @@ struct ChooseNewCategoryView: View {
                     exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newCategory: category)
                     dismiss()
                 } label: {
-                    categoryLabel(for: category)
+                    categoryLabel(for: category, userThemeViewModel: userThemeViewModel)
                 }
             }
             .navigationTitle("Choose category")
@@ -100,15 +109,18 @@ struct ChooseNewCategoryView: View {
     }
     
     @ViewBuilder
-    private func categoryLabel(for category: CategoryModel) -> some View {
+    private func categoryLabel(for category: CategoryModel, userThemeViewModel: UserThemeViewModel) -> some View {
         if exerciseTemplate.category == category {
             HStack {
                 Text(category.name)
+                    .foregroundStyle(.black)
                 Spacer()
                 Image(systemName: "checkmark")
+                    .foregroundStyle(userThemeViewModel.primaryColor)
             }
         } else {
             Text(category.name)
+                .foregroundStyle(.black)
         }
     }
 }
