@@ -76,13 +76,10 @@ struct LogView: View {
                     //open workout editor view
                         .onTapGesture {
                             print("tap workout row")
-                            //first, clear selected workout
-                            selectedWorkout = nil
-                            //then, update selected workout with the tapped workout
                             selectedWorkout = workout
                             //then, toggle editExistingWorkout
                             if let selectedWorkout = selectedWorkout {
-                                editExistingWorkout.toggle()
+                                //editExistingWorkout.toggle()
                                 print("selected workout:")
                                 print(selectedWorkout.id)
                             } else {
@@ -92,6 +89,7 @@ struct LogView: View {
                         }
                 }
             }
+            .animation(.easeInOut(duration: 0.3), value: workouts)
             .contentMargins(.horizontal,0)
             .navigationTitle("Log")
             //MARK: Toolbar
@@ -102,11 +100,28 @@ struct LogView: View {
             //MARK: Full Screen Covers
             //show edit workout views
             .fullScreenCover(isPresented: $editNewWorkout) { newWorkoutEditor }
-            .fullScreenCover(isPresented: $editExistingWorkout) { existingWorkoutEditor }
+            .fullScreenCover(item: $selectedWorkout) { workout in
+                NavigationStack {
+                    EditWorkoutView(workout: workout)
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button("Close") {
+                                    // Perform any final updates before dismissing
+                                    if workout.name.isEmpty {
+                                        workoutViewModel.updateWorkout(workout, newName: "Unnamed Workout")
+                                    }
+                                    selectedWorkout = nil
+                                }
+                                .foregroundStyle(userThemeViewModel.primaryColor)
+                            }
+                        }
+                }
+                .environment(\.modelContext, modelContext)
+            }
             .fullScreenCover(isPresented: $coordinator.showEditWorkout) { coordinatorWorkoutEditor }
             //MARK: On Appear
-            //load default workout tempaltes if needed
             .onAppear{
+                //load default workout tempaltes if needed
                 initializeDefaultDataIfNeeded(context: modelContext)
                 initializeWorkoutsIfNeeded(context: modelContext)
             }
@@ -226,6 +241,7 @@ extension LogView {
     //existing workout editor
     private var existingWorkoutEditor: some View {
         Group {
+            //TODO: Issue im seeing is that selectedWorkout is occasionally nil. Need to figure out an alternative to using selectedWorkout, and pass it directly
             if let workoutToEdit = selectedWorkout {
                 NavigationStack {
                     EditWorkoutView(workout: workoutToEdit)
@@ -242,6 +258,9 @@ extension LogView {
                             }
                         }
                 }
+                .onAppear(perform: {
+                    print(workoutToEdit.id)
+                })
                 .environment(\.modelContext, modelContext)
             }
         }

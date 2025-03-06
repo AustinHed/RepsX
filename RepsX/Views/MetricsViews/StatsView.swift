@@ -352,6 +352,14 @@ extension StatsView {
         dailyIntensityStats.max { $0.averageIntensity < $1.averageIntensity }?.day
     }
     
+    private var highestIntensityValue: Double? {
+        dailyIntensityStats.max { $0.averageIntensity < $1.averageIntensity }?.averageIntensity
+    }
+    
+    private var highestIntensityValueFormatted: String {
+        highestIntensityValue.map { String(format: "%.2f", $0) } ?? "N/A"
+    }
+    
     /// Formats the highest intensity day as "Mon, Mar 5th".
     private var highestIntensityDayFormatted: String {
         guard let day = highestIntensityDay else { return "N/A" }
@@ -369,6 +377,10 @@ extension StatsView {
         return Text("Your most intense day was ")
                 
         + Text("\(highestIntensityDayFormatted)")
+            .bold()
+            .foregroundColor(.blue)
+        + Text(", with an average set intensity of ")
+        + Text(highestIntensityValueFormatted)
             .bold()
             .foregroundColor(.blue)
         
