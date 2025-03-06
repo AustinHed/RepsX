@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import SwipeActions
 
 struct LogView: View {
     
@@ -53,42 +54,36 @@ struct LogView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                //TODO: Add section for favorite routines, sliding cards
-                //MARK: List
-                ForEach(workouts) { workout in
-                    LogViewRow(workout: workout)
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(Visibility.hidden)
-                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                    //swipe to delete
-                        .swipeActions {
-                            Button() {
-                                // Instead of deleting immediately, store the workout in a state variable
+            
+            ScrollView{
+                LazyVStack(spacing: 12) {
+                    ForEach(workouts) { workout in
+                        //logViewRow
+                        SwipeView{
+                            LogViewRow(workout: workout)
+                                .onTapGesture {
+                                    selectedWorkout = workout
+                                }
+                        }
+                        //swipe actions
+                        trailingActions: { _ in
+                            SwipeAction(
+                                systemImage: "trash",
+                                backgroundColor: .red
+                            ){
                                 workoutToDelete = workout
-                            } label: {
-                                Image(systemName: "trash.fill")
-                                    .symbolRenderingMode(.palette)
-                                    .foregroundStyle(.red)
                             }
-                            .tint(.clear)
+                            .foregroundStyle(.white)
+
                         }
-                    //open workout editor view
-                        .onTapGesture {
-                            print("tap workout row")
-                            selectedWorkout = workout
-                            //then, toggle editExistingWorkout
-                            if let selectedWorkout = selectedWorkout {
-                                //editExistingWorkout.toggle()
-                                print("selected workout:")
-                                print(selectedWorkout.id)
-                            } else {
-                                print("workout was nil fuck you")
-                            }
-                            
-                        }
+                        .swipeMinimumDistance(25)
+                        .swipeActionCornerRadius(16)
+                        .padding(.horizontal, 16)
+                        
+                    }
                 }
             }
+            .background(Color(UIColor.systemGroupedBackground))
             .animation(.easeInOut(duration: 0.3), value: workouts)
             .contentMargins(.horizontal,0)
             .navigationTitle("Log")
@@ -101,22 +96,8 @@ struct LogView: View {
             //show edit workout views
             .fullScreenCover(isPresented: $editNewWorkout) { newWorkoutEditor }
             .fullScreenCover(item: $selectedWorkout) { workout in
-                NavigationStack {
-                    EditWorkoutView(workout: workout)
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarLeading) {
-                                Button("Close") {
-                                    // Perform any final updates before dismissing
-                                    if workout.name.isEmpty {
-                                        workoutViewModel.updateWorkout(workout, newName: "Unnamed Workout")
-                                    }
-                                    selectedWorkout = nil
-                                }
-                                .foregroundStyle(userThemeViewModel.primaryColor)
-                            }
-                        }
-                }
-                .environment(\.modelContext, modelContext)
+                existingWorkoutEditor(for: workout)
+                    .environment(\.modelContext, modelContext)
             }
             .fullScreenCover(isPresented: $coordinator.showEditWorkout) { coordinatorWorkoutEditor }
             //MARK: On Appear
@@ -153,21 +134,6 @@ struct LogView: View {
 
 //MARK: Toolbar contents
 extension LogView {
-    //TODO: delete this
-    private var addWorkoutToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    let createdWorkout = workoutViewModel.addWorkout(date: Date())
-                    selectedWorkout = createdWorkout
-                    editNewWorkout = true
-                    print("added workout")
-                } label: {
-                    Image(systemName: "plus")
-                }
-                .foregroundStyle(userThemeViewModel.primaryColor)
-            }
-    }
-    
     //add workout menu
     private var menuToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
@@ -239,30 +205,21 @@ extension LogView {
     }
 
     //existing workout editor
-    private var existingWorkoutEditor: some View {
-        Group {
-            //TODO: Issue im seeing is that selectedWorkout is occasionally nil. Need to figure out an alternative to using selectedWorkout, and pass it directly
-            if let workoutToEdit = selectedWorkout {
-                NavigationStack {
-                    EditWorkoutView(workout: workoutToEdit)
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarLeading) {
-                                Button("Close") {
-                                    if workoutToEdit.name.isEmpty {
-                                        workoutViewModel.updateWorkout(workoutToEdit, newName: "Unnamed Workout")
-                                    }
-                                    editExistingWorkout = false
-                                    selectedWorkout = nil
-                                }
-                                .foregroundStyle(userThemeViewModel.primaryColor)
+    private func existingWorkoutEditor(for workout: Workout) -> some View {
+        NavigationStack {
+            EditWorkoutView(workout: workout)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Close") {
+                            // Final updates before dismissing
+                            if workout.name.isEmpty {
+                                workoutViewModel.updateWorkout(workout, newName: "Unnamed Workout")
                             }
+                            selectedWorkout = nil
                         }
+                        .foregroundStyle(userThemeViewModel.primaryColor)
+                    }
                 }
-                .onAppear(perform: {
-                    print(workoutToEdit.id)
-                })
-                .environment(\.modelContext, modelContext)
-            }
         }
     }
 

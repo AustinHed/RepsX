@@ -17,7 +17,7 @@ struct LogViewRow: View {
             contentStack
         }
         .background(Color.white)
-        .cornerRadius(10)
+        .cornerRadius(16)
     }
 }
 
