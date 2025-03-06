@@ -108,6 +108,7 @@ struct LogView: View {
             //load default workout tempaltes if needed
             .onAppear{
                 initializeDefaultDataIfNeeded(context: modelContext)
+                initializeWorkoutsIfNeeded(context: modelContext)
             }
             
         }
