@@ -27,18 +27,22 @@ struct SettingsView: View {
                 }
                 
                 //exercises and categories
-//                Section("Exercises and Categories"){
-//                    
-//                    NavigationLink("Edit Exercises") {
-//                        //ListOfExerciseTemplatesView()
-//                        ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises") { exercise in
-//                            EditExerciseTemplateView(exerciseTemplate: exercise)
-//                        }
-//                    }
-//                    NavigationLink("Edit Categories") {
-//                        ListOfCategoriesView()
-//                    }
-//                }
+                Section("Exercises and Categories"){
+                    
+                    
+                    NavigationLink("Edit Exercises") {
+                        ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises", destinationBuilder: { exercise in
+                            EditExerciseTemplateView(exerciseTemplate: exercise)
+                        })
+                    }
+                    
+                    NavigationLink("Edit Categories") {
+                        ListOfCategoriesView(navigationTitle: "Edit Categories", destinationBuilder: { category in
+                            EditCategoryView(category: category)
+                        })
+                    }
+                    
+                }
                 
                 //feedback and support
                 Section("Feedback and Support"){
