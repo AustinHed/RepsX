@@ -27,15 +27,18 @@ struct SettingsView: View {
                 }
                 
                 //exercises and categories
-                Section("Exercises and Categories"){
-                    
-                    NavigationLink("Edit Exercises") {
-                        ListOfExerciseTemplatesView()
-                    }
-                    NavigationLink("Edit Categories") {
-                        ListOfCategoriesView()
-                    }
-                }
+//                Section("Exercises and Categories"){
+//                    
+//                    NavigationLink("Edit Exercises") {
+//                        //ListOfExerciseTemplatesView()
+//                        ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises") { exercise in
+//                            EditExerciseTemplateView(exerciseTemplate: exercise)
+//                        }
+//                    }
+//                    NavigationLink("Edit Categories") {
+//                        ListOfCategoriesView()
+//                    }
+//                }
                 
                 //feedback and support
                 Section("Feedback and Support"){

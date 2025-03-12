@@ -69,15 +69,15 @@ struct IntensityBar: View {
     }
 }
 
-#Preview {
-    //default data
-    let category = CategoryModel(name: "chest")
-    let newWorkout = Workout(id: UUID(), startTime: Date())
-    let newExercise = Exercise(name: "Bench Press", category: category, workout: newWorkout)
-    let newSet = Set(exercise: newExercise, reps: 10, weight: 10, intensity: 3)
-    
-    @Environment(\.modelContext) var modelContext
-    let setViewModel:SetViewModel = SetViewModel(modelContext: modelContext)
-    IntensityBar(set:Set(exercise: newExercise, reps: 10, weight: 10, intensity: 3))
-        .padding(.horizontal)
-}
+//#Preview {
+//    //default data
+//    let category = CategoryModel(name: "chest")
+//    let newWorkout = Workout(id: UUID(), startTime: Date())
+//    let newExercise = Exercise(name: "Bench Press", category: category, workout: newWorkout)
+//    let newSet = Set(exercise: newExercise, reps: 10, weight: 10, intensity: 3)
+//    
+//    @Environment(\.modelContext) var modelContext
+//    let setViewModel:SetViewModel = SetViewModel(modelContext: modelContext)
+//    IntensityBar(set:Set(exercise: newExercise, reps: 10, weight: 10, intensity: 3))
+//        .padding(.horizontal)
+//}

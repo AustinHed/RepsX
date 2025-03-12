@@ -277,7 +277,7 @@ extension LogView {
     }
 }
 
-#Preview {
-    LogView(selectedTab: .constant(.log))
-        .modelContainer(SampleData.shared.modelContainer)
-}
+//#Preview {
+//    LogView(selectedTab: .constant(.log))
+//        .modelContainer(SampleData.shared.modelContainer)
+//}

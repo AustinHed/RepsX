@@ -469,21 +469,21 @@ struct TimePickerSheet: View {
 }
 
 
-//MARK: Preview
-#Preview {
-    let testWorkout = Workout(name: "Chest Day", startTime: Date().addingTimeInterval(-3600), endTime: Date(), weight: 150.0, notes: "Good Lift", rating: 5)
-    let newWorkout = Workout(id: UUID(), startTime: Date())
-    
-    
-    NavigationStack{
-        EditWorkoutView(workout: newWorkout)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("X") {
-                        //isAddNewWorkoutPresented = false
-                    }
-                }
-            }
-            .modelContainer(SampleWorkout.shared.modelContainer)
-    }
-}
+////MARK: Preview
+//#Preview {
+//    let testWorkout = Workout(name: "Chest Day", startTime: Date().addingTimeInterval(-3600), endTime: Date(), weight: 150.0, notes: "Good Lift", rating: 5)
+//    let newWorkout = Workout(id: UUID(), startTime: Date())
+//    
+//    
+//    NavigationStack{
+//        EditWorkoutView(workout: newWorkout)
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarLeading) {
+//                    Button("X") {
+//                        //isAddNewWorkoutPresented = false
+//                    }
+//                }
+//            }
+//            .modelContainer(SampleWorkout.shared.modelContainer)
+//    }
+//}

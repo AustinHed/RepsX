@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct ListOfCategoriesView: View {
+struct ListOfCategoriesView<Destination: View>: View {
     
     //Fetch categories
     @Query(sort: \CategoryModel.name) var categories: [CategoryModel]
@@ -35,12 +35,17 @@ struct ListOfCategoriesView: View {
     //Add new category
     @State private var isAddingNewCategory: Bool = false
     
+    // The title for the navigation bar.
+        let navigationTitleText: String
+        // Closure that builds the destination view for a given category.
+        let destinationBuilder: (CategoryModel) -> Destination
+    
     var body: some View {
         NavigationStack {
             List {
                 ForEach(categories) { category in
                     NavigationLink(category.name) {
-                        EditCategoryView(category: category)
+                        destinationBuilder(category)
                     }
                 }
             }
@@ -73,7 +78,7 @@ struct ListOfCategoriesView: View {
     }
 }
 
-#Preview {
-    ListOfCategoriesView()
-        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self])
-}
+//#Preview {
+//    ListOfCategoriesView()
+//        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self])
+//}

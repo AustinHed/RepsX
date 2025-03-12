@@ -24,6 +24,7 @@ class Exercise {
     var order: Int
     var intensity: Int?
     var modality: ExerciseModality
+    var templateId: UUID
     
     //when an Exercise is initialized, it always starts with no associated sets
     var sets: [Set] = []
@@ -38,7 +39,8 @@ class Exercise {
          workout: Workout,
          order: Int = 0,
          intensity: Int? = nil,
-         modality: ExerciseModality = .repetition
+         modality: ExerciseModality = .repetition,
+         templateId: UUID
         ) {
         self.id = id //unique ID
         self.name = name //ex bench
@@ -47,5 +49,6 @@ class Exercise {
         self.order = order
         self.intensity = intensity //nil, 1-3
         self.modality = modality
+        self.templateId = templateId
     }
 }

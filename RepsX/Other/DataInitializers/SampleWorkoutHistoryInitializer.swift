@@ -52,7 +52,9 @@ func initializeWorkoutsIfNeeded(context: ModelContext) {
                 let exercise = Exercise(name: template.name,
                                         category: template.category,
                                         workout: newWorkout,
-                                        modality: .repetition)
+                                        modality: template.modality,
+                                        templateId: template.id
+                )
                 
                 // 5. For each exercise, create 2–4 sets with random weights, reps, and intensity.
                 let setCount = Int.random(in: 2...4)

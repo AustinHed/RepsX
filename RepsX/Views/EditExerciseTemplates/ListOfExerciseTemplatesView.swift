@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct ListOfExerciseTemplatesView: View {
+struct ListOfExerciseTemplatesView<Destination: View>: View {
     
     //Fetch ExerciseTemplates
     @Query(filter: #Predicate<ExerciseTemplate>{
@@ -31,16 +31,28 @@ struct ListOfExerciseTemplatesView: View {
     //Add new category
     @State private var isAddingNewExercise: Bool = false
     
+    //the nav title, dependent on how this view is being accessed
+    let navigationTitle:String
+    
+    //optionally passing throug a list of Workouts
+    let allWorkouts: [Workout]?
+    
+    // This closure builds the destination view for a given exercise.
+    let destinationBuilder: (ExerciseTemplate) -> Destination
+    
+    
+    
     var body: some View {
         NavigationStack {
             List {
                 ForEach(exercises) { exercise in
                     NavigationLink(exercise.name) {
-                        EditExerciseTemplateView(exerciseTemplate: exercise)
+                        //EditExerciseTemplateView(exerciseTemplate: exercise)
+                        destinationBuilder(exercise)
                     }
                 }
             }
-            .navigationTitle("Edit Exercises")
+            .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             //MARK: Toolbar
             .toolbar{
@@ -65,6 +77,6 @@ struct ListOfExerciseTemplatesView: View {
     }
 }
 
-#Preview {
-    ListOfExerciseTemplatesView()
-}
+//#Preview {
+//    ListOfExerciseTemplatesView()
+//}

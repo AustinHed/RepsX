@@ -35,15 +35,15 @@ struct StatsView: View {
     var body: some View {
         NavigationStack {
             List {
-                //last 7 day average
+                //duration
                 Section{
                     rollingWorkoutDuration
                 }
-                
+                //category
                 Section {
                     categoryDistributionChart
                 }
-                
+                //intensity
                 Section {
                     setIntensityChart
                 }
@@ -51,10 +51,15 @@ struct StatsView: View {
                 
                 Section("Specific Stats") {
                     NavigationLink("Exercise") {
-                        //todo
+                        ListOfExerciseTemplatesView(navigationTitle: "Select an Exercise", allWorkouts: workouts) { exercise in
+                            ExerciseOverTimeChartView(filter: .exercise(exercise), workouts: workouts)
+                        }
                     }
                     NavigationLink("Category") {
-                        //todo
+                        ListOfCategoriesView(navigationTitleText: "Category Stats") { category in
+                            //CategoryChartView(category: category)
+                            Text("horse")
+                        }
                     }
                 }
                 
@@ -105,7 +110,7 @@ struct StatsView: View {
     }
 }
 
-//MARK: Rolling Workout Duration
+//MARK: Duration Bar Chart
 extension StatsView {
     
     //Daily stats
@@ -233,7 +238,7 @@ extension StatsView {
     }
 }
 
-//MARK: Pie Chart
+//MARK: Category Pie Chart
 extension StatsView {
     
     //Daily stats, returned as a tuple (name, count, percentage)
@@ -309,7 +314,7 @@ extension StatsView {
     }
 }
 
-//MARK: Intensity
+//MARK: Intensity Bar Chart
 extension StatsView {
     
     /// Computes the average set intensity per day over the lookback period.

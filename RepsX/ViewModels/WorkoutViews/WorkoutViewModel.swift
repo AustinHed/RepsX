@@ -125,17 +125,7 @@ extension WorkoutViewModel {
 
 //MARK: Exercises
 extension WorkoutViewModel {
-    //add an exercise to a specific Workout
-    //note: deprecated
-    func addNewExercise(to workout: Workout, named exerciseName: String) {
-        let order = workout.exercises.count
-        let newExercise = Exercise(id: UUID(), name: exerciseName, category: nil, workout: workout, order: order)
-        workout.exercises.append(newExercise)
-        modelContext.insert(newExercise)
-        save()
-    }
-    
-    //add a pre-defined exercise
+    //add an exercise to a specific Workout, using an ExerciseTemplate
     func addPremadeExercise(to workout: Workout, exercise: ExerciseTemplate) -> Exercise {
         let order = workout.exercises.count
         let newExercise = Exercise(id: UUID(),
@@ -143,7 +133,8 @@ extension WorkoutViewModel {
                                    category: exercise.category,
                                    workout: workout,
                                    order: order,
-                                   modality: exercise.modality
+                                   modality: exercise.modality,
+                                   templateId: exercise.id
         )
         workout.exercises.append(newExercise)
         modelContext.insert(newExercise)
@@ -157,7 +148,7 @@ extension WorkoutViewModel {
             //get that index
             let exerciseOrder = exerciseToRemove.order
             //create a new exercise using the exercise template
-            let newExercise = Exercise(name: exerciseToAdd.name, category: exerciseToAdd.category, workout: workout)
+            let newExercise = Exercise(name: exerciseToAdd.name, category: exerciseToAdd.category, workout: workout, templateId: exerciseToAdd.id)
             newExercise.order = exerciseOrder
             //swap that exercise into the array
             workout.exercises[index] = newExercise

@@ -72,16 +72,18 @@ struct SelectCategoryView: View {
                 //edit exercises and categories
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-//                        Button("Edit Exercises") {
-//                            ListOfExerciseTemplatesView()
+                        
+//                        NavigationLink("Edit Exercises") {
+//                            ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises") { exercise in
+//                                EditExerciseTemplateView(exerciseTemplate: exercise)
+//                            }
+//                                
 //                        }
                         
-                        NavigationLink("Edit Exercises") {
-                            ListOfExerciseTemplatesView()
-                        }
-                        
                         NavigationLink("Edit Categories") {
-                            ListOfCategoriesView()
+                            ListOfCategoriesView(navigationTitleText: "Edit Categories") { category in
+                                EditCategoryView(category: category)
+                            }
                         }
                     } label: {
                         Image(systemName:"ellipsis.circle")
@@ -93,7 +95,9 @@ struct SelectCategoryView: View {
                 AddNewExerciseTemplateView()
             }
             .sheet(isPresented: $isEditingCategories) {
-                ListOfCategoriesView()
+                ListOfCategoriesView(navigationTitleText: "Edit Categories") { category in
+                    EditCategoryView(category: category)
+                }
             }
         }
         
