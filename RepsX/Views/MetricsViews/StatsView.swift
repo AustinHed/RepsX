@@ -16,7 +16,7 @@ struct StatsView: View {
     @Environment(\.modelContext) private var modelContext
     
     //variable lookback period
-    @State var lookbackRange = 7
+    @State var lookbackRange = 14
     
     //lookback period
     private var lookbackPeriod: Date {
@@ -36,7 +36,7 @@ struct StatsView: View {
         NavigationStack {
             List {
                 //duration
-                Section{
+                Section("Highlights"){
                     rollingWorkoutDuration
                 }
                 //category
@@ -84,6 +84,7 @@ struct StatsView: View {
                 }
             }
             .navigationTitle("Stats")
+            .listSectionSpacing(12)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Text("test")
