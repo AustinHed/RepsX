@@ -40,7 +40,13 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
     // This closure builds the destination view for a given exercise.
     let destinationBuilder: (ExerciseTemplate) -> Destination
     
-    
+    init(navigationTitle: String,
+         allWorkouts: [Workout]? = nil,
+         @ViewBuilder destinationBuilder: @escaping (ExerciseTemplate) -> Destination) {
+        self.navigationTitle = navigationTitle
+        self.allWorkouts = allWorkouts
+        self.destinationBuilder = destinationBuilder
+    }
     
     var body: some View {
         NavigationStack {

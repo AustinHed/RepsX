@@ -81,7 +81,7 @@ struct SelectCategoryView: View {
 //                        }
                         
                         NavigationLink("Edit Categories") {
-                            ListOfCategoriesView(navigationTitleText: "Edit Categories") { category in
+                            ListOfCategoriesView(navigationTitle: "Edit Categories") { category in
                                 EditCategoryView(category: category)
                             }
                         }
@@ -95,7 +95,7 @@ struct SelectCategoryView: View {
                 AddNewExerciseTemplateView()
             }
             .sheet(isPresented: $isEditingCategories) {
-                ListOfCategoriesView(navigationTitleText: "Edit Categories") { category in
+                ListOfCategoriesView(navigationTitle: "Edit Categories") { category in
                     EditCategoryView(category: category)
                 }
             }

@@ -12,5 +12,5 @@ import SwiftData
 struct ChartDataPoint: Identifiable {
     let id = UUID()
     let date: Date
-    let totalSets: Int
+    let value: Double
 }

@@ -36,9 +36,21 @@ struct ListOfCategoriesView<Destination: View>: View {
     @State private var isAddingNewCategory: Bool = false
     
     // The title for the navigation bar.
-        let navigationTitleText: String
-        // Closure that builds the destination view for a given category.
-        let destinationBuilder: (CategoryModel) -> Destination
+    let navigationTitle: String
+    
+    //An optional list of all workouts
+    let allWorkouts: [Workout]?
+    
+    // Closure that builds the destination iew for a given category.
+    let destinationBuilder: (CategoryModel) -> Destination
+    
+    init(navigationTitle: String,
+         allWorkouts: [Workout]? = nil,
+         @ViewBuilder destinationBuilder: @escaping (CategoryModel) -> Destination) {
+        self.navigationTitle = navigationTitle
+        self.allWorkouts = allWorkouts
+        self.destinationBuilder = destinationBuilder
+    }
     
     var body: some View {
         NavigationStack {

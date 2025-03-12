@@ -50,15 +50,17 @@ struct StatsView: View {
                 
                 
                 Section("Specific Stats") {
+                    
                     NavigationLink("Exercise") {
                         ListOfExerciseTemplatesView(navigationTitle: "Select an Exercise", allWorkouts: workouts) { exercise in
                             ExerciseOverTimeChartView(filter: .exercise(exercise), workouts: workouts)
                         }
                     }
+                    
                     NavigationLink("Category") {
-                        ListOfCategoriesView(navigationTitleText: "Category Stats") { category in
-                            //CategoryChartView(category: category)
-                            Text("horse")
+                        ListOfCategoriesView(navigationTitle:"Select a Category", allWorkouts: workouts) {
+                            category in
+                            ExerciseOverTimeChartView(filter: .category(category), workouts: workouts)
                         }
                     }
                 }
@@ -102,13 +104,14 @@ struct StatsView: View {
                     } label: {
                         Image(systemName: "ellipsis.circle")
                     }
-
+                    
                 }
             }
             
         }
     }
 }
+
 
 //MARK: Duration Bar Chart
 extension StatsView {
@@ -380,7 +383,7 @@ extension StatsView {
     /// A header view for the intensity chart.
     private var setIntensityHeader: some View {
         return Text("Your most intense day was ")
-                
+        
         + Text("\(highestIntensityDayFormatted)")
             .bold()
             .foregroundColor(.blue)
