@@ -8,11 +8,11 @@ struct ExerciseOverTimeChartView: View {
     // Also updates the navigation title.
     let filter: ChartFilter
     
-    // Passed in list of all workouts, pre-filtered for the given exercise
+    // Passed in list of all workouts
     let workouts: [Workout]
     
     // Store the selected lookback option.
-    @State private var selectedLookback: LookbackOption = .seven
+    @State private var selectedLookback: LookbackOption = .thirty
     
     // Compute the lookback period. If "All Time" is selected, return nil.
     private var lookbackPeriod: Date? {
@@ -34,6 +34,14 @@ struct ExerciseOverTimeChartView: View {
         }
     }
     
+    //the exerciseTemplateId for use in the button
+    private var exerciseTemplate: ExerciseTemplate? {
+        if case .exercise(let template) = filter {
+            return template
+        }
+        return nil
+    }
+    
     var body: some View {
         if setChartData.isEmpty {
             Text("No data available for the selected period.")
@@ -52,6 +60,7 @@ struct ExerciseOverTimeChartView: View {
                     .pickerStyle(.segmented)
                     .padding()
                     
+                    // charts
                     ExpandableChartView(title: "Weight") {
                         medianWeightChart
                     }
@@ -65,28 +74,12 @@ struct ExerciseOverTimeChartView: View {
                     }
                                         
                     //button
-                    //goes to an ExerciseHistoryView
-                    //takes a filtered list of Workouts, transforms it into a List showing the date, weight, reps for a given exercise
-                    Button {
-                        //action
-                    } label: {
-                        HStack{
-                            Text("Exercise History")
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                        }
-                        .padding(.horizontal)
-                        .padding(.vertical, 10)
-                        .background(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .padding(.horizontal)
+                    if let template = exerciseTemplate {
+                        exerciseHistoryNavigationLink(workouts: workouts, exerciseTemplate: template)
                     }
-
-                    
                 }
                 .navigationTitle(filter.navigationTitle)
                 .padding(.vertical, 30)
-                
                 
             }
             .background(Color(UIColor.systemGroupedBackground))
@@ -96,9 +89,27 @@ struct ExerciseOverTimeChartView: View {
     
     
 }
-//MARK: Workout History
+//MARK: Workout History Button
+extension ExerciseOverTimeChartView {
+    func exerciseHistoryNavigationLink(workouts: [Workout], exerciseTemplate: ExerciseTemplate) -> some View {
+        NavigationLink {
+            ExerciseHistoryView(workouts: workouts, exerciseTemplate: exerciseTemplate)
+        } label: {
+            HStack {
+                Text("Exercise History")
+                Spacer()
+                Image(systemName: "chevron.right")
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .padding(.horizontal)
+        }
+    }
+}
 
-//MARK: xAxisStride
+//MARK: X Axis Labels
 extension ExerciseOverTimeChartView {
     // Calculate the stride based on the range of dates in chartData.
     private var xAxisStride: Int {
@@ -111,11 +122,10 @@ extension ExerciseOverTimeChartView {
     }
 }
 
-//MARK: Sets over time
+//MARK: data aggregator function
 extension ExerciseOverTimeChartView {
-    
-    // Computed property that aggregates chart data across the full selected date range.
-    private var setChartData: [ChartDataPoint] {
+    // A helper function to aggregate data by day.
+    private func aggregateData(using aggregator: ([Workout]) -> Double?) -> [ChartDataPoint] {
         let calendar = Calendar.current
         let endDate = calendar.startOfDay(for: Date())
         let startDate: Date = {
@@ -132,24 +142,17 @@ extension ExerciseOverTimeChartView {
             return workoutDay >= startDate && workoutDay <= endDate
         }
         
-        // Group workouts by day.
+        // Group workouts by the start of their day.
         let grouped = Dictionary(grouping: filteredWorkouts, by: { calendar.startOfDay(for: $0.startTime) })
         
         var points: [ChartDataPoint] = []
         var currentDate = startDate
         while currentDate <= endDate {
-            if let dayWorkouts = grouped[currentDate], !dayWorkouts.isEmpty {
-                let totalSets = dayWorkouts.reduce(0) { total, workout in
-                    total + workout.exercises.reduce(0) { sum, exercise in
-                        switch filter {
-                        case .exercise(let exerciseTemplate):
-                            return exercise.templateId == exerciseTemplate.id ? sum + exercise.sets.count : sum
-                        case .category(let category):
-                            return exercise.category?.id == category.id ? sum + exercise.sets.count : sum
-                        }
-                    }
-                }
-                points.append(ChartDataPoint(date: currentDate, value: Double(totalSets)))
+            // Get the workouts for the current day.
+            let workoutsForDay = grouped[currentDate] ?? []
+            // Use the aggregator closure to compute the metric.
+            if let value = aggregator(workoutsForDay) {
+                points.append(ChartDataPoint(date: currentDate, value: value))
             }
             guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
             currentDate = nextDate
@@ -157,8 +160,27 @@ extension ExerciseOverTimeChartView {
         
         return points.sorted { $0.date < $1.date }
     }
-    
+}
 
+//MARK: Sets over time
+extension ExerciseOverTimeChartView {
+    
+    // Computed property that aggregates chart data across the full selected date range.
+    private var setChartData: [ChartDataPoint] {
+        aggregateData { (workoutsForDay: [Workout]) -> Double? in
+            guard !workoutsForDay.isEmpty else { return nil }
+            return Double(workoutsForDay.reduce(0) { total, workout in
+                total + workout.exercises.reduce(0) { sum, exercise in
+                    switch filter {
+                    case .exercise(let exerciseTemplate):
+                        return exercise.templateId == exerciseTemplate.id ? sum + exercise.sets.count : sum
+                    case .category(let category):
+                        return exercise.category?.id == category.id ? sum + exercise.sets.count : sum
+                    }
+                }
+            })
+        }
+    }
     
     //the chart
     private var setCountChart: some View {
@@ -204,52 +226,27 @@ extension ExerciseOverTimeChartView {
     
     // Computed property for the total volume of weight lifted per day.
     private var volumeChartData: [ChartDataPoint] {
-        let calendar = Calendar.current
-        let endDate = calendar.startOfDay(for: Date())
-        let startDate: Date = {
-            if selectedLookback == .all {
-                return workouts.map { calendar.startOfDay(for: $0.startTime) }.min() ?? endDate
-            } else {
-                return lookbackPeriod ?? endDate
-            }
-        }()
-        
-        let filteredWorkouts = workouts.filter { workout in
-            let workoutDay = calendar.startOfDay(for: workout.startTime)
-            return workoutDay >= startDate && workoutDay <= endDate
-        }
-        
-        let grouped = Dictionary(grouping: filteredWorkouts, by: { calendar.startOfDay(for: $0.startTime) })
-        
-        var points: [ChartDataPoint] = []
-        var currentDate = startDate
-        while currentDate <= endDate {
-            if let dayWorkouts = grouped[currentDate], !dayWorkouts.isEmpty {
-                // Compute total volume (assumes each set has weight and reps)
-                let totalVolume = dayWorkouts.reduce(0.0) { total, workout in
-                    total + workout.exercises.reduce(0.0) { sum, exercise in
-                        switch filter {
-                        case .exercise(let exerciseTemplate):
-                            if exercise.templateId == exerciseTemplate.id {
-                                return sum + exercise.sets.reduce(0.0) { volume, set in
-                                    volume + (set.weight * Double(set.reps))
-                                }
-                            } else { return sum }
-                        case .category(let category):
-                            if exercise.category?.id == category.id {
-                                return sum + exercise.sets.reduce(0.0) { volume, set in
-                                    volume + (set.weight * Double(set.reps))
-                                }
-                            } else { return sum }
-                        }
+        aggregateData { (workoutsForDay: [Workout]) -> Double? in
+            guard !workoutsForDay.isEmpty else { return nil }
+            return workoutsForDay.reduce(0.0) { total, workout in
+                total + workout.exercises.reduce(0.0) { sum, exercise in
+                    switch filter {
+                    case .exercise(let exerciseTemplate):
+                        if exercise.templateId == exerciseTemplate.id {
+                            return sum + exercise.sets.reduce(0.0) { volume, set in
+                                volume + (set.weight * Double(set.reps))
+                            }
+                        } else { return sum }
+                    case .category(let category):
+                        if exercise.category?.id == category.id {
+                            return sum + exercise.sets.reduce(0.0) { volume, set in
+                                volume + (set.weight * Double(set.reps))
+                            }
+                        } else { return sum }
                     }
                 }
-                points.append(ChartDataPoint(date: currentDate, value: totalVolume))
             }
-            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
-            currentDate = nextDate
         }
-        return points.sorted { $0.date < $1.date }
     }
     
     //the chart
@@ -296,170 +293,67 @@ extension ExerciseOverTimeChartView {
 
     //median data
     private var medianChartData: [ChartDataPoint] {
-        let calendar = Calendar.current
-        let endDate = calendar.startOfDay(for: Date())
-        let startDate: Date = {
-            if selectedLookback == .all {
-                return workouts.map { calendar.startOfDay(for: $0.startTime) }.min() ?? endDate
-            } else {
-                return lookbackPeriod ?? endDate
-            }
-        }()
-        
-        let filteredWorkouts = workouts.filter { workout in
-            let workoutDay = calendar.startOfDay(for: workout.startTime)
-            return workoutDay >= startDate && workoutDay <= endDate
-        }
-        
-        let grouped = Dictionary(grouping: filteredWorkouts, by: { calendar.startOfDay(for: $0.startTime) })
-        
-        var points: [ChartDataPoint] = []
-        var currentDate = startDate
-        while currentDate <= endDate {
-            let dayWorkouts = grouped[currentDate] ?? []
-            let weights: [Double] = dayWorkouts.flatMap { workout in
+        aggregateData { (workoutsForDay: [Workout]) -> Double? in
+            // Gather all weight values for the day
+            let weights: [Double] = workoutsForDay.flatMap { workout in
                 workout.exercises.flatMap { exercise in
                     switch filter {
                     case .exercise(let exerciseTemplate):
-                        if exercise.templateId == exerciseTemplate.id {
-                            return exercise.sets.map { Double($0.weight) }
-                        } else { return [] }
+                        return exercise.templateId == exerciseTemplate.id ? exercise.sets.map { Double($0.weight) } : []
                     case .category(let category):
-                        if exercise.category?.id == category.id {
-                            return exercise.sets.map { Double($0.weight) }
-                        } else { return [] }
+                        return exercise.category?.id == category.id ? exercise.sets.map { Double($0.weight) } : []
                     }
                 }
             }
-            
-            if !weights.isEmpty {
-                let median: Double
-                if weights.isEmpty {
-                    median = 0.0
-                } else {
-                    let sorted = weights.sorted()
-                    if sorted.count % 2 == 0 {
-                        let mid = sorted.count / 2
-                        median = (sorted[mid - 1] + sorted[mid]) / 2.0
-                    } else {
-                        median = sorted[sorted.count / 2]
-                    }
-                }
-                points.append(ChartDataPoint(date: currentDate, value: median))
+            guard !weights.isEmpty else { return nil }
+            let sorted = weights.sorted()
+            if sorted.count % 2 == 0 {
+                let mid = sorted.count / 2
+                return (sorted[mid - 1] + sorted[mid]) / 2.0
+            } else {
+                return sorted[sorted.count / 2]
             }
-            
-            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
-            currentDate = nextDate
-            
         }
-        
-        return points.sorted { $0.date < $1.date }
     }
 
     //max data
     private var maxChartData: [ChartDataPoint] {
-        let calendar = Calendar.current
-        let endDate = calendar.startOfDay(for: Date())
-        let startDate: Date = {
-            if selectedLookback == .all {
-                return workouts.map { calendar.startOfDay(for: $0.startTime) }.min() ?? endDate
-            } else {
-                return lookbackPeriod ?? endDate
-            }
-        }()
-        
-        let filteredWorkouts = workouts.filter { workout in
-            let workoutDay = calendar.startOfDay(for: workout.startTime)
-            return workoutDay >= startDate && workoutDay <= endDate
-        }
-        
-        let grouped = Dictionary(grouping: filteredWorkouts, by: { calendar.startOfDay(for: $0.startTime) })
-        
-        var points: [ChartDataPoint] = []
-        var currentDate = startDate
-        while currentDate <= endDate {
-            let dayWorkouts = grouped[currentDate] ?? []
-            let weights: [Double] = dayWorkouts.flatMap { workout in
+        aggregateData { (workoutsForDay: [Workout]) -> Double? in
+            // Gather all weight values for the day
+            let weights: [Double] = workoutsForDay.flatMap { workout in
                 workout.exercises.flatMap { exercise in
                     switch filter {
                     case .exercise(let exerciseTemplate):
-                        if exercise.templateId == exerciseTemplate.id {
-                            return exercise.sets.map { Double($0.weight) }
-                        } else { return [] }
+                        return exercise.templateId == exerciseTemplate.id ? exercise.sets.map { Double($0.weight) } : []
                     case .category(let category):
-                        if exercise.category?.id == category.id {
-                            return exercise.sets.map { Double($0.weight) }
-                        } else { return [] }
+                        return exercise.category?.id == category.id ? exercise.sets.map { Double($0.weight) } : []
                     }
                 }
             }
-            
-            //only append values if there was actually a workout that day
-            if !weights.isEmpty {
-                let maxValue = weights.max() ?? 0.0
-                points.append(ChartDataPoint(date: currentDate, value: maxValue))
-            }
-            
-            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
-            currentDate = nextDate
+            // Return nil if there are no weight values (i.e. no workouts for the day)
+            guard !weights.isEmpty else { return nil }
+            return weights.max()
         }
-        
-        return points.sorted { $0.date < $1.date }
     }
 
     //min data
     private var minChartData: [ChartDataPoint] {
-        let calendar = Calendar.current
-        let endDate = calendar.startOfDay(for: Date())
-        let startDate: Date = {
-            if selectedLookback == .all {
-                return workouts.map { calendar.startOfDay(for: $0.startTime) }.min() ?? endDate
-            } else {
-                return lookbackPeriod ?? endDate
-            }
-        }()
-        
-        let filteredWorkouts = workouts.filter { workout in
-            let workoutDay = calendar.startOfDay(for: workout.startTime)
-            return workoutDay >= startDate && workoutDay <= endDate
-        }
-        
-        let grouped = Dictionary(grouping: filteredWorkouts, by: { calendar.startOfDay(for: $0.startTime) })
-        
-        var points: [ChartDataPoint] = []
-        var currentDate = startDate
-        while currentDate <= endDate {
-            let dayWorkouts = grouped[currentDate] ?? []
-            let weights: [Double] = dayWorkouts.flatMap { workout in
+        aggregateData { (workoutsForDay: [Workout]) -> Double? in
+            // Gather all weight values for the day
+            let weights: [Double] = workoutsForDay.flatMap { workout in
                 workout.exercises.flatMap { exercise in
                     switch filter {
                     case .exercise(let exerciseTemplate):
-                        if exercise.templateId == exerciseTemplate.id {
-                            return exercise.sets.map { Double($0.weight) }
-                        } else {
-                            return []
-                        }
+                        return exercise.templateId == exerciseTemplate.id ? exercise.sets.map { Double($0.weight) } : []
                     case .category(let category):
-                        if exercise.category?.id == category.id {
-                            return exercise.sets.map { Double($0.weight) }
-                        } else {
-                            return []
-                        }
+                        return exercise.category?.id == category.id ? exercise.sets.map { Double($0.weight) } : []
                     }
                 }
             }
-            
-            // Only append a min value if there is data for that day.
-            if !weights.isEmpty {
-                let minValue = weights.min()!
-                points.append(ChartDataPoint(date: currentDate, value: minValue))
-            }
-            
-            guard let nextDate = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
-            currentDate = nextDate
+            // Only return a value if data exists for that day.
+            guard !weights.isEmpty else { return nil }
+            return weights.min()
         }
-        
-        return points.sorted { $0.date < $1.date }
     }
 
     private var medianWeightChart: some View {
