@@ -24,8 +24,9 @@ func initializeWorkoutsIfNeeded(context: ModelContext) {
         // 3. Create 21 workouts, one for each day in the last 3 weeks.
         let calendar = Calendar.current
         
-        for dayOffset in 0..<21 {
+        for dayOffset in 0..<41 {
             // Calculate the date for this offset (0 = today, 1 = yesterday, etc.)
+            //this creates 41 days of exercise history
             guard let dayDate = calendar.date(byAdding: .day, value: -dayOffset, to: Date()) else { continue }
             
             // Pick a random start time for the workout (e.g., between 6 AM and 8 AM).
