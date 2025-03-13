@@ -10,7 +10,7 @@ import Charts
 import SwiftData
 
 // Example StatsView
-struct StatsView: View {
+struct StatsHomeView: View {
     // Fetch workouts from SwiftData.
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     @Environment(\.modelContext) private var modelContext
@@ -37,7 +37,8 @@ struct StatsView: View {
             List {
                 //duration
                 Section("Highlights"){
-                    rollingWorkoutDuration
+                    
+                rollingWorkoutDuration
                 }
                 //category
                 Section {
@@ -53,33 +54,33 @@ struct StatsView: View {
                     
                     NavigationLink("Exercise") {
                         ListOfExerciseTemplatesView(navigationTitle: "Select an Exercise", allWorkouts: workouts) { exercise in
-                            ExerciseOverTimeChartView(filter: .exercise(exercise), workouts: workouts)
+                            ExerciseAndCategoryChartsView(filter: .exercise(exercise), workouts: workouts)
                         }
                     }
                     
                     NavigationLink("Category") {
                         ListOfCategoriesView(navigationTitle:"Select a Category", allWorkouts: workouts) {
                             category in
-                            ExerciseOverTimeChartView(filter: .category(category), workouts: workouts)
+                            ExerciseAndCategoryChartsView(filter: .category(category), workouts: workouts)
                         }
                     }
                 }
                 
                 Section("Overall Stats"){
                     NavigationLink("Workout Length") {
-                        //todo
+                        GeneralChartsView(filter: .length, workouts: workouts)
                     }
                     NavigationLink("Volume") {
-                        //todo
+                        GeneralChartsView(filter: .volume, workouts: workouts)
                     }
                     NavigationLink("Total Sets") {
-                        //todo
+                        GeneralChartsView(filter: .sets, workouts: workouts)
                     }
                     NavigationLink("Total Reps") {
-                        //todo
+                        GeneralChartsView(filter: .reps, workouts: workouts)
                     }
                     NavigationLink("Set Intensity") {
-                        //todo
+                        GeneralChartsView(filter: .intensity, workouts: workouts)
                     }
                 }
             }
@@ -115,7 +116,7 @@ struct StatsView: View {
 
 
 //MARK: Duration Bar Chart
-extension StatsView {
+extension StatsHomeView {
     
     //Daily stats
     private var dailyStats: [(day: Date, totalTime: TimeInterval)] {
@@ -243,7 +244,7 @@ extension StatsView {
 }
 
 //MARK: Category Pie Chart
-extension StatsView {
+extension StatsHomeView {
     
     //Daily stats, returned as a tuple (name, count, percentage)
     private var overallCategoryDistribution: [(category: String, count: Int, percentage: Double)] {
@@ -319,7 +320,7 @@ extension StatsView {
 }
 
 //MARK: Intensity Bar Chart
-extension StatsView {
+extension StatsHomeView {
     
     /// Computes the average set intensity per day over the lookback period.
     /// For each day, it collects intensity values from all sets (of every exercise in each workout).
@@ -435,7 +436,7 @@ extension StatsView {
 
 
 #Preview {
-    StatsView(selectedTab: .constant(.stats))
+    StatsHomeView(selectedTab: .constant(.stats))
 }
 
 

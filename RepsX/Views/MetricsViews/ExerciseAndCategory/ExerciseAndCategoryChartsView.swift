@@ -2,7 +2,7 @@ import SwiftUI
 import Charts
 import SwiftData
 
-struct ExerciseOverTimeChartView: View {
+struct ExerciseAndCategoryChartsView: View {
     
     // Used to show either Exercise or Category data based on the filter provided.
     // Also updates the navigation title.
@@ -22,15 +22,6 @@ struct ExerciseOverTimeChartView: View {
             let calendar = Calendar.current
             // For example, if 7 days is selected, we want workouts from today through 6 days ago.
             return calendar.startOfDay(for: calendar.date(byAdding: .day, value: -(selectedLookback.rawValue - 1), to: Date()) ?? Date())
-        }
-    }
-    
-    // Filter workouts based on the selected lookback period.
-    private var recentWorkouts: [Workout] {
-        if let period = lookbackPeriod {
-            return workouts.filter { $0.startTime >= period }
-        } else {
-            return workouts // "All Time" selected – no filtering.
         }
     }
     
@@ -60,11 +51,19 @@ struct ExerciseOverTimeChartView: View {
                     .pickerStyle(.segmented)
                     .padding()
                     
-                    // charts
+                    //charts
                     ExpandableChartView(title: "Weight") {
                         medianWeightChart
                     }
-                    
+                    //TODO: Remove Sets
+                    /*
+                     replace sets with volume, then include high level stats below
+                     ex. % increase over time
+                     ex. set a goal
+                     ex. progress towards goal
+                     ex. total sets completed
+                     will be 2 charts, 3-4 stats, then the history view
+                     */
                     ExpandableChartView(title:"Sets") {
                         setCountChart
                     }
@@ -79,7 +78,6 @@ struct ExerciseOverTimeChartView: View {
                     }
                 }
                 .navigationTitle(filter.navigationTitle)
-                .padding(.vertical, 30)
                 
             }
             .background(Color(UIColor.systemGroupedBackground))
@@ -90,7 +88,7 @@ struct ExerciseOverTimeChartView: View {
     
 }
 //MARK: Workout History Button
-extension ExerciseOverTimeChartView {
+extension ExerciseAndCategoryChartsView {
     func exerciseHistoryNavigationLink(workouts: [Workout], exerciseTemplate: ExerciseTemplate) -> some View {
         NavigationLink {
             ExerciseHistoryView(workouts: workouts, exerciseTemplate: exerciseTemplate)
@@ -110,7 +108,7 @@ extension ExerciseOverTimeChartView {
 }
 
 //MARK: X Axis Labels
-extension ExerciseOverTimeChartView {
+extension ExerciseAndCategoryChartsView {
     // Calculate the stride based on the range of dates in chartData.
     private var xAxisStride: Int {
         guard let firstDate = setChartData.first?.date,
@@ -123,7 +121,7 @@ extension ExerciseOverTimeChartView {
 }
 
 //MARK: data aggregator function
-extension ExerciseOverTimeChartView {
+extension ExerciseAndCategoryChartsView {
     // A helper function to aggregate data by day.
     private func aggregateData(using aggregator: ([Workout]) -> Double?) -> [ChartDataPoint] {
         let calendar = Calendar.current
@@ -163,7 +161,7 @@ extension ExerciseOverTimeChartView {
 }
 
 //MARK: Sets over time
-extension ExerciseOverTimeChartView {
+extension ExerciseAndCategoryChartsView {
     
     // Computed property that aggregates chart data across the full selected date range.
     private var setChartData: [ChartDataPoint] {
@@ -176,6 +174,8 @@ extension ExerciseOverTimeChartView {
                         return exercise.templateId == exerciseTemplate.id ? sum + exercise.sets.count : sum
                     case .category(let category):
                         return exercise.category?.id == category.id ? sum + exercise.sets.count : sum
+                    default: //default is category
+                        return sum
                     }
                 }
             })
@@ -222,7 +222,7 @@ extension ExerciseOverTimeChartView {
 }
 
 //MARK: Volume over time
-extension ExerciseOverTimeChartView {
+extension ExerciseAndCategoryChartsView {
     
     // Computed property for the total volume of weight lifted per day.
     private var volumeChartData: [ChartDataPoint] {
@@ -243,6 +243,9 @@ extension ExerciseOverTimeChartView {
                                 volume + (set.weight * Double(set.reps))
                             }
                         } else { return sum }
+                        
+                    default: //default breaks
+                        return sum
                     }
                 }
             }
@@ -289,7 +292,7 @@ extension ExerciseOverTimeChartView {
 }
 
 //MARK: Median Weight over time
-extension ExerciseOverTimeChartView {
+extension ExerciseAndCategoryChartsView {
 
     //median data
     private var medianChartData: [ChartDataPoint] {
@@ -302,6 +305,9 @@ extension ExerciseOverTimeChartView {
                         return exercise.templateId == exerciseTemplate.id ? exercise.sets.map { Double($0.weight) } : []
                     case .category(let category):
                         return exercise.category?.id == category.id ? exercise.sets.map { Double($0.weight) } : []
+                        
+                    default: //default is category
+                        return []
                     }
                 }
             }
@@ -327,6 +333,8 @@ extension ExerciseOverTimeChartView {
                         return exercise.templateId == exerciseTemplate.id ? exercise.sets.map { Double($0.weight) } : []
                     case .category(let category):
                         return exercise.category?.id == category.id ? exercise.sets.map { Double($0.weight) } : []
+                    default: //default is category
+                        return []
                     }
                 }
             }
@@ -347,6 +355,8 @@ extension ExerciseOverTimeChartView {
                         return exercise.templateId == exerciseTemplate.id ? exercise.sets.map { Double($0.weight) } : []
                     case .category(let category):
                         return exercise.category?.id == category.id ? exercise.sets.map { Double($0.weight) } : []
+                    default: //default is category
+                        return []
                     }
                 }
             }

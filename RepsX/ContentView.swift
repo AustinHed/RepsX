@@ -41,7 +41,7 @@ struct ContentView: View {
                 .tag(Tab.routines)
             
             //Stats
-            StatsView(selectedTab: $selectedTab)
+            StatsHomeView(selectedTab: $selectedTab)
                 .tabItem {
                     Label("Stats", systemImage: "chart.bar")
                 }
