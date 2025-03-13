@@ -72,6 +72,8 @@ struct GeneralChartsView: View {
                         generalChart
                     }
                     
+                    StatsSummaryView(dataPoints: chartData, filter: filter, lookback: selectedLookback)
+                    
                     //button to more details
                     generalHistoryNavigationLink(dataPoints: chartData, filter: filter)
                 }
@@ -173,8 +175,10 @@ extension GeneralChartsView {
             return "Daily Sets Completed"
         case .reps:
             return "Daily Reps Completed"
-        //case .intensity:
+        case .intensity:
+            return "Daily Intensity Score"
         default:
+            //should never happen
             return "General Chart"
         }
     }

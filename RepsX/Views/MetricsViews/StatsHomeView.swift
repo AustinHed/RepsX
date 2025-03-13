@@ -49,7 +49,6 @@ struct StatsHomeView: View {
                     setIntensityChart
                 }
                 
-                
                 Section("Specific Stats") {
                     
                     NavigationLink("Exercise") {

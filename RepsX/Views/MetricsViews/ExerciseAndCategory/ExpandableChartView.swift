@@ -19,8 +19,8 @@ struct ExpandableChartView<Content: View>: View {
     let expandedHeight: CGFloat
     
     init(title: String,
-         collapsedHeight: CGFloat = 150,
-         expandedHeight: CGFloat = 300,
+         collapsedHeight: CGFloat = 100,
+         expandedHeight: CGFloat = 400,
          @ViewBuilder content: () -> Content) {
         self.title = title
         self.collapsedHeight = collapsedHeight
