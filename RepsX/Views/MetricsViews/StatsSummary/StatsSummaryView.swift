@@ -2,13 +2,29 @@ import SwiftUI
 
 struct StatsSummaryView: View {
     let dataPoints: [ChartDataPoint]
+    
+    let minDataPoints: [ChartDataPoint]?
+    let maxDataPoints: [ChartDataPoint]?
+    
     let filter: ChartFilter
     let lookback: LookbackOption
+    
+    init(dataPoints: [ChartDataPoint],
+         minDataPoints: [ChartDataPoint]? = nil,
+         maxDataPoints: [ChartDataPoint]? = nil,
+         filter: ChartFilter,
+         lookback: LookbackOption) {
+        self.dataPoints = dataPoints
+        self.minDataPoints = minDataPoints
+        self.maxDataPoints = maxDataPoints
+        self.filter = filter
+        self.lookback = lookback
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             
-            //Human readable text
+            //Summary text
             VStack (alignment:.leading){
                 humanReadableSummary
                     .padding(.bottom)
@@ -24,7 +40,7 @@ struct StatsSummaryView: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(.horizontal)
             
-            //metrics
+            //Min Max Avg Med
             HStack {
                 // Minimum (excluding zeros)
                 VStack(alignment: .leading) {
@@ -32,7 +48,7 @@ struct StatsSummaryView: View {
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     if let minVal = currentMin {
-                        Text("\(minVal, specifier: "%.0f")")
+                        Text("\(minVal, specifier: "%.1f")")
                             .font(.headline)
                     } else {
                         Text("-")
@@ -46,7 +62,7 @@ struct StatsSummaryView: View {
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                     if let maxVal = currentMax {
-                        Text("\(maxVal, specifier: "%.0f")")
+                        Text("\(maxVal, specifier: "%.1f")")
                             .font(.headline)
                     } else {
                         Text("-")
@@ -89,7 +105,7 @@ struct StatsSummaryView: View {
     }
 }
 
-// MARK: - Calendar Helpers
+// MARK: Calendar Helpers
 extension StatsSummaryView {
     var calendar: Calendar { Calendar.current }
     var today: Date { calendar.startOfDay(for: Date()) }
@@ -100,7 +116,7 @@ extension StatsSummaryView {
     }
 }
 
-// MARK: - Filtered Data Points
+// MARK: Filtered Data Points
 extension StatsSummaryView {
     /// Data points falling within the current period.
     var currentDataPoints: [ChartDataPoint] {
@@ -110,7 +126,7 @@ extension StatsSummaryView {
     }
 }
 
-// MARK: - Aggregated Metrics
+// MARK:  Aggregated Metrics
 extension StatsSummaryView {
     /// Total value of the current period.
     var currentTotal: Double {
@@ -159,16 +175,57 @@ extension StatsSummaryView {
     /// The minimum value from the current period, excluding zeros.
     var currentMin: Double? {
         let nonZeroValues = currentDataPoints.map { $0.value }.filter { $0 != 0 }
-        return nonZeroValues.min()
+        if minDataPoints != nil {
+            return minDataPoint.value
+        } else {
+            return nonZeroValues.min()
+        }
+        
     }
     
     /// The maximum value from the current period.
     var currentMax: Double? {
-        currentDataPoints.map { $0.value }.max()
+        if maxDataPoints != nil {
+            return maxDataPoint.value
+        } else {
+            return currentDataPoints.map { $0.value }.max()
+        }
     }
 }
 
-// MARK: - Titles and Human Readable summary
+//MARK: Min and Max values and dates
+extension StatsSummaryView {
+    var minDataPoint: (value: Double, date: String) {
+        // Find the ChartDataPoint with the minimum value.
+        guard let minPoint = minDataPoints?.min(by: { $0.value < $1.value }) else {
+            return (0, "N/A")
+        }
+        
+        // Format the date as a string.
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        let dateString = formatter.string(from: minPoint.date)
+        
+        return (minPoint.value, dateString)
+    }
+    
+    var maxDataPoint: (value: Double, date: String) {
+        // Find the ChartDataPoint with the minimum value.
+        guard let minPoint = maxDataPoints?.max(by: { $0.value < $1.value }) else {
+            return (0, "N/A")
+        }
+        
+        // Format the date as a string.
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        let dateString = formatter.string(from: minPoint.date)
+        
+        return (minPoint.value, dateString)
+    }
+    
+}
+
+// MARK: Titles and Human Readable summary
 extension StatsSummaryView {
     
     /// A human-readable version of the metric name (used in the summary sentence).
@@ -184,6 +241,10 @@ extension StatsSummaryView {
             return "daily reps"
         case .intensity:
             return "daily set intensity"
+        case .category(let category):
+            return "\(category.name) weight"
+        case .exercise(let exercise):
+            return "\(exercise.name) weight"
         default:
             return "metric"
         }
@@ -230,6 +291,10 @@ extension StatsSummaryView {
                 return "reps"
             case .intensity:
                 return "units"
+            case .category(_):
+                return "lbs"
+            case .exercise(_):
+                return "lbs"
             default:
                 return ""
             }
@@ -273,27 +338,31 @@ extension StatsSummaryView {
     
     var humanReadableTotal: Text {
         switch filter {
+        
         case .length:
-            // Total duration (assumed to be in minutes)
             return Text("Since ")
                 + Text("\(formattedStartDate)").bold()
                 + Text(", you logged ")
                 + Text("\(currentTotal, specifier: "%.0f") minutes of exercise.").bold()
+        
         case .sets:
             return Text("Since ")
                 + Text("\(formattedStartDate)").bold()
                 + Text(", you completed ")
                 + Text("\(currentTotal, specifier: "%.0f") sets.").bold()
+        
         case .reps:
             return Text("Since ")
                 + Text("\(formattedStartDate)").bold()
                 + Text(", you completed ")
                 + Text("\(currentTotal, specifier: "%.0f") reps.").bold()
+        
         case .volume:
             return Text("Since ")
                 + Text("\(formattedStartDate)").bold()
                 + Text(", you lifted ")
                 + Text("\(currentTotal, specifier: "%.0f") lbs of volume.").bold()
+        
         case .intensity:
             // For intensity, using average because a total doesn't make sense.
             return Text("Since ")
@@ -301,8 +370,29 @@ extension StatsSummaryView {
                 + Text(", your average intensity was ")
                 + Text("\(currentAverage, specifier: "%.1f")").bold()
                 + Text(".")
+        
+        case .category(let category):
+            return Text("Your ")
+            + Text("\(lookback.rawValue)-day ").bold()
+            + Text("\(category.name) PR ")
+            + Text("was ")
+            + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold()
+            + Text(", achieved on ")
+            + Text("\(maxDataPoint.date)").bold()
+        
+        case .exercise(let exercise):
+            return Text("Your ")
+            + Text("\(lookback.rawValue)-day ").bold()
+            + Text("\(exercise.name) PR ")
+            + Text("was ")
+            + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold()
+            + Text(", achieved on ")
+            + Text("\(maxDataPoint.date)").bold()
+            
+        
         default:
             return Text("No metric selected.")
         }
     }
 }
+

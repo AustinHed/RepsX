@@ -66,10 +66,12 @@ struct StatsHomeView: View {
                 }
                 
                 Section("Overall Stats"){
-                    NavigationLink("Workout Length") {
+                    //favorite exercises
+                    //favorite categories
+                    NavigationLink("Workout Duration") {
                         GeneralChartsView(filter: .length, workouts: workouts)
                     }
-                    NavigationLink("Volume") {
+                    NavigationLink("Workout Volume") {
                         GeneralChartsView(filter: .volume, workouts: workouts)
                     }
                     NavigationLink("Total Sets") {

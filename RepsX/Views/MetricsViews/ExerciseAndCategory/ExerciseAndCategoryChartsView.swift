@@ -51,19 +51,14 @@ struct ExerciseAndCategoryChartsView: View {
                     .pickerStyle(.segmented)
                     .padding()
                     
+                    //metrics
+                    StatsSummaryView(dataPoints: medianChartData, minDataPoints:minChartData, maxDataPoints:maxChartData, filter: filter, lookback: selectedLookback)
+                    
                     //charts
                     ExpandableChartView(title: "Weight") {
                         medianWeightChart
                     }
-                    //TODO: Remove Sets
-                    /*
-                     replace sets with volume, then include high level stats below
-                     ex. % increase over time
-                     ex. set a goal
-                     ex. progress towards goal
-                     ex. total sets completed
-                     will be 2 charts, 3-4 stats, then the history view
-                     */
+
                     ExpandableChartView(title:"Sets") {
                         setCountChart
                     }

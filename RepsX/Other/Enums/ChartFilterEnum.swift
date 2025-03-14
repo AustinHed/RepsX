@@ -17,19 +17,19 @@ enum ChartFilter {
     var navigationTitle: String {
         switch self {
         case .exercise(let template):
-            return "History: \(template.name)"
+            return "\(template.name)"
         case .category(let category):
-            return "History: \(category.name)"
+            return "\(category.name)"
         case .length:
-            return "Workout Length History"
+            return "Workout Duration"
         case .volume:
-            return "Volume History"
+            return "Workout Volume"
         case .sets:
-            return "Set History"
+            return "Total Sets"
         case .reps:
-            return "Rep History"
+            return "Total Reps"
         case .intensity:
-            return "Intensity History"
+            return "Set Intensity"
         }
     }
 }

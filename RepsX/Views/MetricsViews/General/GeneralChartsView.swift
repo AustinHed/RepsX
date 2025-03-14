@@ -9,12 +9,12 @@ struct GeneralChartsView: View {
     
     // Ensure that this view is only used with generic filters.
     init(filter: ChartFilter, workouts: [Workout]) {
-        switch filter {
-        case .exercise, .category:
-            fatalError("GenericWorkoutStatsChartView must be used with a generic filter, not .exercise or .category.")
-        default:
-            break
-        }
+//        switch filter {
+//        case .exercise, .category:
+//            fatalError("GenericWorkoutStatsChartView must be used with a generic filter, not .exercise or .category.")
+//        default:
+//            break
+//        }
         self.filter = filter
         self.workouts = workouts
     }
@@ -68,11 +68,14 @@ struct GeneralChartsView: View {
                     .pickerStyle(.segmented)
                     .padding()
                     
+                    //summary text
+                    StatsSummaryView(dataPoints: chartData, filter: filter, lookback: selectedLookback)
+                    
+                    
+                    //chart
                     ExpandableChartView(title: chartTitle) {
                         generalChart
                     }
-                    
-                    StatsSummaryView(dataPoints: chartData, filter: filter, lookback: selectedLookback)
                     
                     //button to more details
                     generalHistoryNavigationLink(dataPoints: chartData, filter: filter)

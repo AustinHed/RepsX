@@ -7,9 +7,16 @@
 import SwiftUI
 import Foundation
 
+//TODO: update so that the chart can have 2 different collapsed sizes (smaller for Sets / Volume on Exercises)
+enum ExpandableChartSize {
+    case small
+    case large
+}
+
 struct ExpandableChartView<Content: View>: View {
     let title: String
     let content: Content
+    
     
     // State to track if the chart is expanded or collapsed.
     @State private var isExpanded = false
