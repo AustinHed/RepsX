@@ -13,6 +13,7 @@ struct LogView: View {
     
     //Fetch all workouts
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
+    //TODO: pass this array when opening a workout, to be used to access Exercise History when viewing an exercise
     @Environment(\.modelContext) private var modelContext
     
     //Fetch favorited routines
