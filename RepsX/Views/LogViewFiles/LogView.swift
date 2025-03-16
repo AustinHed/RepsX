@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import SwipeActions
 
+
 struct LogView: View {
     
     //Fetch all workouts
@@ -58,6 +59,14 @@ struct LogView: View {
             
             ScrollView{
                 LazyVStack(spacing: 12) {
+                    
+                    //Calendar
+                    CalendarView(workouts: workouts)
+                        .background(Color.white)
+                        .cornerRadius(16)
+                        .padding(.horizontal)
+                    
+                    //Workouts
                     ForEach(workouts) { workout in
                         //logViewRow
                         SwipeView{
@@ -88,11 +97,13 @@ struct LogView: View {
             .animation(.easeInOut(duration: 0.3), value: workouts)
             .contentMargins(.horizontal,0)
             .navigationTitle("Log")
+            
             //MARK: Toolbar
             //add workout button
             .toolbar {
                 menuToolbarItem
             }
+            
             //MARK: Full Screen Covers
             //show edit workout views
             .fullScreenCover(isPresented: $editNewWorkout) { newWorkoutEditor }
@@ -278,7 +289,70 @@ extension LogView {
     }
 }
 
-//#Preview {
-//    LogView(selectedTab: .constant(.log))
-//        .modelContainer(SampleData.shared.modelContainer)
-//}
+//MARK: Calendar section
+extension LogView {
+    // Generate 14 dates starting from 13 days ago through today.
+    private var fourteenDays: [Date] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        // Create an array of 14 dates, where the first element is 13 days ago and the last is today.
+        return (0..<14).compactMap { offset in
+            calendar.date(byAdding: .day, value: -(13 - offset), to: today)
+        }
+    }
+    
+    // Split the dates into two rows.
+    private var firstRow: [Date] {
+        Array(fourteenDays.prefix(7))
+    }
+    
+    private var secondRow: [Date] {
+        Array(fourteenDays.suffix(7))
+    }
+    
+    // Formatter for the date in "dd/MM" format.
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd/MM"
+        return formatter.string(from: date)
+    }
+    
+    private func calendar(firstRow: [Date], secondRow:[Date]) -> some View {
+        VStack(spacing: 16) {
+            // First row of circles.
+            HStack(spacing: 16) {
+                ForEach(firstRow, id: \.self) { date in
+                    Circle()
+                        .fill(Color.blue.opacity(0.3))
+                        .frame(width: 35, height: 35)
+                        .overlay(
+                            Text(formattedDate(date))
+                                .font(.caption)
+                                .foregroundColor(.black)
+                        )
+                }
+            }
+            // Second row of circles.
+            HStack(spacing: 16) {
+                ForEach(secondRow, id: \.self) { date in
+                    Circle()
+                        .fill(Color.blue.opacity(0.3))
+                        .frame(width: 30, height: 30)
+                        .overlay(
+                            Text(formattedDate(date))
+                                .font(.caption)
+                                .foregroundColor(.black)
+                        )
+                }
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.white)
+        )
+
+    }
+    
+    
+}
