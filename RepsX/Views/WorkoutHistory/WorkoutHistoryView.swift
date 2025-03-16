@@ -46,6 +46,7 @@ struct WorkoutHistoryView: View {
     @State var coordinator = WorkoutCoordinator.shared
     
     // Group workouts by month and year (e.g., "February 2025")
+    //TODO: fix grouping workouts - breaks when updating intensity, not sure why
     private var groupedWorkouts: [String: [Workout]] {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMMM yyyy"
@@ -66,6 +67,7 @@ struct WorkoutHistoryView: View {
         }
     }
     
+    //MARK: Body
     var body: some View {
         NavigationStack {
             
