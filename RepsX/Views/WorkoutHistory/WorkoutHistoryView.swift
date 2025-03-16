@@ -10,7 +10,7 @@ import SwiftData
 import SwipeActions
 
 
-struct LogView: View {
+struct WorkoutHistoryView: View {
     
     //Fetch all workouts
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
@@ -54,49 +54,79 @@ struct LogView: View {
         }
     }
     
+    // Sort the keys (months) in descending order (most recent first)
+    private var sortedGroupKeys: [String] {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM yyyy"
+        return groupedWorkouts.keys.sorted { key1, key2 in
+            guard let date1 = formatter.date(from: key1),
+                  let date2 = formatter.date(from: key2)
+            else { return false }
+            return date1 > date2
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             
             ScrollView{
-                LazyVStack(spacing: 12) {
+                LazyVStack(alignment: .leading, spacing: 12) {
                     
-                    //Calendar
-                    CalendarView(workouts: workouts)
+                    // Calendar at the top
+                    WorkoutHistoryCalendarView(workouts: workouts)
                         .background(Color.white)
                         .cornerRadius(16)
                         .padding(.horizontal)
+                        .padding(.top)
                     
-                    //Workouts
-                    ForEach(workouts) { workout in
-                        //logViewRow
-                        SwipeView{
-                            LogViewRow(workout: workout)
-                                .onTapGesture {
-                                    selectedWorkout = workout
+                    // For each month section...
+                    ForEach(sortedGroupKeys, id: \.self) { monthKey in
+                        if let workoutsForMonth = groupedWorkouts[monthKey] {
+                            VStack(alignment: .leading, spacing: 8) {
+                                // Section header for the month/year
+                                let count = workoutsForMonth.count
+                                let countText = count == 1 ? "workout" : "workouts"
+                                HStack {
+                                    Text("\(monthKey)")
+                                    Spacer()
+                                    Text("\(count) \(countText)")
+                                    
                                 }
-                        }
-                        //swipe actions
-                        trailingActions: { _ in
-                            SwipeAction(
-                                systemImage: "trash",
-                                backgroundColor: .red
-                            ){
-                                workoutToDelete = workout
+                                .font(.headline)
+                                .padding(.vertical, 4)
+                                .padding(.horizontal)
+                                .padding(.horizontal)
+                                    
+                                
+                                // Workouts for this month
+                                ForEach(workoutsForMonth) { workout in
+                                    SwipeView {
+                                        WorkoutHistoryRow(workout: workout)
+                                            .onTapGesture {
+                                                selectedWorkout = workout
+                                            }
+                                    } trailingActions: { _ in
+                                        SwipeAction(
+                                            systemImage: "trash",
+                                            backgroundColor: .red
+                                        ) {
+                                            workoutToDelete = workout
+                                        }
+                                        .foregroundStyle(.white)
+                                    }
+                                    .swipeMinimumDistance(25)
+                                    .swipeActionCornerRadius(16)
+                                    .padding(.horizontal, 16)
+                                }
                             }
-                            .foregroundStyle(.white)
-
                         }
-                        .swipeMinimumDistance(25)
-                        .swipeActionCornerRadius(16)
-                        .padding(.horizontal, 16)
-                        
                     }
                 }
             }
             .background(Color(UIColor.systemGroupedBackground))
             .animation(.easeInOut(duration: 0.3), value: workouts)
             .contentMargins(.horizontal,0)
-            .navigationTitle("Log")
+            .navigationTitle("History")
             
             //MARK: Toolbar
             //add workout button
@@ -145,7 +175,7 @@ struct LogView: View {
 }
 
 //MARK: Toolbar contents
-extension LogView {
+extension WorkoutHistoryView {
     //add workout menu
     private var menuToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) {
@@ -189,7 +219,7 @@ extension LogView {
 }
 
 //MARK: Fullscreen Covers
-extension LogView {
+extension WorkoutHistoryView {
     //new workout editor
     private var newWorkoutEditor: some View {
         Group {
@@ -215,7 +245,7 @@ extension LogView {
             }
         }
     }
-
+    
     //existing workout editor
     private func existingWorkoutEditor(for workout: Workout) -> some View {
         NavigationStack {
@@ -234,7 +264,7 @@ extension LogView {
                 }
         }
     }
-
+    
     //workout coordinator
     private var coordinatorWorkoutEditor: some View {
         Group {
@@ -258,7 +288,7 @@ extension LogView {
 
 //MARK: Alert
 //TODO: Fix this so it can be used
-extension LogView {
+extension WorkoutHistoryView {
     func deleteWorkoutAlert(
         workoutToDelete: Binding<Workout?>,
         workoutViewModel: WorkoutViewModel
@@ -273,24 +303,24 @@ extension LogView {
                     }),
                    presenting: workoutToDelete.wrappedValue,
                    actions: { workout in
-                       Button("Delete", role: .destructive) {
-                           withAnimation {
-                               workoutToDelete.wrappedValue = nil
-                               workoutViewModel.deleteWorkout(workout)
-                           }
-                       }
-                       Button("Cancel", role: .cancel) {
-                           workoutToDelete.wrappedValue = nil
-                       }
-                   },
+            Button("Delete", role: .destructive) {
+                withAnimation {
+                    workoutToDelete.wrappedValue = nil
+                    workoutViewModel.deleteWorkout(workout)
+                }
+            }
+            Button("Cancel", role: .cancel) {
+                workoutToDelete.wrappedValue = nil
+            }
+        },
                    message: { workout in
-                       Text("Are you sure you want to delete this workout?")
-                   })
+            Text("Are you sure you want to delete this workout?")
+        })
     }
 }
 
 //MARK: Calendar section
-extension LogView {
+extension WorkoutHistoryView {
     // Generate 14 dates starting from 13 days ago through today.
     private var fourteenDays: [Date] {
         let calendar = Calendar.current
@@ -351,7 +381,7 @@ extension LogView {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color.white)
         )
-
+        
     }
     
     

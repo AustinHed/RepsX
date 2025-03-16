@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CalendarView: View {
+struct WorkoutHistoryCalendarView: View {
     let workouts: [Workout] // Array of logged workouts.
     @State private var isExpanded = false
     @State private var currentDate = Date()
@@ -89,6 +89,7 @@ struct CalendarView: View {
             // Common header on the same horizontal plane.
             HStack {
                 // Left navigation button.
+                Spacer()
                 Button(action: {
                     withAnimation {
                         if isExpanded {
@@ -131,6 +132,7 @@ struct CalendarView: View {
                     Image(systemName: "chevron.right")
                         .font(.title3)
                 }
+                Spacer()
                 
                 // Expand/contract toggle button with extra left padding.
                 Button(action: {
@@ -144,6 +146,7 @@ struct CalendarView: View {
                 }
             }
             .padding(.horizontal)
+            .padding(.top)
             
             // Calendar grid.
             if isExpanded {
@@ -220,12 +223,12 @@ struct CalendarView: View {
                 .padding()
             }
         }
-        .padding()
+        //.padding()
     }
 }
 
 struct CalendarView_Previews: PreviewProvider {
     static var previews: some View {
-        CalendarView(workouts: Workout.sampleData)
+        WorkoutHistoryCalendarView(workouts: Workout.sampleData)
     }
 }

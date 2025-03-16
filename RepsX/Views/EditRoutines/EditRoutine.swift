@@ -51,7 +51,7 @@ struct EditRoutine: View {
                         WorkoutCoordinator.shared.currentWorkout = newWorkout
                         WorkoutCoordinator.shared.showEditWorkout = true
                         //then, tell the TabView to navigate to .log
-                        selectedTab = .log
+                        selectedTab = .history
                         //finally, dismiss the EditRoutineView
                         dismiss()
                     }

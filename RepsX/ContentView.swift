@@ -10,10 +10,10 @@ import SwiftData
 
 struct ContentView: View {
     
-    @State private var selectedTab: Tab = .log
+    @State private var selectedTab: Tab = .history
         
         enum Tab {
-            case log, routines, stats, settings
+            case history, routines, stats, settings
         }
     
     @Environment(\.modelContext) private var modelContext
@@ -26,12 +26,12 @@ struct ContentView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             //Log
-            LogView(selectedTab: $selectedTab)
+            WorkoutHistoryView(selectedTab: $selectedTab)
                 .globalKeyboardDoneButton()
                 .tabItem {
-                    Label("Log", systemImage: "list.bullet")
+                    Label("History", systemImage: "list.bullet")
                 }
-                .tag(Tab.log)
+                .tag(Tab.history)
             
             //Routines
             RoutinesView(selectedTab: $selectedTab)

@@ -18,6 +18,11 @@ struct IntensityBar: View {
         SetViewModel(modelContext: modelContext)
     }
     
+    //exercise view model
+    private var exerciseViewModel:ExerciseViewModel {
+        ExerciseViewModel(modelContext: modelContext)
+    }
+    
     //theme view Model
     private var userThemeViewModel: UserThemeViewModel {
         UserThemeViewModel(modelContext: modelContext)
@@ -33,7 +38,8 @@ struct IntensityBar: View {
                     .onTapGesture {
                         // Update the intensity property based on the tapped segment (1-indexed)
                         withAnimation(.bouncy) {
-                            setViewModel.updateSet(set, newIntensity: index + 1)
+                            exerciseViewModel.updateSet(set, newIntensity: index + 1)
+//                            setViewModel.updateSet(set, newIntensity: index + 1)
                         }
                         
                     }
@@ -69,15 +75,3 @@ struct IntensityBar: View {
     }
 }
 
-//#Preview {
-//    //default data
-//    let category = CategoryModel(name: "chest")
-//    let newWorkout = Workout(id: UUID(), startTime: Date())
-//    let newExercise = Exercise(name: "Bench Press", category: category, workout: newWorkout)
-//    let newSet = Set(exercise: newExercise, reps: 10, weight: 10, intensity: 3)
-//    
-//    @Environment(\.modelContext) var modelContext
-//    let setViewModel:SetViewModel = SetViewModel(modelContext: modelContext)
-//    IntensityBar(set:Set(exercise: newExercise, reps: 10, weight: 10, intensity: 3))
-//        .padding(.horizontal)
-//}

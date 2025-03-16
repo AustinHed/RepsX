@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct LogViewRow: View {
+struct WorkoutHistoryRow: View {
     var workout: Workout
     @State private var isExpanded: Bool = false  // Default is contracted
 
@@ -21,7 +21,7 @@ struct LogViewRow: View {
     }
 }
 
-extension LogViewRow {
+extension WorkoutHistoryRow {
     // The accent bar remains unchanged.
     private var accentLine: some View {
         Rectangle()

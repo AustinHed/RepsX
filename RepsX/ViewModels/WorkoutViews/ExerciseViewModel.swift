@@ -39,14 +39,6 @@ class ExerciseViewModel {
 //MARK: Exercise Functions
 extension ExerciseViewModel {
     //MARK: Add and Delete
-    //add an exercise to a workout
-//    func addExercise(to workout: Workout, name: String, category: CategoryModel, modality: ExerciseModality) {
-//        let order = workout.exercises.count
-//        let newExercise = Exercise(id: UUID(), name: name, category: category, workout: workout, order: order, modality: modality)
-//        workout.exercises.append(newExercise)
-//        modelContext.insert(newExercise)
-//        save()
-//    }
     //delete an exercise from a workout
     func deleteExercise(_ exercise: Exercise, from workout: Workout) {
         //1. Remove the exercise from the workout's exercises array. This is to avoid potential UI issues where a view depends on the array
@@ -125,7 +117,7 @@ extension ExerciseViewModel {
     
     //MARK: Update
     //global update sets function
-    func updateSet(_ set: Set, newReps: Int? = nil, newWeight: Double? = nil, newTime: Double? = nil, newDistance: Double? = nil) {
+    func updateSet(_ set: Set, newReps: Int? = nil, newWeight: Double? = nil, newTime: Double? = nil, newDistance: Double? = nil, newIntensity:Int? = nil) {
         if let newReps = newReps {
             set.reps = newReps
         }
@@ -139,6 +131,9 @@ extension ExerciseViewModel {
         
         if let newDistance = newDistance {
             set.distance = newDistance
+        }
+        if let newIntensity = newIntensity {
+            set.intensity = newIntensity
         }
         save()
     }
