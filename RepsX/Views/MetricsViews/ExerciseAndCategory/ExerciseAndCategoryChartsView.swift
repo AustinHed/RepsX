@@ -33,6 +33,10 @@ struct ExerciseAndCategoryChartsView: View {
         return nil
     }
     
+    
+    //Dot and bar size
+    let markerSize: CGFloat = 8
+    
     var body: some View {
         if setChartData.isEmpty {
             Text("No data available for the selected period.")
@@ -360,10 +364,45 @@ extension ExerciseAndCategoryChartsView {
             return weights.min()
         }
     }
-
+    
+    //used to create the barmark between min and max values for a day
+    struct CandlestickData: Identifiable {
+        let id = UUID()
+        let date: Date
+        let min: Double
+        let max: Double
+    }
+    
+    //candle stick data array
+    private var candlestickData: [CandlestickData] {
+        // Zip minChartData and maxChartData together.
+        return zip(minChartData, maxChartData).compactMap { (minPoint, maxPoint) in
+            // Ensure the dates match (to be safe).
+            if Calendar.current.isDate(minPoint.date, inSameDayAs: maxPoint.date) {
+                return CandlestickData(date: minPoint.date, min: minPoint.value, max: maxPoint.value)
+            }
+            return nil
+        }
+    }
+    
+    //chart
     private var medianWeightChart: some View {
+        
         Chart {
-            // Draw the median weight line with smooth, curved interpolation.
+            
+            //candlesticks
+            ForEach(candlestickData) { point in
+                BarMark(
+                    x: .value("Date", point.date, unit: .day),
+                    yStart: .value("Min Weight", point.min),
+                    yEnd: .value("Max Weight", point.max),
+                    width: MarkDimension(floatLiteral: markerSize)
+                )
+                .cornerRadius(markerSize / 2) // Capsule-like appearance.
+                .foregroundStyle(.blue.opacity(0.4))
+            }
+            
+            //median line
             ForEach(medianChartData) { point in
                 LineMark(
                     x: .value("Date", point.date, unit: .day),
@@ -371,37 +410,28 @@ extension ExerciseAndCategoryChartsView {
                 )
                 .interpolationMethod(.catmullRom)
                 .foregroundStyle(.blue)
+                .lineStyle(StrokeStyle(lineWidth: 4))
             }
             
-            // Overlay median data point markers.
+            //median data point markers
             ForEach(medianChartData) { point in
                 PointMark(
                     x: .value("Date", point.date, unit: .day),
                     y: .value("Median Weight", point.value)
                 )
-                .symbol(Circle())
-                .foregroundStyle(.blue)
+                .symbol {
+                    ZStack {
+                        Circle()
+                            .fill(Color.blue)
+                            .frame(width: markerSize, height: markerSize)
+                        Circle()
+                            .stroke(Color.white, lineWidth: 2)
+                            .frame(width: markerSize, height: markerSize)
+                    }
+                }
             }
             
-            // Overlay max weight markers.
-            ForEach(maxChartData) { point in
-                PointMark(
-                    x: .value("Date", point.date, unit: .day),
-                    y: .value("Max Weight", point.value)
-                )
-                .symbol(Circle())
-                .foregroundStyle(.red)
-            }
-            
-            // Overlay min weight markers.
-            ForEach(minChartData) { point in
-                PointMark(
-                    x: .value("Date", point.date, unit: .day),
-                    y: .value("Min Weight", point.value)
-                )
-                .symbol(Circle())
-                .foregroundStyle(.green)
-            }
+
         }
         .padding(.vertical)
         .chartXAxis {
