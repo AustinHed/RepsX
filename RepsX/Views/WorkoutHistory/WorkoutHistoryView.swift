@@ -70,7 +70,7 @@ struct WorkoutHistoryView: View {
         NavigationStack {
             
             ScrollView{
-                LazyVStack(alignment: .leading, spacing: 12) {
+                LazyVStack(spacing: 12) {
                     
                     // Calendar at the top
                     WorkoutHistoryCalendarView(workouts: workouts)
@@ -79,47 +79,29 @@ struct WorkoutHistoryView: View {
                         .padding(.horizontal)
                         .padding(.top)
                     
-                    // For each month section...
-                    ForEach(sortedGroupKeys, id: \.self) { monthKey in
-                        if let workoutsForMonth = groupedWorkouts[monthKey] {
-                            VStack(alignment: .leading, spacing: 8) {
-                                // Section header for the month/year
-                                let count = workoutsForMonth.count
-                                let countText = count == 1 ? "workout" : "workouts"
-                                HStack {
-                                    Text("\(monthKey)")
-                                    Spacer()
-                                    Text("\(count) \(countText)")
-                                    
+                    ForEach(workouts) { workout in
+                        //logViewRow
+                        SwipeView{
+                            WorkoutHistoryRow(workout: workout)
+                                .onTapGesture {
+                                    selectedWorkout = workout
                                 }
-                                .font(.headline)
-                                .padding(.vertical, 4)
-                                .padding(.horizontal)
-                                .padding(.horizontal)
-                                    
-                                
-                                // Workouts for this month
-                                ForEach(workoutsForMonth) { workout in
-                                    SwipeView {
-                                        WorkoutHistoryRow(workout: workout)
-                                            .onTapGesture {
-                                                selectedWorkout = workout
-                                            }
-                                    } trailingActions: { _ in
-                                        SwipeAction(
-                                            systemImage: "trash",
-                                            backgroundColor: .red
-                                        ) {
-                                            workoutToDelete = workout
-                                        }
-                                        .foregroundStyle(.white)
-                                    }
-                                    .swipeMinimumDistance(25)
-                                    .swipeActionCornerRadius(16)
-                                    .padding(.horizontal, 16)
-                                }
-                            }
                         }
+                        //swipe actions
+                        trailingActions: { _ in
+                            SwipeAction(
+                                systemImage: "trash",
+                                backgroundColor: .red
+                            ){
+                                workoutToDelete = workout
+                            }
+                            .foregroundStyle(.white)
+
+                        }
+                        .swipeMinimumDistance(25)
+                        .swipeActionCornerRadius(16)
+                        .padding(.horizontal, 16)
+                        
                     }
                 }
             }
