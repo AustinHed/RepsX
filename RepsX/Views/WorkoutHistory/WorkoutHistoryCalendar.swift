@@ -106,13 +106,12 @@ struct WorkoutHistoryCalendarView: View {
                     Image(systemName: "chevron.left")
                         .font(.title3)
                 }
-                
                 Spacer()
                 
                 // Header text.
                 Text(headerText)
                     .font(.headline)
-                
+                    .frame(maxWidth: .infinity)
                 Spacer()
                 
                 // Right navigation button.
@@ -133,10 +132,10 @@ struct WorkoutHistoryCalendarView: View {
                         .font(.title3)
                 }
                 Spacer()
-                
+
                 // Expand/contract toggle button with extra left padding.
                 Button(action: {
-                    withAnimation {
+                    withAnimation (.spring) {
                         isExpanded.toggle()
                     }
                 }) {
@@ -156,7 +155,7 @@ struct WorkoutHistoryCalendarView: View {
                     // Weekday header with unique IDs.
                     ForEach(Array(["S", "M", "T", "W", "T", "F", "S"].enumerated()), id: \.offset) { _, day in
                         Text(day)
-                            .font(.subheadline)
+                            .font(.caption)
                             .frame(maxWidth: .infinity)
                     }
                     // Calendar cells.
@@ -177,9 +176,11 @@ struct WorkoutHistoryCalendarView: View {
                             Text("\(calendar.component(.day, from: date))")
                                 .lineLimit(1)
                                 .fixedSize(horizontal: true, vertical: false)
-                                .frame(maxWidth: .infinity, minHeight: 40)
+                                .frame(maxWidth: .infinity)
+                                .padding(8)
+                                
                                 .background(backgroundColor)
-                                .cornerRadius(8)
+                                .cornerRadius(30) //was 8
                                 .foregroundColor(isFuture ? .gray : .primary)
                         } else {
                             Text("")
@@ -207,14 +208,15 @@ struct WorkoutHistoryCalendarView: View {
                         VStack {
                             Text(date, format: .dateTime.weekday(.narrow))
                                 .font(.caption)
+                                .frame(maxWidth: .infinity)
                             Text("\(calendar.component(.day, from: date))")
                                 .lineLimit(1)
                                 .fixedSize(horizontal: true, vertical: false)
-                                .font(.headline)
                                 .frame(maxWidth: .infinity)
                                 .padding(8)
+                               
                                 .background(backgroundColor)
-                                .cornerRadius(8)
+                                .cornerRadius(30) //was 8
                                 .foregroundColor(isFuture ? .gray : .primary)
                         }
                         .frame(maxWidth: .infinity)

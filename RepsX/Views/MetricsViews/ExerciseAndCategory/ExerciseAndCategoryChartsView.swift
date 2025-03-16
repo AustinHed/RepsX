@@ -396,7 +396,7 @@ extension ExerciseAndCategoryChartsView {
                     x: .value("Date", point.date, unit: .day),
                     yStart: .value("Min Weight", point.min),
                     yEnd: .value("Max Weight", point.max),
-                    width: MarkDimension(floatLiteral: markerSize)
+                    width: MarkDimension(floatLiteral: markerSize-1)
                 )
                 .cornerRadius(markerSize / 2) // Capsule-like appearance.
                 .foregroundStyle(.blue.opacity(0.4))
@@ -409,7 +409,7 @@ extension ExerciseAndCategoryChartsView {
                     y: .value("Median Weight", point.value)
                 )
                 .interpolationMethod(.catmullRom)
-                .foregroundStyle(.blue)
+                .foregroundStyle(.blue.opacity(0.8))
                 .lineStyle(StrokeStyle(lineWidth: 4))
             }
             

@@ -7,7 +7,7 @@ struct StatsSummaryView: View {
     let maxDataPoints: [ChartDataPoint]?
     
     let filter: ChartFilter
-    let lookback: LookbackOption
+    let lookback: LookbackOption //if allTime, then 0
     
     init(dataPoints: [ChartDataPoint],
          minDataPoints: [ChartDataPoint]? = nil,
@@ -107,6 +107,7 @@ struct StatsSummaryView: View {
 
 // MARK: Calendar Helpers
 extension StatsSummaryView {
+    
     var calendar: Calendar { Calendar.current }
     var today: Date { calendar.startOfDay(for: Date()) }
     
@@ -120,9 +121,22 @@ extension StatsSummaryView {
 extension StatsSummaryView {
     /// Data points falling within the current period.
     var currentDataPoints: [ChartDataPoint] {
-        dataPoints.filter { point in
-            point.date >= currentPeriodStart && point.date <= today
+        
+        if lookback.rawValue != 0 {
+            print ("using limited time")
+            return dataPoints.filter { point in
+                point.date >= currentPeriodStart && point.date <= today
+            }
+            
+        } else {
+            
+            let oldestDataPointDate = dataPoints.min(by: { $0.date < $1.date })?.date ?? Date()
+            print("using all time")
+            return dataPoints.filter { point in
+                point.date >= oldestDataPointDate && point.date <= today
+            }
         }
+        
     }
 }
 
@@ -193,7 +207,8 @@ extension StatsSummaryView {
     }
 }
 
-//MARK: Min and Max values and dates
+//MARK: Min and Max values + associated date
+///used for the candlesticks
 extension StatsSummaryView {
     var minDataPoint: (value: Double, date: String) {
         // Find the ChartDataPoint with the minimum value.
@@ -225,7 +240,7 @@ extension StatsSummaryView {
     
 }
 
-// MARK: Titles and Human Readable summary
+// MARK: Summary & data trends
 extension StatsSummaryView {
     
     /// A human-readable version of the metric name (used in the summary sentence).
@@ -310,24 +325,43 @@ extension StatsSummaryView {
             }
         }
         
-        return Text("Over the last ")
-            + Text("\(lookback.rawValue) days").bold()
-            + Text(" your average ")
+        if lookback.rawValue == 0 {
+            //all time
+            return Text("Your ")
+            + Text("All-Time").bold().foregroundColor(.blue)
+            + Text(" average ")
             + Text("\(humanReadableMetric)")
             + verb
             + Text("\(direction) ").bold().foregroundColor(changeColor)
             + Text("\(changePercentString)%").bold().foregroundColor(changeColor)
             + Text(", from ")
-            + Text("\(baselineString) ").bold()
+            + Text("\(baselineString) ").bold().foregroundStyle(.blue)
             + Text(metricValue)
             + Text(" to ")
-            + Text("\(endingString) ").bold()
+            + Text("\(endingString) ").bold().foregroundStyle(.blue)
             + Text(metricValue)
             + Text(".")
+        } else {
+            return Text("Over the last ")
+                + Text("\(lookback.rawValue) days").bold().foregroundStyle(.blue)
+                + Text(" your average ")
+                + Text("\(humanReadableMetric)")
+                + verb
+                + Text("\(direction) ").bold().foregroundColor(changeColor)
+                + Text("\(changePercentString)%").bold().foregroundColor(changeColor)
+                + Text(", from ")
+                + Text("\(baselineString) ").bold().foregroundStyle(.blue)
+                + Text(metricValue)
+                + Text(" to ")
+                + Text("\(endingString) ").bold().foregroundStyle(.blue)
+                + Text(metricValue)
+                + Text(".")
+        }
+        
     }
 }
 
-//MARK: Human readable total
+//MARK: Human readable total / set PR
 extension StatsSummaryView {
     /// Formats the start date of the current period as "MM/dd/yy".
     var formattedStartDate: String {
@@ -340,55 +374,127 @@ extension StatsSummaryView {
         switch filter {
         
         case .length:
-            return Text("Since ")
-                + Text("\(formattedStartDate)").bold()
-                + Text(", you logged ")
-                + Text("\(currentTotal, specifier: "%.0f") minutes of exercise.").bold()
+            if lookback.rawValue == 0 {
+                //all time
+                return Text("Your")
+                + Text(" All-Time ").bold().foregroundStyle(.blue)
+                + Text(" minutes of exercise logged is ")
+                + Text("\(currentTotal, specifier: "%.0f") minutes.").bold().foregroundStyle(.blue)
+            } else {
+                //limited time
+                return Text("Since ")
+                + Text("\(formattedStartDate)").bold().foregroundStyle(.blue)
+                    + Text(", you logged ")
+                    + Text("\(currentTotal, specifier: "%.0f") minutes of exercise.").bold().foregroundStyle(.blue)
+                
+            }
         
         case .sets:
-            return Text("Since ")
-                + Text("\(formattedStartDate)").bold()
-                + Text(", you completed ")
-                + Text("\(currentTotal, specifier: "%.0f") sets.").bold()
+            if lookback.rawValue == 0 {
+                //all time
+                return Text("Your")
+                + Text(" All-Time ").bold().foregroundStyle(.blue)
+                + Text(" total sets completed is ")
+                + Text("\(currentTotal, specifier: "%.0f") sets.").bold().foregroundStyle(.blue)
+            } else {
+                //limited time
+                return Text("Since ")
+                    + Text("\(formattedStartDate)").bold().foregroundStyle(.blue)
+                    + Text(", you completed ")
+                    + Text("\(currentTotal, specifier: "%.0f") sets.").bold().foregroundStyle(.blue)
+                
+            }
         
         case .reps:
-            return Text("Since ")
-                + Text("\(formattedStartDate)").bold()
-                + Text(", you completed ")
-                + Text("\(currentTotal, specifier: "%.0f") reps.").bold()
+            if lookback.rawValue == 0 {
+                //all time
+                return Text("Your")
+                + Text(" All-Time ").bold().foregroundStyle(.blue)
+                + Text(" total reps completed is ")
+                + Text("\(currentTotal, specifier: "%.0f") reps.").bold().foregroundStyle(.blue)
+                
+            } else {
+                //limited time
+                return Text("Since ")
+                    + Text("\(formattedStartDate)").bold().foregroundStyle(.blue)
+                    + Text(", you completed ")
+                    + Text("\(currentTotal, specifier: "%.0f") reps.").bold().foregroundStyle(.blue)
+                
+            }
         
         case .volume:
-            return Text("Since ")
-                + Text("\(formattedStartDate)").bold()
-                + Text(", you lifted ")
-                + Text("\(currentTotal, specifier: "%.0f") lbs of volume.").bold()
+            if lookback.rawValue == 0 {
+                //all time
+                return Text("Your")
+                + Text(" All-Time ").bold().foregroundStyle(.blue)
+                + Text(" total lift volume is ")
+                + Text("\(currentTotal, specifier: "%.0f") lbs of volume.").bold().foregroundStyle(.blue)
+                
+            } else {
+                //limited time
+                return Text("Since ")
+                    + Text("\(formattedStartDate)").bold().foregroundStyle(.blue)
+                    + Text(", you lifted ")
+                    + Text("\(currentTotal, specifier: "%.0f") lbs of volume.").bold().foregroundStyle(.blue)
+                
+            }
         
         case .intensity:
             // For intensity, using average because a total doesn't make sense.
-            return Text("Since ")
-                + Text("\(formattedStartDate)").bold()
+            if lookback.rawValue == 0 {
+                // all time
+                return Text("Your")
+                + Text(" All-Time ").bold().foregroundStyle(.blue)
+                + Text(" average intensity is ")
+                + Text("\(currentAverage, specifier: "%.1f")").bold().foregroundStyle(.blue)
+                + Text("units.")
+                
+            } else {
+                //limited time
+                return Text("Since ")
+                + Text("\(formattedStartDate)").bold().foregroundStyle(.blue)
                 + Text(", your average intensity was ")
-                + Text("\(currentAverage, specifier: "%.1f")").bold()
+                + Text("\(currentAverage, specifier: "%.1f")").bold().foregroundStyle(.blue)
                 + Text(".")
-        
+            }
+                
         case .category(let category):
-            return Text("Your ")
-            + Text("\(lookback.rawValue)-day ").bold()
-            + Text("\(category.name) PR ")
-            + Text("was ")
-            + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold()
-            + Text(", achieved on ")
-            + Text("\(maxDataPoint.date)").bold()
+            if lookback.rawValue == 0 {
+                return Text("Your ")
+                + Text("All-Time ").bold().foregroundStyle(.blue)
+                + Text("\(category.name) PR ")
+                + Text("is ")
+                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(.blue)
+                + Text(", achieved on ")
+                + Text("\(maxDataPoint.date)").bold().foregroundStyle(.blue)
+            } else {
+                return Text("Your ")
+                + Text("\(lookback.rawValue)-day ").bold().foregroundStyle(.blue)
+                + Text("\(category.name) PR ")
+                + Text("was ")
+                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(.blue)
+                + Text(", achieved on ")
+                + Text("\(maxDataPoint.date)").bold().foregroundStyle(.blue)
+            }
         
         case .exercise(let exercise):
-            return Text("Your ")
-            + Text("\(lookback.rawValue)-day ").bold()
-            + Text("\(exercise.name) PR ")
-            + Text("was ")
-            + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold()
-            + Text(", achieved on ")
-            + Text("\(maxDataPoint.date)").bold()
-            
+            if lookback.rawValue == 0 {
+                return Text("Your ")
+                + Text("All-Time ").bold().foregroundStyle(.blue)
+                + Text("\(exercise.name) PR ")
+                + Text("is ")
+                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(.blue)
+                + Text(", achieved on ")
+                + Text("\(maxDataPoint.date)").bold().foregroundStyle(.blue)
+            } else {
+                return Text("Your ")
+                + Text("\(lookback.rawValue)-day ").bold().foregroundStyle(.blue)
+                + Text("\(exercise.name) PR ")
+                + Text("was ")
+                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(.blue)
+                + Text(", achieved on ")
+                + Text("\(maxDataPoint.date)").bold().foregroundStyle(.blue)
+            }
         
         default:
             return Text("No metric selected.")

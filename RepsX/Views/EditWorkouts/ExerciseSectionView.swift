@@ -216,18 +216,18 @@ extension ExerciseSectionView {
             
             TextField("0", text: Binding(
                 get: {
-                    let formatted = String(format: "%.0f", set.time)
+                    let formatted = String(format: "%.0f", set.distance)
                     return formatted == "0" ? "" : formatted
                 },
                 set: { newValue in
                     if newValue.isEmpty {
-                        set.time = 0
+                        set.distance = 0
                         print("update setDistance with an empty value, use 0")
                     } else if let number = Double(newValue) {
-                        set.time = number
+                        set.distance = number
                         print("update setDistance with valid value")
                     } else {
-                        set.time = 0
+                        set.distance = 0
                         print("update setDistance with invalid value, use 0")
                     }
                 }
