@@ -54,7 +54,7 @@ struct RoutinesView: View {
                     Button {
                         //new Routine
                     } label: {
-                        Image(systemName:"plus")
+                        Image(systemName:"plus.circle")
                     }
                     .foregroundStyle(userThemeViewModel.primaryColor)
 

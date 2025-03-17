@@ -87,30 +87,6 @@ struct StatsHomeView: View {
             }
             .navigationTitle("Stats")
             .listSectionSpacing(12)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Text("test")
-                }
-                
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button(lookbackRange == 7 ? "14-day view" : "7-day view") {
-                            withAnimation{
-                                if lookbackRange == 7 {
-                                    lookbackRange = 14
-                                } else {
-                                    lookbackRange = 7
-                                }
-                            }
-                            
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                    }
-                    
-                }
-            }
-            
         }
     }
 }
