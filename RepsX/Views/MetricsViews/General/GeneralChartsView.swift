@@ -79,6 +79,8 @@ struct GeneralChartsView: View {
                     
                     //button to more details
                     generalHistoryNavigationLink(dataPoints: chartData, filter: filter)
+                    
+                    Spacer()
                 }
             }
             .navigationTitle(filter.navigationTitle)

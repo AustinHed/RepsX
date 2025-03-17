@@ -75,6 +75,8 @@ struct ExerciseAndCategoryChartsView: View {
                     if let template = exerciseTemplate {
                         exerciseHistoryNavigationLink(workouts: workouts, exerciseTemplate: template)
                     }
+                    
+                    Spacer()
                 }
                 .navigationTitle(filter.navigationTitle)
                 

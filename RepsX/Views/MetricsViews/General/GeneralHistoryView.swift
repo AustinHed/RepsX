@@ -29,6 +29,7 @@ struct GeneralHistoryView: View {
         List(dataPoints.sorted {$0.date > $1.date}, id: \.date) { dataPoint in
             rowView(for: dataPoint)
         }
+        .navigationTitle("History: \(filter.navigationTitle)")
     }
 }
 

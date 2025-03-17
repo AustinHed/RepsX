@@ -30,8 +30,6 @@ struct ListOfCategoriesView<Destination: View>: View {
     //selected category
     @State private var selectedCategory:CategoryModel? = nil
     
-    //add a passed ExerciseTemplate
-    
     //Add new category
     @State private var isAddingNewCategory: Bool = false
     
@@ -61,7 +59,7 @@ struct ListOfCategoriesView<Destination: View>: View {
                     }
                 }
             }
-            .navigationTitle("Edit Categories")
+            .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             //MARK: Toolbar
             .toolbar{
