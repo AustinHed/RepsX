@@ -22,86 +22,99 @@ struct StatsSummaryView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            
-            //Summary text
-            VStack (alignment:.leading){
-                humanReadableSummary
-                    .padding(.bottom)
+        if dataPoints.isEmpty {
+            //not enough data
+            Text("Not enough data. Please return later to see insights into your progress")
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .padding(.horizontal)
+        } else {
+            //main content
+            VStack(alignment: .leading, spacing: 12) {
                 
-                // Overall Total
-                //this should be a computed var
-                humanReadableTotal
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal)
-            .padding(.vertical, 10)
-            .background(Color.white)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding(.horizontal)
-            
-            //Min Max Avg Med
-            HStack {
-                // Minimum (excluding zeros)
-                VStack(alignment: .leading) {
-                    Text("Min")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                    if let minVal = currentMin {
-                        Text("\(minVal, specifier: "%.1f")")
-                            .font(.headline)
-                    } else {
-                        Text("-")
+                //Summary text
+                VStack (alignment:.leading){
+                    humanReadableSummary
+                        .padding(.bottom)
+                    
+                    // Overall Total
+                    //this should be a computed var
+                    humanReadableTotal
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .padding(.horizontal)
+                
+                //Min Max Avg Med
+                HStack {
+                    // Minimum (excluding zeros)
+                    VStack(alignment: .leading) {
+                        Text("Min")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        if let minVal = currentMin {
+                            Text("\(minVal, specifier: "%.1f")")
+                                .font(.headline)
+                        } else {
+                            Text("-")
+                                .font(.headline)
+                        }
+                    }
+                    Spacer()
+                    // Maximum
+                    VStack(alignment: .leading) {
+                        Text("Max")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        if let maxVal = currentMax {
+                            Text("\(maxVal, specifier: "%.1f")")
+                                .font(.headline)
+                        } else {
+                            Text("-")
+                                .font(.headline)
+                        }
+                    }
+                    Spacer()
+                    //average
+                    VStack(alignment: .leading) {
+                        Text("Average")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        Text("\(currentAverage, specifier: "%.1f")")
                             .font(.headline)
                     }
-                }
-                Spacer()
-                // Maximum
-                VStack(alignment: .leading) {
-                    Text("Max")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                    if let maxVal = currentMax {
-                        Text("\(maxVal, specifier: "%.1f")")
-                            .font(.headline)
-                    } else {
-                        Text("-")
-                            .font(.headline)
+                    Spacer()
+                    //median
+                    VStack(alignment: .leading) {
+                        Text("Median")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        if let medianVal = currentMedian {
+                            Text("\(medianVal, specifier: "%.1f")")
+                                .font(.headline)
+                        } else {
+                            Text("-")
+                                .font(.headline)
+                        }
                     }
                 }
-                Spacer()
-                //average
-                VStack(alignment: .leading) {
-                    Text("Average")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                    Text("\(currentAverage, specifier: "%.1f")")
-                        .font(.headline)
-                }
-                Spacer()
-                //median
-                VStack(alignment: .leading) {
-                    Text("Median")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                    if let medianVal = currentMedian {
-                        Text("\(medianVal, specifier: "%.1f")")
-                            .font(.headline)
-                    } else {
-                        Text("-")
-                            .font(.headline)
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal)
-            .padding(.vertical, 10)
-            .background(Color.white)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding(.horizontal)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.vertical, 10)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .padding(.horizontal)
 
-            
+                
+            }
         }
+        
     }
 }
 
@@ -269,7 +282,7 @@ extension StatsSummaryView {
     var humanReadableSummary: Text {
         let sortedPoints = currentDataPoints.sorted { $0.date < $1.date }
         guard let first = sortedPoints.first, let last = sortedPoints.last, first.value != 0 else {
-            return Text("Not enough data to compute a trend.")
+            return Text("Not enough data to compute a trend. Please return later to see insights into your progress")
         }
         
         let baseline: Double

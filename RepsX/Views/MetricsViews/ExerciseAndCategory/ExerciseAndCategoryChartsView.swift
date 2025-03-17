@@ -42,7 +42,6 @@ struct ExerciseAndCategoryChartsView: View {
             Text("No data available for the selected period.")
                 .foregroundStyle(.secondary)
         } else {
-            
             ScrollView{
                 LazyVStack(spacing:12) {
                     
@@ -59,8 +58,15 @@ struct ExerciseAndCategoryChartsView: View {
                     StatsSummaryView(dataPoints: medianChartData, minDataPoints:minChartData, maxDataPoints:maxChartData, filter: filter, lookback: selectedLookback)
                     
                     //charts
+                    //TODO: Fix this - should show when not enough data to create chart
                     ExpandableChartView(title: "Weight") {
-                        medianWeightChart
+                        if setChartData.isEmpty {
+                            Text("not enough data")
+                                .foregroundStyle(.black)
+                        } else {
+                            medianWeightChart
+                        }
+                        
                     }
 
                     ExpandableChartView(title:"Sets") {
@@ -87,25 +93,6 @@ struct ExerciseAndCategoryChartsView: View {
     }
     
     
-}
-//MARK: Workout History Button
-extension ExerciseAndCategoryChartsView {
-    func exerciseHistoryNavigationLink(workouts: [Workout], exerciseTemplate: ExerciseTemplate) -> some View {
-        NavigationLink {
-            ExerciseHistoryView(workouts: workouts, exerciseTemplate: exerciseTemplate)
-        } label: {
-            HStack {
-                Text("Exercise History")
-                Spacer()
-                Image(systemName: "chevron.right")
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 10)
-            .background(Color.white)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding(.horizontal)
-        }
-    }
 }
 
 //MARK: X Axis Labels
@@ -158,137 +145,6 @@ extension ExerciseAndCategoryChartsView {
         }
         
         return points.sorted { $0.date < $1.date }
-    }
-}
-
-//MARK: Sets over time
-extension ExerciseAndCategoryChartsView {
-    
-    // Computed property that aggregates chart data across the full selected date range.
-    private var setChartData: [ChartDataPoint] {
-        aggregateData { (workoutsForDay: [Workout]) -> Double? in
-            guard !workoutsForDay.isEmpty else { return nil }
-            return Double(workoutsForDay.reduce(0) { total, workout in
-                total + workout.exercises.reduce(0) { sum, exercise in
-                    switch filter {
-                    case .exercise(let exerciseTemplate):
-                        return exercise.templateId == exerciseTemplate.id ? sum + exercise.sets.count : sum
-                    case .category(let category):
-                        return exercise.category?.id == category.id ? sum + exercise.sets.count : sum
-                    default: //default is category
-                        return sum
-                    }
-                }
-            })
-        }
-    }
-    
-    //the chart
-    private var setCountChart: some View {
-        Chart(setChartData) { point in
-            BarMark(
-                x: .value("Date", point.date, unit: .day),
-                y: .value("Total Sets", point.value)
-            )
-            .clipShape(Capsule())
-        }
-        .padding(.vertical)
-        .chartXAxis {
-            AxisMarks(values: .stride(by: .day, count: xAxisStride)) { value in
-                AxisValueLabel {
-                    if let dateValue = value.as(Date.self) {
-                        Text(dateValue, format: .dateTime.month(.defaultDigits).day(.twoDigits))
-                            .font(.caption)
-                    }
-                }
-            }
-        }
-        .chartYAxis {
-            AxisMarks(values: .automatic) { value in
-                if let number = value.as(Double.self), number == 0 {
-                    // Using zero opacity to hide 0.
-                    AxisGridLine().foregroundStyle(.gray.opacity(0))
-                    AxisTick().foregroundStyle(.gray.opacity(0))
-                    AxisValueLabel().foregroundStyle(.gray.opacity(0))
-                } else {
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2, 2]))
-                    AxisTick(stroke: StrokeStyle(lineWidth: 0.5))
-                    AxisValueLabel()
-                        .font(.caption2)
-                        .foregroundStyle(.gray)
-                }
-            }
-        }
-    }
-}
-
-//MARK: Volume over time
-extension ExerciseAndCategoryChartsView {
-    
-    // Computed property for the total volume of weight lifted per day.
-    private var volumeChartData: [ChartDataPoint] {
-        aggregateData { (workoutsForDay: [Workout]) -> Double? in
-            guard !workoutsForDay.isEmpty else { return nil }
-            return workoutsForDay.reduce(0.0) { total, workout in
-                total + workout.exercises.reduce(0.0) { sum, exercise in
-                    switch filter {
-                    case .exercise(let exerciseTemplate):
-                        if exercise.templateId == exerciseTemplate.id {
-                            return sum + exercise.sets.reduce(0.0) { volume, set in
-                                volume + (set.weight * Double(set.reps))
-                            }
-                        } else { return sum }
-                    case .category(let category):
-                        if exercise.category?.id == category.id {
-                            return sum + exercise.sets.reduce(0.0) { volume, set in
-                                volume + (set.weight * Double(set.reps))
-                            }
-                        } else { return sum }
-                        
-                    default: //default breaks
-                        return sum
-                    }
-                }
-            }
-        }
-    }
-    
-    //the chart
-    private var volumeCountChart: some View {
-        Chart(volumeChartData) { point in
-            BarMark(
-                x: .value("Date", point.date, unit: .day),
-                y: .value("Total Volume", point.value)
-            )
-            .clipShape(Capsule())
-        }
-        .padding(.vertical)
-        .chartXAxis {
-            AxisMarks(values: .stride(by: .day, count: xAxisStride)) { value in
-                AxisValueLabel {
-                    if let dateValue = value.as(Date.self) {
-                        Text(dateValue, format: .dateTime.month(.defaultDigits).day(.twoDigits))
-                            .font(.caption)
-                    }
-                }
-            }
-        }
-        .chartYAxis {
-            AxisMarks(values: .automatic) { value in
-                if let number = value.as(Double.self), number == 0 {
-                    // Using zero opacity to hide 0.
-                    AxisGridLine().foregroundStyle(.gray.opacity(0))
-                    AxisTick().foregroundStyle(.gray.opacity(0))
-                    AxisValueLabel().foregroundStyle(.gray.opacity(0))
-                } else {
-                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2, 2]))
-                    AxisTick(stroke: StrokeStyle(lineWidth: 0.5))
-                    AxisValueLabel()
-                        .font(.caption2)
-                        .foregroundStyle(.gray)
-                }
-            }
-        }
     }
 }
 
@@ -432,7 +288,6 @@ extension ExerciseAndCategoryChartsView {
                     }
                 }
             }
-            
 
         }
         .padding(.vertical)
@@ -460,6 +315,157 @@ extension ExerciseAndCategoryChartsView {
                         .foregroundStyle(.gray)
                 }
             }
+        }
+    }
+}
+
+//MARK: Sets over time
+extension ExerciseAndCategoryChartsView {
+    
+    // Computed property that aggregates chart data across the full selected date range.
+    private var setChartData: [ChartDataPoint] {
+        aggregateData { (workoutsForDay: [Workout]) -> Double? in
+            guard !workoutsForDay.isEmpty else { return nil }
+            return Double(workoutsForDay.reduce(0) { total, workout in
+                total + workout.exercises.reduce(0) { sum, exercise in
+                    switch filter {
+                    case .exercise(let exerciseTemplate):
+                        return exercise.templateId == exerciseTemplate.id ? sum + exercise.sets.count : sum
+                    case .category(let category):
+                        return exercise.category?.id == category.id ? sum + exercise.sets.count : sum
+                    default: //default is category
+                        return sum
+                    }
+                }
+            })
+        }
+    }
+    
+    //the chart
+    private var setCountChart: some View {
+        Chart(setChartData) { point in
+            BarMark(
+                x: .value("Date", point.date, unit: .day),
+                y: .value("Total Sets", point.value)
+            )
+            .clipShape(Capsule())
+        }
+        .padding(.vertical)
+        .chartXAxis {
+            AxisMarks(values: .stride(by: .day, count: xAxisStride)) { value in
+                AxisValueLabel {
+                    if let dateValue = value.as(Date.self) {
+                        Text(dateValue, format: .dateTime.month(.defaultDigits).day(.twoDigits))
+                            .font(.caption)
+                    }
+                }
+            }
+        }
+        .chartYAxis {
+            AxisMarks(values: .automatic) { value in
+                if let number = value.as(Double.self), number == 0 {
+                    // Using zero opacity to hide 0.
+                    AxisGridLine().foregroundStyle(.gray.opacity(0))
+                    AxisTick().foregroundStyle(.gray.opacity(0))
+                    AxisValueLabel().foregroundStyle(.gray.opacity(0))
+                } else {
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2, 2]))
+                    AxisTick(stroke: StrokeStyle(lineWidth: 0.5))
+                    AxisValueLabel()
+                        .font(.caption2)
+                        .foregroundStyle(.gray)
+                }
+            }
+        }
+    }
+}
+
+//MARK: Volume over time
+extension ExerciseAndCategoryChartsView {
+    
+    // Computed property for the total volume of weight lifted per day.
+    private var volumeChartData: [ChartDataPoint] {
+        aggregateData { (workoutsForDay: [Workout]) -> Double? in
+            guard !workoutsForDay.isEmpty else { return nil }
+            return workoutsForDay.reduce(0.0) { total, workout in
+                total + workout.exercises.reduce(0.0) { sum, exercise in
+                    switch filter {
+                    case .exercise(let exerciseTemplate):
+                        if exercise.templateId == exerciseTemplate.id {
+                            return sum + exercise.sets.reduce(0.0) { volume, set in
+                                volume + (set.weight * Double(set.reps))
+                            }
+                        } else { return sum }
+                    case .category(let category):
+                        if exercise.category?.id == category.id {
+                            return sum + exercise.sets.reduce(0.0) { volume, set in
+                                volume + (set.weight * Double(set.reps))
+                            }
+                        } else { return sum }
+                        
+                    default: //default breaks
+                        return sum
+                    }
+                }
+            }
+        }
+    }
+    
+    //the chart
+    private var volumeCountChart: some View {
+        Chart(volumeChartData) { point in
+            BarMark(
+                x: .value("Date", point.date, unit: .day),
+                y: .value("Total Volume", point.value)
+            )
+            .clipShape(Capsule())
+        }
+        .padding(.vertical)
+        .chartXAxis {
+            AxisMarks(values: .stride(by: .day, count: xAxisStride)) { value in
+                AxisValueLabel {
+                    if let dateValue = value.as(Date.self) {
+                        Text(dateValue, format: .dateTime.month(.defaultDigits).day(.twoDigits))
+                            .font(.caption)
+                    }
+                }
+            }
+        }
+        .chartYAxis {
+            AxisMarks(values: .automatic) { value in
+                if let number = value.as(Double.self), number == 0 {
+                    // Using zero opacity to hide 0.
+                    AxisGridLine().foregroundStyle(.gray.opacity(0))
+                    AxisTick().foregroundStyle(.gray.opacity(0))
+                    AxisValueLabel().foregroundStyle(.gray.opacity(0))
+                } else {
+                    AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [2, 2]))
+                    AxisTick(stroke: StrokeStyle(lineWidth: 0.5))
+                    AxisValueLabel()
+                        .font(.caption2)
+                        .foregroundStyle(.gray)
+                }
+            }
+        }
+    }
+}
+
+//MARK: Workout History Button
+extension ExerciseAndCategoryChartsView {
+    func exerciseHistoryNavigationLink(workouts: [Workout], exerciseTemplate: ExerciseTemplate) -> some View {
+        NavigationLink {
+            ExerciseHistoryView(workouts: workouts, exerciseTemplate: exerciseTemplate)
+        } label: {
+            HStack {
+                Text("Exercise History")
+                Spacer()
+                Image(systemName: "chevron.right")
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 10)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .padding(.horizontal)
         }
     }
 }

@@ -167,7 +167,7 @@ extension StatsHomeView {
             Text("\(periodPercentageDifference, specifier: "%.0f")%")
                 .bold()
                 .foregroundColor(.blue) +
-            Text(" since last time")
+            Text(" compared to the previous 14 days")
         } else {
             return Text("Over the past ") +
             Text("\(lookbackRange) days, ")
