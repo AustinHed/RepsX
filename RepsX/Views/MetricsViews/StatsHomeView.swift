@@ -44,10 +44,6 @@ struct StatsHomeView: View {
                 Section {
                     categoryDistributionChart
                 }
-                //intensity
-                Section {
-                    setIntensityChart
-                }
                 
                 Section("Specific Stats") {
                     
@@ -292,121 +288,6 @@ extension StatsHomeView {
         HStack {
             headerText
             chartView
-        }
-    }
-}
-
-//MARK: Intensity Bar Chart
-extension StatsHomeView {
-    
-    /// Computes the average set intensity per day over the lookback period.
-    /// For each day, it collects intensity values from all sets (of every exercise in each workout).
-    private var dailyIntensityStats: [(day: Date, averageIntensity: Double)] {
-        let calendar = Calendar.current
-        
-        // Group workouts by the start of their day.
-        let grouped = Dictionary(grouping: recentWorkouts, by: { calendar.startOfDay(for: $0.startTime) })
-        
-        // For each day in the lookback period, calculate the average intensity.
-        let stats = (0..<lookbackRange).compactMap { offset -> (Date, Double) in
-            // Determine the day.
-            let day = calendar.date(byAdding: .day, value: -offset, to: Date())!
-            let startOfDay = calendar.startOfDay(for: day)
-            
-            // Gather all intensity values from sets within exercises in workouts for this day.
-            let workoutsForDay = grouped[startOfDay] ?? []
-            let intensities: [Int] = workoutsForDay.flatMap { workout in
-                workout.exercises.flatMap { exercise in
-                    exercise.sets.compactMap { $0.intensity }
-                }
-            }
-            
-            // Compute the average intensity (or 0 if there are none).
-            let average = intensities.isEmpty ? 0.0 : Double(intensities.reduce(0, +)) / Double(intensities.count)
-            return (startOfDay, average)
-        }
-        // Sort the stats in ascending order by date.
-        return stats.sorted(by: { $0.0 < $1.0 })
-    }
-    
-    /// Returns the highest average intensity among all days.
-    private var highestAverageIntensity: Double {
-        dailyIntensityStats.map { $0.averageIntensity }.max() ?? 0
-    }
-    
-    /// Returns the day that saw the highest average intensity.
-    private var highestIntensityDay: Date? {
-        dailyIntensityStats.max { $0.averageIntensity < $1.averageIntensity }?.day
-    }
-    
-    private var highestIntensityValue: Double? {
-        dailyIntensityStats.max { $0.averageIntensity < $1.averageIntensity }?.averageIntensity
-    }
-    
-    private var highestIntensityValueFormatted: String {
-        highestIntensityValue.map { String(format: "%.2f", $0) } ?? "N/A"
-    }
-    
-    /// Formats the highest intensity day as "Mon, Mar 5th".
-    private var highestIntensityDayFormatted: String {
-        guard let day = highestIntensityDay else { return "N/A" }
-        let weekday = day.formatted(.dateTime.weekday(.abbreviated))
-        let month = day.formatted(.dateTime.month(.abbreviated))
-        let dayNumber = Calendar.current.component(.day, from: day)
-        return "\(weekday), \(month) \(dayNumber.ordinal)"
-    }
-    
-    /// A bar chart showing the average set intensity per day.
-    /// The day with the highest average intensity is rendered in dark blue,
-    /// while the other days are shown in lighter blue.
-    /// A header view for the intensity chart.
-    private var setIntensityHeader: some View {
-        return Text("Your most intense day was ")
-        
-        + Text("\(highestIntensityDayFormatted)")
-            .bold()
-            .foregroundColor(.blue)
-        + Text(", with an average set intensity of ")
-        + Text(highestIntensityValueFormatted)
-            .bold()
-            .foregroundColor(.blue)
-        
-    }
-    
-    /// A bar chart view showing the average set intensity per day.
-    private var setIntensityBarChart: some View {
-        Chart {
-            ForEach(dailyIntensityStats, id: \.day) { stat in
-                BarMark(
-                    x: .value("Date", stat.day, unit: .day),
-                    y: .value("Average Intensity", stat.averageIntensity)
-                )
-                .clipShape(Capsule())
-                .foregroundStyle(
-                    stat.averageIntensity == highestAverageIntensity ?
-                    Color.blue : Color.blue.opacity(0.5)
-                )
-            }
-        }
-        .frame(height: 150)
-        .chartXAxis {
-            AxisMarks(values: .stride(by: .day, count: 2)) { value in
-                AxisValueLabel {
-                    if let dateValue = value.as(Date.self) {
-                        Text(dateValue, format: .dateTime.month(.twoDigits).day(.twoDigits))
-                            .font(.caption)
-                    }
-                }
-            }
-        }
-        .chartYAxis(.hidden)
-    }
-    
-    /// The combined view that displays the header and bar chart.
-    var setIntensityChart: some View {
-        VStack {
-            setIntensityHeader
-            setIntensityBarChart
         }
     }
 }
