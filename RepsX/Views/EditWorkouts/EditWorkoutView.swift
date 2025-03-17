@@ -15,7 +15,6 @@ struct EditWorkoutView: View {
     //the initialized workout
     @State var workout: Workout
     
-    
     @State var exerciseToReplace: Exercise?
     
     //viewModel
@@ -34,12 +33,7 @@ struct EditWorkoutView: View {
     @FocusState private var endTimeFocused: Bool
     
     //time picker
-    @State private var isTimePickerPresented: Bool = false
-    @State private var editingTime: TimePickerMode = .start
-    
-    //color picker
-    @State private var isColorPickerPresented: Bool = false
-    @State private var selectedColor: String = "#808080"
+    @State private var activeTimePicker: TimePickerMode? = nil
     
     //Reorder
     @State private var isReordering: Bool = false
@@ -162,12 +156,13 @@ struct EditWorkoutView: View {
         }
         //MARK: Sheets
         //Time picker
-        .sheet(isPresented: $isTimePickerPresented) {
-            if editingTime == .start {
-                TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .start, primaryColor: userThemeViewModel.primaryColor)
-            } else {
-                TimePickerSheet(workout: workout, workoutViewModel: workoutViewModel, mode: .end, primaryColor: userThemeViewModel.primaryColor)
-            }
+        .sheet(item: $activeTimePicker) { mode in
+            TimePickerSheet(
+                workout: workout,
+                workoutViewModel: workoutViewModel,
+                mode: mode,
+                primaryColor: userThemeViewModel.primaryColor
+            )
         }
         //Reorder / Delete
         .sheet(isPresented: $isReordering) {
@@ -265,14 +260,13 @@ extension EditWorkoutView {
 //start time row
 //TODO: Fix bug with selecting end time actually selecting start time
 extension EditWorkoutView {
+    // Start time row:
     var startTimeRow: some View {
         HStack {
             Text("Start Time")
             Spacer()
             Button {
-                //action
-                editingTime = .start
-                isTimePickerPresented.toggle()
+                activeTimePicker = .start
             } label: {
                 Text("\(workoutViewModel.formattedDate(workout.startTime))")
             }
@@ -282,24 +276,21 @@ extension EditWorkoutView {
 }
 //end time row
 extension EditWorkoutView {
+    // End time row:
     var endTimeRow: some View {
-        HStack{
+        HStack {
             Text("End Time")
             Spacer()
             Button {
-                //action
-                editingTime = .end
-                isTimePickerPresented.toggle()
+                activeTimePicker = .end
             } label: {
-                if workout.endTime != nil {
-                    Text("\(workoutViewModel.formattedDate(workout.endTime!))")
+                if let endTime = workout.endTime {
+                    Text("\(workoutViewModel.formattedDate(endTime))")
                 } else {
                     Text("-")
                 }
             }
             .foregroundStyle(userThemeViewModel.primaryColor)
-            
-            
         }
     }
 }
@@ -372,8 +363,9 @@ extension EditWorkoutView{
 
 //MARK: Date and Time
 //time picker enum
-enum TimePickerMode {
+enum TimePickerMode: Int, Identifiable {
     case start, end
+    var id: Int { self.rawValue }
 }
 //dateTime picker
 struct TimePickerSheet: View {
