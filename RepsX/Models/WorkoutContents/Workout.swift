@@ -17,7 +17,6 @@ class Workout {
     var weight: Double?     // Optional bodyweight in lbs
     var notes: String?      // Optional workout notes
     var rating: Int?
-    var color: String?
 
     @Relationship(deleteRule: .cascade) var exercises: [Exercise] = []
     
@@ -28,8 +27,7 @@ class Workout {
          weight: Double? = nil,
          notes: String? = nil,
          rating: Int? = nil,
-         exercises: [Exercise]? = [],
-         color: String? = ""
+         exercises: [Exercise]? = []
     ) {
         self.id = id
         self.name = name
@@ -39,7 +37,6 @@ class Workout {
         self.notes = notes
         self.rating = rating
         self.exercises = exercises ?? []
-        self.color = color
     }
     
     /// Computed property that returns the workout length (in seconds).

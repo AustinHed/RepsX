@@ -32,14 +32,11 @@ class RoutineViewModel {
     }
     
     //MARK: Update
-    func updateRoutine(_ routine: Routine, newName: String? = nil, newColor: String? = nil) {
+    func updateRoutine(_ routine: Routine, newName: String? = nil) {
         if let newName = newName {
             routine.name = newName
         }
-        
-        if let newColor = newColor {
-            routine.colorHex = newColor
-        }
+
     }
     //favorite
     func favoriteRoutine(_ routine: Routine) {

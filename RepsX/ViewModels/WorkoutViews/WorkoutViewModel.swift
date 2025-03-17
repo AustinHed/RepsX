@@ -58,7 +58,7 @@ extension WorkoutViewModel {
     //add a new workout using a Routine
     func addWorkoutFromRoutine(_ routine: Routine, date: Date) -> Workout {
         //first, create the Workout
-        let newWorkout = Workout(id: UUID(),name: routine.name, startTime: date, color: routine.colorHex)
+        let newWorkout = Workout(id: UUID(),name: routine.name, startTime: date)
         modelContext.insert(newWorkout)
         
         //then, create the Exercises in the workout
@@ -91,7 +91,7 @@ extension WorkoutViewModel {
     
     //MARK: Update Workout functions
     //global update
-    func updateWorkout(_ workout: Workout, newName: String? = nil, newStartTime: Date? = nil, newEndTime:Date? = nil, newNotes: String? = nil, newRating: Int? = nil, newColor: String? = nil) {
+    func updateWorkout(_ workout: Workout, newName: String? = nil, newStartTime: Date? = nil, newEndTime:Date? = nil, newNotes: String? = nil, newRating: Int? = nil) {
         //update name
         if let newName = newName {
             workout.name = newName
@@ -112,10 +112,6 @@ extension WorkoutViewModel {
         //update rating
         if let newRating = newRating {
             workout.rating = max(1, min(5, newRating))
-        }
-        
-        if let newColor = newColor{
-            workout.color = newColor
         }
         //save
         save()
