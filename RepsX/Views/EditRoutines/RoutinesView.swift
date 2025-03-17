@@ -33,19 +33,11 @@ struct RoutinesView: View {
         NavigationStack{
             List {
                 ForEach(routines) { routine in
-                    HStack{
-                        Circle()
-                            .frame(width: 20, height: 20)
-                            //.foregroundStyle(Color(UIColor(hex:routine.colorHex ?? "") ?? .gray))
-                            .foregroundStyle(Color(hexString: routine.colorHex ?? ""))
-                        NavigationLink {
-                            EditRoutine(routine: routine, selectedTab: $selectedTab)
-                        } label: {
-                            RoutineLabel(routine: routine, color: userThemeViewModel.primaryColor)
-                        }
-
+                    NavigationLink {
+                        EditRoutine(routine: routine, selectedTab: $selectedTab)
+                    } label: {
+                        RoutineLabel(routine: routine, color: userThemeViewModel.primaryColor)
                     }
-                    
                 }
             }
             .navigationTitle("Routines")

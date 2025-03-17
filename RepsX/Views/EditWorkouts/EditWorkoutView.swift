@@ -70,13 +70,7 @@ struct EditWorkoutView: View {
                 //End time row
                 endTimeRow
                 
-                //Rating row
-                colorRow
-                    .onAppear {
-                        if workout.color != nil {
-                            selectedColor = workout.color!
-                        }
-                    }
+                //TODO: Rate the workout 1 - 5 stars
                 
             }
             
@@ -218,17 +212,7 @@ struct EditWorkoutView: View {
                     
                 }
             )
-        }
-        )
-        //color picker
-        .sheet(isPresented: $isColorPickerPresented) {
-            ColorPickerGrid(selectedColor: selectedColor) { color in
-                selectedColor = color
-                workoutViewModel.updateWorkout(workout, newColor: color)
-            }
-            .presentationDetents([.height(150)])
-            .presentationBackground(.clear)
-        }
+        })
         //Timer
         .sheet(isPresented: $showTimer) {
             Spacer()
@@ -279,6 +263,7 @@ extension EditWorkoutView {
     }
 }
 //start time row
+//TODO: Fix bug with selecting end time actually selecting start time
 extension EditWorkoutView {
     var startTimeRow: some View {
         HStack {
@@ -318,26 +303,6 @@ extension EditWorkoutView {
         }
     }
 }
-//color row
-extension EditWorkoutView {
-    var colorRow: some View {
-        HStack{
-            Text("Workout Color ")
-            Spacer()
-            Button {
-                isColorPickerPresented.toggle()
-            } label: {
-                Circle()
-                    .frame(width: 20, height: 20)
-                    //.foregroundStyle(Color(UIColor(hex:selectedColor) ?? .gray))
-                    .foregroundStyle(Color(hexString: selectedColor))
-            }
-            
-            
-        }
-    }
-}
-
 
 //MARK: Exercises
 //exercise name
@@ -392,8 +357,6 @@ extension EditWorkoutView {
         }
     }
 }
-
-
 //MARK: Add Exercise Button
 extension EditWorkoutView{
     func addButton(workoutViewModel:WorkoutViewModel) -> some View {
@@ -406,7 +369,6 @@ extension EditWorkoutView{
         .foregroundStyle(userThemeViewModel.primaryColor)
     }
 }
-
 
 //MARK: Date and Time
 //time picker enum
@@ -468,22 +430,3 @@ struct TimePickerSheet: View {
     }
 }
 
-
-////MARK: Preview
-//#Preview {
-//    let testWorkout = Workout(name: "Chest Day", startTime: Date().addingTimeInterval(-3600), endTime: Date(), weight: 150.0, notes: "Good Lift", rating: 5)
-//    let newWorkout = Workout(id: UUID(), startTime: Date())
-//    
-//    
-//    NavigationStack{
-//        EditWorkoutView(workout: newWorkout)
-//            .toolbar {
-//                ToolbarItem(placement: .navigationBarLeading) {
-//                    Button("X") {
-//                        //isAddNewWorkoutPresented = false
-//                    }
-//                }
-//            }
-//            .modelContainer(SampleWorkout.shared.modelContainer)
-//    }
-//}

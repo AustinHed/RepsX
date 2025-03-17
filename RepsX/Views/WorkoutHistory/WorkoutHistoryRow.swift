@@ -13,7 +13,6 @@ struct WorkoutHistoryRow: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            accentLine
             contentStack
         }
         .background(Color.white)
@@ -22,12 +21,6 @@ struct WorkoutHistoryRow: View {
 }
 
 extension WorkoutHistoryRow {
-    // The accent bar remains unchanged.
-    private var accentLine: some View {
-        Rectangle()
-            .fill(Color(hexString: workout.color ?? ""))
-            .frame(height: 7)
-    }
     
     // The main content container.
     private var contentStack: some View {
