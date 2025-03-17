@@ -38,9 +38,18 @@ struct ExerciseAndCategoryChartsView: View {
     let markerSize: CGFloat = 8
     
     var body: some View {
-        if setChartData.isEmpty {
-            Text("No data available for the selected period.")
-                .foregroundStyle(.secondary)
+        if medianChartData.isEmpty {
+            ScrollView{
+                Text("Not enough data to generate insights. Please log additional workouts and check back later.")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                    .padding(.vertical, 10)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding(.horizontal)
+                    .navigationTitle(filter.navigationTitle)
+            }
+            .background(Color(UIColor.systemGroupedBackground))
         } else {
             ScrollView{
                 LazyVStack(spacing:12) {
@@ -58,7 +67,6 @@ struct ExerciseAndCategoryChartsView: View {
                     StatsSummaryView(dataPoints: medianChartData, minDataPoints:minChartData, maxDataPoints:maxChartData, filter: filter, lookback: selectedLookback)
                     
                     //charts
-                    //TODO: Fix this - should show when not enough data to create chart
                     ExpandableChartView(title: "Weight") {
                         if setChartData.isEmpty {
                             Text("not enough data")
