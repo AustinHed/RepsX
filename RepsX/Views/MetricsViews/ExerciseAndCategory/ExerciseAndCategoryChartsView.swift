@@ -33,6 +33,8 @@ struct ExerciseAndCategoryChartsView: View {
         return nil
     }
     
+    //selected data point for the chart
+    @State private var selectedDataPoint: ChartDataPoint? = nil
     
     //Dot and bar size
     let markerSize: CGFloat = 8
@@ -67,21 +69,15 @@ struct ExerciseAndCategoryChartsView: View {
                     StatsSummaryView(dataPoints: medianChartData, minDataPoints:minChartData, maxDataPoints:maxChartData, filter: filter, lookback: selectedLookback)
                     
                     //charts
-                    ExpandableChartView(title: "Weight") {
-                        if setChartData.isEmpty {
-                            Text("not enough data")
-                                .foregroundStyle(.black)
-                        } else {
-                            medianWeightChart
-                        }
-                        
+                    ExpandableChartView(title: "Weight", chartType: filter) {
+                        medianWeightChart
                     }
 
-                    ExpandableChartView(title:"Sets") {
+                    ExpandableChartView(title:"Sets", chartType: filter) {
                         setCountChart
                     }
                     
-                    ExpandableChartView(title:"Volume") {
+                    ExpandableChartView(title:"Volume", chartType: filter) {
                         volumeCountChart
                     }
                                         
@@ -357,6 +353,19 @@ extension ExerciseAndCategoryChartsView {
                 y: .value("Total Sets", point.value)
             )
             .clipShape(Capsule())
+            
+            if let selected = selectedDataPoint {
+                RuleMark(x: .value("Date", selected.date, unit: .day))
+                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [5]))
+                    .foregroundStyle(.blue)
+            }
+        }
+        .interactiveChartOverlay(data: setChartData, selectedDataPoint: $selectedDataPoint) { $0.date }
+        .overlay {
+            // Write the selected data point to the preference.
+            if let selected = selectedDataPoint {
+                Color.clear.preference(key: ChartDataPointPreferenceKey.self, value: selected)
+            }
         }
         .padding(.vertical)
         .chartXAxis {
@@ -477,3 +486,5 @@ extension ExerciseAndCategoryChartsView {
         }
     }
 }
+
+

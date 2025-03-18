@@ -9,12 +9,6 @@ struct GeneralChartsView: View {
     
     // Ensure that this view is only used with generic filters.
     init(filter: ChartFilter, workouts: [Workout]) {
-//        switch filter {
-//        case .exercise, .category:
-//            fatalError("GenericWorkoutStatsChartView must be used with a generic filter, not .exercise or .category.")
-//        default:
-//            break
-//        }
         self.filter = filter
         self.workouts = workouts
     }
@@ -73,7 +67,7 @@ struct GeneralChartsView: View {
                     
                     
                     //chart
-                    ExpandableChartView(title: chartTitle) {
+                    ExpandableChartView(title: chartTitle, chartType: filter) {
                         generalChart
                     }
                     
