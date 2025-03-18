@@ -61,7 +61,7 @@ struct ExpandableChartView<Content: View>: View {
                         case .exercise(_):
                             switch title {
                             case "Weight":
-                                Text("\(selected.value, specifier: "%.2f") median set weight on \(selected.date, format: .dateTime.month(.defaultDigits).day(.twoDigits))")
+                                Text("\(selected.value, specifier: "%.2f") lb median set weight on \(selected.date, format: .dateTime.month(.defaultDigits).day(.twoDigits))")
                                     .font(.headline)
                             case "Sets":
                                 Text("\(selected.value, specifier: "%.0f") sets on \(selected.date, format: .dateTime.month(.defaultDigits).day(.twoDigits))")

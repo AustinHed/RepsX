@@ -33,8 +33,13 @@ struct ExerciseAndCategoryChartsView: View {
         return nil
     }
     
-    //selected data point for the chart
-    @State private var selectedDataPoint: ChartDataPoint? = nil
+    //selected data points for the chart
+    //weight
+    @State private var selectedWeightDataPoint: ChartDataPoint? = nil
+    //sets
+    @State private var selectedSetsDataPoint: ChartDataPoint? = nil
+    //volume
+    @State private var selectedVolumeDataPoint: ChartDataPoint? = nil
     
     //Dot and bar size
     let markerSize: CGFloat = 8
@@ -273,6 +278,12 @@ extension ExerciseAndCategoryChartsView {
                 .interpolationMethod(.catmullRom)
                 .foregroundStyle(.blue.opacity(0.8))
                 .lineStyle(StrokeStyle(lineWidth: 4))
+                
+                if let selected = selectedWeightDataPoint {
+                    RuleMark(x: .value("Date", selected.date, unit: .day))
+                        .lineStyle(StrokeStyle(lineWidth: 2, dash: [5]))
+                        .foregroundStyle(.blue)
+                }
             }
             
             //median data point markers
@@ -293,6 +304,13 @@ extension ExerciseAndCategoryChartsView {
                 }
             }
 
+        }
+        .interactiveChartOverlay(data: medianChartData, selectedDataPoint: $selectedWeightDataPoint) { $0.date }
+        .overlay {
+            // Write the selected data point to the preference.
+            if let selected = selectedWeightDataPoint {
+                Color.clear.preference(key: ChartDataPointPreferenceKey.self, value: selected)
+            }
         }
         .padding(.vertical)
         .chartXAxis {
@@ -354,16 +372,16 @@ extension ExerciseAndCategoryChartsView {
             )
             .clipShape(Capsule())
             
-            if let selected = selectedDataPoint {
+            if let selected = selectedSetsDataPoint {
                 RuleMark(x: .value("Date", selected.date, unit: .day))
                     .lineStyle(StrokeStyle(lineWidth: 2, dash: [5]))
                     .foregroundStyle(.blue)
             }
         }
-        .interactiveChartOverlay(data: setChartData, selectedDataPoint: $selectedDataPoint) { $0.date }
+        .interactiveChartOverlay(data: setChartData, selectedDataPoint: $selectedSetsDataPoint) { $0.date }
         .overlay {
             // Write the selected data point to the preference.
-            if let selected = selectedDataPoint {
+            if let selected = selectedSetsDataPoint {
                 Color.clear.preference(key: ChartDataPointPreferenceKey.self, value: selected)
             }
         }
@@ -436,6 +454,20 @@ extension ExerciseAndCategoryChartsView {
                 y: .value("Total Volume", point.value)
             )
             .clipShape(Capsule())
+            
+            //the visual line marker
+            if let selected = selectedVolumeDataPoint {
+                RuleMark(x: .value("Date", selected.date, unit: .day))
+                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [5]))
+                    .foregroundStyle(.blue)
+            }
+        }
+        .interactiveChartOverlay(data: volumeChartData, selectedDataPoint: $selectedVolumeDataPoint) { $0.date }
+        .overlay {
+            // Write the selected data point to the preference.
+            if let selected = selectedVolumeDataPoint {
+                Color.clear.preference(key: ChartDataPointPreferenceKey.self, value: selected)
+            }
         }
         .padding(.vertical)
         .chartXAxis {

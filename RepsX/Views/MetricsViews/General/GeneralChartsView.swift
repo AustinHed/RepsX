@@ -13,6 +13,8 @@ struct GeneralChartsView: View {
         self.workouts = workouts
     }
     
+    @State private var selectedGeneralDataPoint: ChartDataPoint? = nil
+    
     // A date formatter for display purposes.
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -205,6 +207,19 @@ extension GeneralChartsView {
                 y: .value("Value", point.value)
             )
             .clipShape(Capsule())
+            
+            if let selected = selectedGeneralDataPoint {
+                RuleMark(x: .value("Date", selected.date, unit: .day))
+                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [5]))
+                    .foregroundStyle(.blue)
+            }
+        }
+        .interactiveChartOverlay(data: chartData, selectedDataPoint: $selectedGeneralDataPoint) { $0.date }
+        .overlay {
+            // Write the selected data point to the preference.
+            if let selected = selectedGeneralDataPoint {
+                Color.clear.preference(key: ChartDataPointPreferenceKey.self, value: selected)
+            }
         }
         .chartXAxis {
             AxisMarks(values: .stride(by: .day, count: xAxisStride)) { value in

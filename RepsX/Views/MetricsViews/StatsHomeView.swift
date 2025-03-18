@@ -163,11 +163,11 @@ extension StatsHomeView {
             Text("\(Int(averageWorkoutTime)) minutes")
                 .bold()
                 .foregroundColor(.blue) +
-            Text(" of exercise per day. That's up ") +
+            Text(" of exercise per day. That's a ") +
             Text("\(periodPercentageDifference, specifier: "%.0f")%")
                 .bold()
                 .foregroundColor(.blue) +
-            Text(" compared to the previous 14 days")
+            Text(" change vs the previous 14 day period")
         } else {
             return Text("Over the past ") +
             Text("\(lookbackRange) days, ")
