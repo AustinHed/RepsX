@@ -36,6 +36,7 @@ class ExerciseInRoutineViewModel {
             exerciseInRoutine.setCount = newSetCount
         }
         
+        //replace the exercise template
         if let newExerciseTemplate = newExerciseTemplate {
             exerciseInRoutine.exerciseTemplate = newExerciseTemplate
         }

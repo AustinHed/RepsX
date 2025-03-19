@@ -125,7 +125,6 @@ struct EditRoutine: View {
                         onExerciseSelected: { exerciseTemplate in
                             //take the selected Exercise and add an ExerciseTemplate
                             routineViewModel.addExerciseInRoutine(to: routine, exercise: exerciseTemplate)
-                            print(exerciseTemplate)
                             //dismiss
                             isSelectingExercise = false
                             
@@ -139,7 +138,7 @@ struct EditRoutine: View {
     }
 }
 
-//MARK: Start button
+//MARK: edit button
 extension EditRoutine {
     //TODO: Edit routines
 }

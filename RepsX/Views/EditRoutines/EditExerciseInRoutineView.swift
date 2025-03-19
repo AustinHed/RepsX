@@ -27,6 +27,9 @@ struct EditExerciseInRoutineView: View {
         UserThemeViewModel(modelContext: modelContext)
     }
     
+    //replace exercise var
+    @State var replaceExerciseInRoutine:Bool = false
+    
     var body: some View {
         NavigationStack{
             List{
@@ -48,9 +51,12 @@ struct EditExerciseInRoutineView: View {
                 }
                 
                 Section{
-                    
                     Button {
-                        //replace
+                        replaceExerciseInRoutine.toggle()
+                        //TODO: Replace
+                        //show select cat view
+                        //show list of exercises view
+                        //replace existing exerciseTemplate with selected exercise
                     } label: {
                         Text("Replace")
                             .foregroundStyle(userThemeViewModel.primaryColor)
@@ -69,6 +75,22 @@ struct EditExerciseInRoutineView: View {
             }
             .navigationTitle(exerciseInRoutine.exerciseName)
             .navigationBarTitleDisplayMode(.inline)
+            //MARK: Sheets
+            .sheet(isPresented: $replaceExerciseInRoutine) {
+                NavigationStack {
+                    SelectCategoryView(
+                        isSelectingExercise: $replaceExerciseInRoutine,
+                        onExerciseSelected: {exerciseTemplate in
+                            //take the selected exerciseTemplate and swap it for the existing exerciseTemplate
+                            exerciseInRoutineViewModel.updateExerciseInRoutine(exerciseInRoutine, newExerciseTemplate: exerciseTemplate)
+                            //dismiss
+                            print(exerciseTemplate.name)
+                            print(exerciseInRoutine.exerciseName)
+                            replaceExerciseInRoutine = false
+                        }
+                    )
+                }
+            }
         }
         
     }

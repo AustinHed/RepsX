@@ -27,9 +27,9 @@ struct AddNewRoutineView: View {
     //toggle alert
     @State var showAlert: Bool = false
     
-    //disable save unless 1+ exercises
+    //disable save unless 1+ exercises and non-blank name
     var canSaveRoutine: Bool {
-        if routine.exercises.isEmpty {
+        if routine.exercises.isEmpty || routine.name.isEmpty {
             true
         } else {
             false
