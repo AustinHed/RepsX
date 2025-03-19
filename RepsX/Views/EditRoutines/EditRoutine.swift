@@ -76,7 +76,6 @@ struct EditRoutine: View {
                             routineViewModel.favoriteRoutine(routine)
                             print(routine.favorite)
                         } label: {
-                            
                             HStack{
                                 Text(routine.favorite ? "Unfavorite" : "Favorite")
                                     .foregroundStyle(.black)
@@ -98,7 +97,10 @@ struct EditRoutine: View {
                         
                         //delete specific routine
                         Button (role:.destructive) {
+                            //dismiss
+                            dismiss()
                             //delete
+                            routineViewModel.deleteRoutine(routine)
                         } label: {
                             HStack{
                                 Text("Delete")
@@ -139,10 +141,10 @@ struct EditRoutine: View {
 
 //MARK: Start button
 extension EditRoutine {
-    //TODO
+    //TODO: Edit routines
 }
 
-//MARK: Name and Color
+//MARK: Name
 extension EditRoutine {
     func nameAndColorSection(
         routine: Routine,
@@ -171,6 +173,7 @@ extension EditRoutine {
                 NavigationLink {
                     EditExerciseInRoutineView(exerciseInRoutine: exercise)
                 } label: {
+                    //TODO: what if not sets
                     VStack(alignment:.leading){
                         Text(exercise.exerciseName)
                             .foregroundStyle(.black)
@@ -198,14 +201,3 @@ extension EditRoutine {
         }
     }
 }
-
-
-//#Preview {
-//    let eTemplate = ExerciseTemplate(name: "Bench Press", category:CategoryModel(name: "category"), modality: .repetition)
-//    
-//    let template = ExerciseInRoutine(exerciseTemplate:eTemplate,setCount:5)
-//    
-//    let routine2 = Routine(name: "Push Day", colorHex: "#808080", exercises: [template])
-//    
-//    EditRoutine(routine: routine2, selectedTab: .constant(.routines))
-//}

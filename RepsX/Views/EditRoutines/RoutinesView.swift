@@ -12,7 +12,7 @@ import Foundation
 struct RoutinesView: View {
     
     //Fetch all existing routines
-    @Query(sort: \Routine.name, order: .reverse) var routines: [Routine]
+    @Query(sort: \Routine.name, order: .forward) var routines: [Routine]
     @Environment(\.modelContext) private var modelContext
     
     //routines view model
@@ -25,9 +25,12 @@ struct RoutinesView: View {
         UserThemeViewModel(modelContext: modelContext)
     }
     
+    //new routine AND toggle to invoke navigation link
+    @State private var newRoutine: Routine? = nil
+    @State private var isLinkActive = false
+    
     //Routing around
     @Binding var selectedTab: ContentView.Tab
-    
     
     var body: some View {
         NavigationStack{
@@ -38,39 +41,55 @@ struct RoutinesView: View {
                     } label: {
                         RoutineLabel(routine: routine, color: userThemeViewModel.primaryColor)
                     }
+                    //MARK: Swipe Actions
+                    .swipeActions(edge: .trailing) {
+                        deleteSwipeAction(for: routine)
+                    }
                 }
             }
             .navigationTitle("Routines")
             //MARK: Toolbar
             .toolbar {
-                //Edit Button
-                ToolbarItem(placement: .topBarLeading) {
-                    Text("Edit(WIP)")
-                        .foregroundStyle(userThemeViewModel.primaryColor)
-                }
-                
                 //Plus button
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        //new Routine
+                        //action
+                        newRoutine = routineViewModel.addRoutine(name: "New Routine")
+                        isLinkActive = true
                     } label: {
                         Image(systemName:"plus.circle")
                     }
-                    .foregroundStyle(userThemeViewModel.primaryColor)
-
                 }
+                
+                
             }
+            .background(
+                NavigationLink(
+                    destination: Group {
+                        if let routine = newRoutine {
+                            AddNewRoutineView(routine: routine)
+                        } else {
+                            EmptyView()
+                        }
+                    },
+                    isActive: $isLinkActive,
+                    label: {
+                        EmptyView()
+                    }
+                )
+                .hidden()
+            )
         }
         .tint(userThemeViewModel.primaryColor)
     }
 }
 
-//star on favorited Routines
+//MARK: Star for routines
 extension RoutinesView{
     struct RoutineLabel: View {
         let routine: Routine
         let color:Color
-
+        
         var body: some View {
             Group {
                 if routine.favorite {
@@ -89,7 +108,14 @@ extension RoutinesView{
     }
 }
 
-#Preview {
-    RoutinesView(selectedTab: .constant(.routines))
-        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self, Routine.self])
+//MARK: Swipe to delete
+extension RoutinesView {
+    private func deleteSwipeAction(for routine: Routine) -> some View {
+        Button(role: .destructive) {
+            routineViewModel.deleteRoutine(routine)
+        } label: {
+            Image(systemName: "trash.fill")
+        }
+        .tint(.red)
+    }
 }

@@ -1,0 +1,126 @@
+//
+//  AddNewRoutineView.swift
+//  RepsX
+//
+//  Created by Austin Hed on 3/17/25.
+//
+
+import SwiftUI
+
+struct AddNewRoutineView: View {
+    
+    //Environment
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
+    
+    //the routine
+    var routine: Routine
+    
+    //view models
+    private var routineViewModel: RoutineViewModel {
+        RoutineViewModel(modelContext: modelContext)
+    }
+    
+    //add exercise toggle
+    @State var isAddingExercise: Bool = false
+    
+    //toggle alert
+    @State var showAlert: Bool = false
+    
+    //empty array of ExerciseInRoutines
+    @State private var exercisesInRoutine: [ExerciseInRoutine] = []
+    
+    var body: some View {
+        
+        NavigationStack {
+            List {
+                //name
+                Section {
+                    Text("Placeholder name")
+                }
+                //exercises
+                Section {
+                    ForEach(routine.exercises, id: \.self) { exercise in
+                        NavigationLink {
+                            EditExerciseInRoutineView(exerciseInRoutine: exercise)
+                        } label: {
+                            //TODO: what if not sets
+                            VStack(alignment:.leading){
+                                Text(exercise.exerciseName)
+                                    .foregroundStyle(.black)
+                                Text("\(exercise.setCount) Sets")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.gray)
+                            }
+                        }
+                    }
+                }
+                
+                Section {
+                    Button("Add Exercise") {
+                        isAddingExercise.toggle()
+                    }
+                }
+            }
+            .navigationTitle("New Routine")
+            //MARK: Toolbar
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Cancel") {
+                        showAlert.toggle()
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Save") {
+                        //just closes the editing view
+                        dismiss()
+                    }
+                }
+            }
+            //MARK: Sheets
+            .sheet(isPresented: $isAddingExercise) {
+                NavigationStack{
+                    SelectCategoryView(
+                        isSelectingExercise: $isAddingExercise,
+                        onExerciseSelected: { exerciseTemplate in
+                            routineViewModel.addExerciseInRoutine(to: routine, exercise: exerciseTemplate)
+                            isAddingExercise = false
+                        }
+                        
+                    )
+                }
+            }
+            //MARK: Alerts
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Cancel new routine"),
+                    message: Text("Are you sure you want to cancel? This routine will not be saved"),
+                    primaryButton: .cancel(
+                        Text("Cancel"),
+                        action: {return}
+                    ),
+                    secondaryButton: .destructive(
+                        Text("Cancel Routines"),
+                        action: {
+                            //dismiss
+                            dismiss()
+                            //delete the routine
+                            routineViewModel.deleteRoutine(routine)
+                        }
+                    )
+                )
+            }
+        }
+        .navigationBarBackButtonHidden(true)
+    }
+}
+
+extension AddNewRoutineView {
+    
+}
+
+//#Preview {
+//    let newRoutine = Routine(name: "Test", exercises: [])
+//    AddNewRoutineView(routine: newRoutine)
+//}
