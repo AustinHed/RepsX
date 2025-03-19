@@ -57,7 +57,7 @@ struct EditRoutine: View {
                 }
                 
                 //name
-                nameAndColorSection(routine: routine, routineViewModel: routineViewModel)
+                nameSection(routine: routine, routineViewModel: routineViewModel)
                 
                 //exercises
                 exercisesSection(for: routine)
@@ -146,7 +146,7 @@ extension EditRoutine {
 
 //MARK: Name
 extension EditRoutine {
-    func nameAndColorSection(
+    func nameSection(
         routine: Routine,
         routineViewModel: RoutineViewModel
     ) -> some View {

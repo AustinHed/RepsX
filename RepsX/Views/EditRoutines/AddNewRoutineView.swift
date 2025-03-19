@@ -27,6 +27,15 @@ struct AddNewRoutineView: View {
     //toggle alert
     @State var showAlert: Bool = false
     
+    //disable save unless 1+ exercises
+    var canSaveRoutine: Bool {
+        if routine.exercises.isEmpty {
+            true
+        } else {
+            false
+        }
+    }
+    
     //empty array of ExerciseInRoutines
     @State private var exercisesInRoutine: [ExerciseInRoutine] = []
     
@@ -36,7 +45,7 @@ struct AddNewRoutineView: View {
             List {
                 //name
                 Section {
-                    Text("Placeholder name")
+                    nameSection(routine: routine, routineViewModel: routineViewModel)
                 }
                 //exercises
                 Section {
@@ -76,6 +85,7 @@ struct AddNewRoutineView: View {
                         //just closes the editing view
                         dismiss()
                     }
+                    .disabled(canSaveRoutine)
                 }
             }
             //MARK: Sheets
@@ -116,10 +126,39 @@ struct AddNewRoutineView: View {
     }
 }
 
+//MARK: add exercise button
 extension AddNewRoutineView {
-    
+    func addExerciseButton(isSelectingExercise: Binding <Bool>) -> some View{
+        Section{
+            Button {
+                isSelectingExercise.wrappedValue.toggle()
+            } label: {
+                Text("Add Exercise")
+            }
+        }
+    }
 }
 
+//MARK: edit name
+extension AddNewRoutineView {
+    func nameSection(
+        routine: Routine,
+        routineViewModel: RoutineViewModel
+    ) -> some View {
+        Section {
+            // Edit Name
+            TextField("New Routine", text: Binding(
+                get: { routine.name },
+                set: { newName in
+                    routine.name = newName.isEmpty ? "" : newName
+                }
+            ))
+            .onSubmit {
+                routineViewModel.updateRoutine(routine, newName: routine.name)
+            }
+        }
+    }
+}
 //#Preview {
 //    let newRoutine = Routine(name: "Test", exercises: [])
 //    AddNewRoutineView(routine: newRoutine)
