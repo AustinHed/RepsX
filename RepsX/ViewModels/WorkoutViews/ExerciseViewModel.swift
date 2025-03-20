@@ -151,4 +151,23 @@ extension ExerciseViewModel {
     }
 }
 
+//MARK: Prev Set Values
+extension ExerciseViewModel {
+    
+    func fetchMostRecentWorkout(for templateId: UUID) -> [Set] {
+        let descriptor = FetchDescriptor<Exercise>(
+            predicate: #Predicate { exercise in
+                exercise.templateId == templateId},
+            sortBy: [SortDescriptor(\.workout?.startTime, order: .reverse)]
+        )
+        
+        do {
+            return try modelContext.fetch(descriptor).second?.sets ?? []
+        } catch {
+            print("error fetching most recent sets for a workout \(error)")
+            return []
+        }
+    }
+}
+
 

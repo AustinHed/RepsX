@@ -14,6 +14,9 @@ struct ExerciseSectionView: View {
     //initialized Exercise
     @State var exercise: Exercise
     
+    //most recent exercise
+    @State private var previousSets: [Set] = []
+    
     //viewModel
     private var exerciseViewModel: ExerciseViewModel {
         ExerciseViewModel(modelContext: modelContext)
@@ -58,6 +61,11 @@ struct ExerciseSectionView: View {
                 intensityBar(set:set)
                 
             }
+            .onAppear {
+                    previousSets = exerciseViewModel.fetchMostRecentWorkout(for: exercise.templateId)
+                print("template Id: \(exercise.templateId)")
+                print("\(previousSets.count)")
+            }
             //MARK: Swipe Actions
             .swipeActions(edge: .trailing) {
                 //delete
@@ -70,7 +78,7 @@ struct ExerciseSectionView: View {
                 
             }
         }
-        
+
         //add button
         addButton(primaryColor:userThemeViewModel.primaryColor)
     }
@@ -98,32 +106,42 @@ extension ExerciseSectionView {
 
 //MARK: Weight
 extension ExerciseSectionView {
-    /// Returns an editable weight field view for a given set.
+    /// Returns an editable weight field view for a given set,
+    /// using the previous weight as a placeholder (if available) or "0" otherwise.
     func setWeightField(for set: Set) -> some View {
-        VStack(alignment: .leading) {
+        // Compute the placeholder:
+        let placeholder: String = {
+            if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.weight != 0 }) {
+                return String(format: "%.0f", historicalSet.weight)
+            }
+            return "0"
+        }()
+        
+        return VStack(alignment: .leading) {
             Text("Lbs")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             
-            
-            TextField("0", text: Binding(
+            TextField("", text: Binding(
                 get: {
-                    let formatted = String(format: "%.0f", set.weight)
-                    return formatted == "0" ? "" : formatted
+                    // Return the current weight as a string if it's non-zero,
+                    // otherwise return an empty string so the prompt is visible.
+                    if set.weight != 0 {
+                        return String(format: "%.0f", set.weight)
+                    }
+                    return ""
                 },
                 set: { newValue in
+                    // When the user updates the field, update the set's weight.
                     if newValue.isEmpty {
                         set.weight = 0
-                        print("update setWeight with an empty value, use 0")
                     } else if let number = Double(newValue) {
                         set.weight = number
-                        print("update setWeight with valid value")
                     } else {
                         set.weight = 0
-                        print("update setWeight with invalid value, use 0")
                     }
                 }
-            ))
+            ), prompt: Text(placeholder))
             .frame(maxWidth: 50, maxHeight: 15)
             .focused($isKeyboardActive)
             .keyboardType(.decimalPad)
@@ -132,7 +150,6 @@ extension ExerciseSectionView {
                 exerciseViewModel.updateSet(set, newWeight: set.weight)
             }
         }
-        
     }
 }
 //MARK: Reps
