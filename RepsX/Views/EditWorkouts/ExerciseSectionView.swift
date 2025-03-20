@@ -15,6 +15,7 @@ struct ExerciseSectionView: View {
     @State var exercise: Exercise
     
     //most recent exercise
+    ///the previous sets from when a user performed this exercise. Used to show past weight lifted
     @State private var previousSets: [Set] = []
     
     //viewModel
@@ -112,7 +113,7 @@ extension ExerciseSectionView {
         // Compute the placeholder:
         let placeholder: String = {
             if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.weight != 0 }) {
-                return String(format: "%.0f", historicalSet.weight)
+                return String(format: "%.1f", historicalSet.weight)
             }
             return "0"
         }()
@@ -127,7 +128,13 @@ extension ExerciseSectionView {
                     // Return the current weight as a string if it's non-zero,
                     // otherwise return an empty string so the prompt is visible.
                     if set.weight != 0 {
-                        return String(format: "%.0f", set.weight)
+                        //check to show either "22" or "22.5" depending on value
+                        if set.weight.truncatingRemainder(dividingBy: 1) == 0 {
+                            return String(format: "%.0f", set.weight)
+                        } else {
+                            return String(format: "%.1f", set.weight)
+                        }
+                        
                     }
                     return ""
                 },
@@ -137,6 +144,7 @@ extension ExerciseSectionView {
                         set.weight = 0
                     } else if let number = Double(newValue) {
                         set.weight = number
+                        print("weight: \(number)")
                     } else {
                         set.weight = 0
                     }
@@ -155,29 +163,37 @@ extension ExerciseSectionView {
 //MARK: Reps
 extension ExerciseSectionView {
     func setRepsField(for set: Set) -> some View {
-        VStack(alignment: .leading) {
+        
+        let placeholder: String = {
+            if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.reps != 0 }) {
+                return String(format: "%d", historicalSet.reps)
+            }
+            return "0"
+        }()
+        
+        
+        return VStack(alignment: .leading) {
             Text("Reps")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             
-            TextField("0", text: Binding (
+            TextField("", text: Binding (
                 get: {
-                    let formatted = String(set.reps)
-                    return formatted == "0" ? "" : formatted
+                    if set.reps != 0 {
+                        return String(format: "%d", set.reps)
+                    }
+                    return ""
                 },
                 set: { newValue in
                     if newValue.isEmpty {
                         set.reps = 0
-                        print("update rep with an empty value, use 0")
                     } else if let number = Int(newValue) {
                         set.reps = number
-                        print("update rep with valid value")
                     } else {
                         set.reps = 0
-                        print("update reps with invalid value, use 0")
                     }
                 }
-            ))
+            ), prompt: Text(placeholder))
             .frame(maxWidth: 50, maxHeight: 15)
             .focused($isKeyboardActive)
             .keyboardType(.numberPad)
@@ -192,29 +208,36 @@ extension ExerciseSectionView {
 //MARK: Time
 extension ExerciseSectionView {
     func setTimeField(for set: Set) -> some View {
-        VStack(alignment: .leading) {
+        
+        let placeholder: String = {
+            if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.time != 0 }) {
+                return String(format: "%.1f", historicalSet.time)
+            }
+            return "0"
+        }()
+        
+        return VStack(alignment: .leading) {
             Text("Minutes")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             
-            TextField("0", text: Binding(
+            TextField("", text: Binding(
                 get: {
-                    let formatted = String(format: "%.0f", set.time)
-                    return formatted == "0" ? "" : formatted
+                    if set.time != 0 {
+                        return String(format: "%.1f", set.reps)
+                    }
+                    return "0"
                 },
                 set: { newValue in
                     if newValue.isEmpty {
                         set.time = 0
-                        print("update setTime with an empty value, use 0")
                     } else if let number = Double(newValue) {
                         set.time = number
-                        print("update setTime with valid value")
                     } else {
                         set.time = 0
-                        print("update setTime with invalid value, use 0")
                     }
                 }
-            ))
+            ), prompt:Text(placeholder))
             .frame(maxWidth: 50, maxHeight: 15)
             .focused($isKeyboardActive)
             .keyboardType(.decimalPad)
@@ -229,29 +252,36 @@ extension ExerciseSectionView {
 //MARK: Distance
 extension ExerciseSectionView {
     func setDistanceField(for set: Set) -> some View {
-        VStack(alignment: .leading) {
+        
+        let placeholder: String = {
+            if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.distance != 0 }) {
+                return String(format: "%.1f", historicalSet.distance)
+            }
+            return "0"
+        }()
+        
+        return VStack(alignment: .leading) {
             Text("Miles")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             
             TextField("0", text: Binding(
                 get: {
-                    let formatted = String(format: "%.0f", set.distance)
-                    return formatted == "0" ? "" : formatted
+                    if set.distance != 0 {
+                        return String(format: "$.1f", set.distance)
+                    }
+                    return "0"
                 },
                 set: { newValue in
                     if newValue.isEmpty {
                         set.distance = 0
-                        print("update setDistance with an empty value, use 0")
                     } else if let number = Double(newValue) {
                         set.distance = number
-                        print("update setDistance with valid value")
                     } else {
                         set.distance = 0
-                        print("update setDistance with invalid value, use 0")
                     }
                 }
-            ))
+            ), prompt:Text(placeholder))
             .frame(maxWidth: 50, maxHeight: 15)
             .focused($isKeyboardActive)
             .keyboardType(.decimalPad)
