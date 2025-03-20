@@ -22,7 +22,7 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
         UserThemeViewModel(modelContext: modelContext)
     }
     
-    // The category to filter on. nil means no filter.
+    //Filter options
     @State var selectedCategory: CategoryModel? = nil
     
     // Add new exercise
@@ -102,6 +102,10 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
                                     categoryFilterLabel(text: category.name, category: category)
                                 }
                             }
+                        }
+                        
+                        Section("Filter by Modality") {
+                            
                         }
                     } label: {
                         if selectedCategory != nil {

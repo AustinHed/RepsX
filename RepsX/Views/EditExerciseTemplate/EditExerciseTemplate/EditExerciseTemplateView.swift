@@ -33,7 +33,7 @@ struct EditExerciseTemplateView: View {
         NavigationStack{
             List{
                 //update name
-                Section("Edit exercise name"){
+                Section("Name"){
                     TextField("Exercise", text: $exerciseTemplate.name)
                         .onSubmit {
                             exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newName: exerciseTemplate.name)
@@ -43,14 +43,14 @@ struct EditExerciseTemplateView: View {
                 }
                 
                 //update category
-                Section("Edit exercise category"){
+                Section("Category"){
                     NavigationLink(exerciseTemplate.category.name) {
                         ChooseNewCategoryView( exerciseTemplate: exerciseTemplate)
                     }
                 }
                 
                 //choose modality section
-                Section("Edit Modality") {
+                Section {
                     NavigationLink {
                         ChooseNewModalityView(exerciseTemplate: exerciseTemplate)
                     } label: {
@@ -59,6 +59,10 @@ struct EditExerciseTemplateView: View {
                             modalityDetail
                         }
                     }
+                } header: {
+                    Text("Modality")
+                } footer: {
+                    Text("How an exercise is performed, and how measures are used to track performance (Weight, Reps, Time)")
                 }
                 
                 //delete button
