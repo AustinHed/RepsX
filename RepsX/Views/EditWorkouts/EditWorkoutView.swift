@@ -258,7 +258,6 @@ extension EditWorkoutView {
     }
 }
 //start time row
-//TODO: Fix bug with selecting end time actually selecting start time
 extension EditWorkoutView {
     // Start time row:
     var startTimeRow: some View {

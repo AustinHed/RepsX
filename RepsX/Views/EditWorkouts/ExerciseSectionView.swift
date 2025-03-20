@@ -39,7 +39,8 @@ struct ExerciseSectionView: View {
                 //number
                 exerciseNumberField(index: index, set: set, primaryColor: userThemeViewModel.primaryColor)
                 
-                //weight
+                //values to display, based on modality
+                ///ex. weight x reps, distance x time
                 if set.exercise?.modality == .repetition {
                     setWeightField(for: set)
                     setRepsField(for: set)
@@ -94,6 +95,7 @@ extension ExerciseSectionView {
             .foregroundColor(set.reps == 0 ? Color.gray : primaryColor)
     }
 }
+
 //MARK: Weight
 extension ExerciseSectionView {
     /// Returns an editable weight field view for a given set.
@@ -102,6 +104,7 @@ extension ExerciseSectionView {
             Text("Lbs")
                 .font(.caption)
                 .foregroundStyle(.secondary)
+            
             
             TextField("0", text: Binding(
                 get: {
@@ -133,7 +136,7 @@ extension ExerciseSectionView {
     }
 }
 //MARK: Reps
-extension ExerciseSectionView{
+extension ExerciseSectionView {
     func setRepsField(for set: Set) -> some View {
         VStack(alignment: .leading) {
             Text("Reps")
@@ -243,12 +246,6 @@ extension ExerciseSectionView {
         
     }
 }
-//MARK: Notes
-extension ExerciseSectionView {
-    func setNotesField(for set: Set) -> some View {
-        Text("notes")
-    }
-}
 
 
 //MARK: Intensity
@@ -264,6 +261,14 @@ extension ExerciseSectionView {
         .frame(maxHeight: 5)
     }
     
+}
+
+
+//MARK: Notes
+extension ExerciseSectionView {
+    func setNotesField(for set: Set) -> some View {
+        Text("notes")
+    }
 }
 
 

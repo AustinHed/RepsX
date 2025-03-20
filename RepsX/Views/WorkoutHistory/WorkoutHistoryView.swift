@@ -15,6 +15,7 @@ struct WorkoutHistoryView: View {
     //Fetch all workouts
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     //TODO: pass this array when opening a workout, to be used to access Exercise History when viewing an exercise
+    
     @Environment(\.modelContext) private var modelContext
     
     //Fetch favorited routines
@@ -41,7 +42,7 @@ struct WorkoutHistoryView: View {
         UserThemeViewModel(modelContext: modelContext)
     }
     
-    //binding cars
+    //binding vars
     @Binding var selectedTab: ContentView.Tab
     @State var coordinator = WorkoutCoordinator.shared
     
@@ -54,7 +55,6 @@ struct WorkoutHistoryView: View {
             dateFormatter.string(from: workout.startTime)
         }
     }
-    
     // Sort the keys (months) in descending order (most recent first)
     private var sortedGroupKeys: [String] {
         let formatter = DateFormatter()
@@ -205,6 +205,7 @@ extension WorkoutHistoryView {
 //MARK: Fullscreen Covers
 extension WorkoutHistoryView {
     //new workout editor
+    //TODO: need to pass all workouts here
     private var newWorkoutEditor: some View {
         Group {
             if let workoutToEdit = selectedWorkout {
