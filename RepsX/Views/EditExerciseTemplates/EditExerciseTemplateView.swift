@@ -10,7 +10,7 @@ import SwiftData
 
 struct EditExerciseTemplateView: View {
     
-    //the category you want to edit
+    //the exercise template to edit
     @State var exerciseTemplate: ExerciseTemplate
     
     //model context
@@ -49,6 +49,18 @@ struct EditExerciseTemplateView: View {
                     }
                 }
                 
+                //choose modality section
+                Section("Edit Modality") {
+                    NavigationLink {
+                        ChooseNewModalityView(exerciseTemplate: exerciseTemplate)
+                    } label: {
+                        VStack (alignment: .leading){
+                            Text(exerciseTemplate.modality.rawValue.capitalizingFirstLetter())
+                            modalityDetail
+                        }
+                    }
+                }
+                
                 //delete button
                 Section() {
                     Button("Delete"){
@@ -64,7 +76,7 @@ struct EditExerciseTemplateView: View {
             //MARK: Toolbar
             .toolbar {
                 //Back button
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button("Back") {
                         dismiss()
                     }
@@ -75,57 +87,32 @@ struct EditExerciseTemplateView: View {
     }
 }
 
-//MARK: Choose a new category
-struct ChooseNewCategoryView: View {
-    //Fetch categories
-    @Query(sort: \CategoryModel.name) var categories: [CategoryModel]
-    @Environment(\.modelContext) private var modelContext
-    //dismiss
-    @Environment(\.dismiss) private var dismiss
-    //view model
-    private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
-        ExerciseTemplateViewModel(modelContext: modelContext)
-    }
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
-    }
-    
-    var exerciseTemplate:ExerciseTemplate
-    
-    var body: some View {
-        NavigationStack {
-            List(categories) { category in
-                Button {
-                    exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newCategory: category)
-                    dismiss()
-                } label: {
-                    categoryLabel(for: category, userThemeViewModel: userThemeViewModel)
-                }
-            }
-            .navigationTitle("Choose category")
-            .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-    
-    @ViewBuilder
-    private func categoryLabel(for category: CategoryModel, userThemeViewModel: UserThemeViewModel) -> some View {
-        if exerciseTemplate.category == category {
-            HStack {
-                Text(category.name)
-                    .foregroundStyle(.black)
-                Spacer()
-                Image(systemName: "checkmark")
-                    .foregroundStyle(userThemeViewModel.primaryColor)
-            }
-        } else {
-            Text(category.name)
-                .foregroundStyle(.black)
+
+//MARK: Modality options
+extension EditExerciseTemplateView {
+    private var modalityDetail: some View {
+        switch exerciseTemplate.modality {
+        case .repetition:
+            return Text("Weight, Reps")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        case .tension:
+            return Text("Weight, Time")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        case .endurance:
+            return Text("Distance, Time")
+                .font(.caption)
+                .foregroundColor(.secondary)
+        case .other:
+            return Text("Other")
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
     }
 }
 
-#Preview {
-    let exerciseTemplate = ExerciseTemplate(name: "Test")
-    EditExerciseTemplateView(exerciseTemplate: exerciseTemplate)
-}
+//#Preview {
+//    let exerciseTemplate = ExerciseTemplate(name: "Test")
+//    EditExerciseTemplateView(exerciseTemplate: exerciseTemplate)
+//}
