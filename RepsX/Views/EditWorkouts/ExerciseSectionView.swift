@@ -31,6 +31,9 @@ struct ExerciseSectionView: View {
     //focus states
     @FocusState var isKeyboardActive: Bool //to dismiss the keyboard
     @FocusState private var setWeightFocused: Bool
+    @FocusState private var setRepsFocused: Bool
+    @FocusState private var setTimeFocused: Bool
+    @FocusState private var setDistanceFocused: Bool
     
     //body
     var body: some View {
@@ -106,61 +109,136 @@ extension ExerciseSectionView {
 }
 
 //MARK: Weight
-extension ExerciseSectionView {
-    /// Returns an editable weight field view for a given set,
-    /// using the previous weight as a placeholder (if available) or "0" otherwise.
-    func setWeightField(for set: Set) -> some View {
-        // Compute the placeholder:
-        let placeholder: String = {
-            if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.weight != 0 }) {
-                return String(format: "%.1f", historicalSet.weight)
-            }
-            return "0"
-        }()
-        
-        return VStack(alignment: .leading) {
+/// A custom text field for weight input that decouples the visual text from the underlying model value
+/// and updates the model when focus is lost or when the user submits.
+struct WeightTextField: View {
+    @Binding var weight: Double
+    let placeholder: String
+
+    // Local state for the text field input.
+    @State private var weightText: String = ""
+    // Focus state for detecting when the field gains/loses focus.
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        VStack(alignment: .leading) {
             Text("Lbs")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             
-            TextField("", text: Binding(
-                get: {
-                    // Return the current weight as a string if it's non-zero,
-                    // otherwise return an empty string so the prompt is visible.
-                    if set.weight != 0 {
-                        //check to show either "22" or "22.5" depending on value
-                        if set.weight.truncatingRemainder(dividingBy: 1) == 0 {
-                            return String(format: "%.0f", set.weight)
-                        } else {
-                            return String(format: "%.1f", set.weight)
-                        }
-                        
-                    }
-                    return ""
-                },
-                set: { newValue in
-                    // When the user updates the field, update the set's weight.
-                    if newValue.isEmpty {
-                        set.weight = 0
-                    } else if let number = Double(newValue) {
-                        set.weight = number
-                        print("weight: \(number)")
+            TextField("", text: $weightText, prompt: Text(placeholder))
+                .frame(maxWidth: 50, maxHeight: 15)
+                .keyboardType(.decimalPad)
+                .focused($isFocused)
+                .submitLabel(.done)
+                // On first appearance, initialize the text field.
+                .onAppear {
+                    // If weight is 0, show an empty text field to display the placeholder.
+                    if weight == 0 {
+                        weightText = ""
                     } else {
-                        set.weight = 0
+                        weightText = (weight.truncatingRemainder(dividingBy: 1) == 0) ?
+                            String(format: "%.0f", weight) :
+                            String(format: "%.1f", weight)
                     }
                 }
-            ), prompt: Text(placeholder))
-            .frame(maxWidth: 50, maxHeight: 15)
-            .focused($isKeyboardActive)
-            .keyboardType(.decimalPad)
-            .submitLabel(.done)
-            .onSubmit {
-                exerciseViewModel.updateSet(set, newWeight: set.weight)
-            }
+                // As the user types, try to update the model if the text can be converted.
+                .onChange(of: weightText) { newValue in
+                    if let newWeight = Double(newValue) {
+                        weight = newWeight
+                    }
+                }
+                // When the user submits (e.g. taps "Done"), ensure the model is updated.
+                .onSubmit {
+                    if let newWeight = Double(weightText) {
+                        weight = newWeight
+                    }
+                }
+                // When the field loses focus, update the underlying model.
+                .onChange(of: isFocused) { focused in
+                    if !focused {
+                        if let newWeight = Double(weightText) {
+                            weight = newWeight
+                        }
+                    }
+                }
         }
     }
 }
+extension ExerciseSectionView {
+    /// Returns an editable weight field view for a given set.
+    func setWeightField(for set: Set) -> some View {
+        // Compute the placeholder: use a historical set's value if available, otherwise "0".
+        let placeholder: String = {
+            if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.weight != 0 }) {
+                return (historicalSet.weight.truncatingRemainder(dividingBy: 1) == 0) ?
+                    String(format: "%.0f", historicalSet.weight) :
+                    String(format: "%.1f", historicalSet.weight)
+            }
+            return "0"
+        }()
+        
+        // Use our custom WeightTextField.
+        return WeightTextField(weight: Binding(
+            get: { set.weight },
+            set: { newValue in set.weight = newValue }
+        ), placeholder: placeholder)
+    }
+}
+
 //MARK: Reps
+struct RepsTextField: View {
+    @Binding var reps: Int
+    let placeholder: String
+
+    // Local state for the text field input.
+    @State private var repsText: String = ""
+    // Focus state for detecting when the field gains/loses focus.
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        VStack(alignment: .leading) {
+            Text("Reps")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            
+            TextField("", text: $repsText, prompt: Text(placeholder))
+                .frame(maxWidth: 50, maxHeight: 15)
+                .keyboardType(.numberPad)
+                .focused($isFocused)
+                .submitLabel(.done)
+                // On first appearance, initialize the text field.
+                .onAppear {
+                    // If reps is 0, leave the field empty so that the placeholder is visible.
+                    if reps == 0 {
+                        repsText = ""
+                    } else {
+                        repsText = String(format: "%d", reps)
+                    }
+                }
+                // As the user types, update the model if the text converts to an Int.
+                .onChange(of: repsText) { newValue in
+                    if let newReps = Int(newValue) {
+                        reps = newReps
+                    }
+                }
+                // When the user submits (e.g. taps "Done"), update the model.
+                .onSubmit {
+                    if let newReps = Int(repsText) {
+                        reps = newReps
+                    }
+                }
+                // When the field loses focus, update the underlying model.
+                .onChange(of: isFocused) { focused in
+                    if !focused {
+                        if let newReps = Int(repsText) {
+                            reps = newReps
+                        }
+                    }
+                }
+        }
+    }
+}
 extension ExerciseSectionView {
     func setRepsField(for set: Set) -> some View {
         
@@ -171,127 +249,140 @@ extension ExerciseSectionView {
             return "0"
         }()
         
-        
-        return VStack(alignment: .leading) {
-            Text("Reps")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            
-            TextField("", text: Binding (
-                get: {
-                    if set.reps != 0 {
-                        return String(format: "%d", set.reps)
-                    }
-                    return ""
-                },
-                set: { newValue in
-                    if newValue.isEmpty {
-                        set.reps = 0
-                    } else if let number = Int(newValue) {
-                        set.reps = number
-                    } else {
-                        set.reps = 0
-                    }
-                }
-            ), prompt: Text(placeholder))
-            .frame(maxWidth: 50, maxHeight: 15)
-            .focused($isKeyboardActive)
-            .keyboardType(.numberPad)
-            .submitLabel(.done)
-            .onSubmit {
-                exerciseViewModel.updateSet(set, newReps: set.reps)
-            }
-        }
-        
+        return RepsTextField(reps: Binding(
+            get: { set.reps },
+            set: { newValue in set.reps = newValue }
+        ), placeholder: placeholder)
     }
 }
+
 //MARK: Time
-extension ExerciseSectionView {
-    func setTimeField(for set: Set) -> some View {
-        
-        let placeholder: String = {
-            if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.time != 0 }) {
-                return String(format: "%.1f", historicalSet.time)
-            }
-            return "0"
-        }()
-        
-        return VStack(alignment: .leading) {
+struct TimeTextField: View {
+    @Binding var time: Double
+    let placeholder: String
+
+    // Local state for the text field input.
+    @State private var timeText: String = ""
+    // Focus state for detecting when the field gains/loses focus.
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        VStack(alignment: .leading) {
             Text("Minutes")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             
-            TextField("", text: Binding(
-                get: {
-                    if set.time != 0 {
-                        return String(format: "%.1f", set.reps)
-                    }
-                    return "0"
-                },
-                set: { newValue in
-                    if newValue.isEmpty {
-                        set.time = 0
-                    } else if let number = Double(newValue) {
-                        set.time = number
+            TextField("", text: $timeText, prompt: Text(placeholder))
+                .frame(maxWidth: 50, maxHeight: 15)
+                .keyboardType(.decimalPad)
+                .focused($isFocused)
+                .submitLabel(.done)
+                .onAppear {
+                    // If time is 0, leave the field empty to show the placeholder.
+                    if time == 0 {
+                        timeText = ""
                     } else {
-                        set.time = 0
+                        timeText = String(format: "%.1f", time)
                     }
                 }
-            ), prompt:Text(placeholder))
-            .frame(maxWidth: 50, maxHeight: 15)
-            .focused($isKeyboardActive)
-            .keyboardType(.decimalPad)
-            .submitLabel(.done)
-            .onSubmit {
-                exerciseViewModel.updateSet(set, newTime: set.time)
-            }
+                .onChange(of: timeText) { newValue in
+                    if let newTime = Double(newValue) {
+                        time = newTime
+                    }
+                }
+                .onSubmit {
+                    if let newTime = Double(timeText) {
+                        time = newTime
+                    }
+                }
+                .onChange(of: isFocused) { focused in
+                    if !focused {
+                        if let newTime = Double(timeText) {
+                            time = newTime
+                        }
+                    }
+                }
         }
-        
     }
 }
-//MARK: Distance
 extension ExerciseSectionView {
-    func setDistanceField(for set: Set) -> some View {
-        
-        let placeholder: String = {
-            if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.distance != 0 }) {
-                return String(format: "%.1f", historicalSet.distance)
-            }
-            return "0"
-        }()
-        
-        return VStack(alignment: .leading) {
+    func setTimeField(for set: Set) -> some View {
+            let placeholder: String = {
+                if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.time != 0 }) {
+                    return String(format: "%.1f", historicalSet.time)
+                }
+                return "0"
+            }()
+            
+            return TimeTextField(time: Binding(
+                get: { set.time },
+                set: { newValue in set.time = newValue }
+            ), placeholder: placeholder)
+        }
+}
+//MARK: Distance
+struct DistanceTextField: View {
+    @Binding var distance: Double
+    let placeholder: String
+
+    // Local state for the text field input.
+    @State private var distanceText: String = ""
+    // Focus state for detecting when the field gains/loses focus.
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        VStack(alignment: .leading) {
             Text("Miles")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             
-            TextField("0", text: Binding(
-                get: {
-                    if set.distance != 0 {
-                        return String(format: "$.1f", set.distance)
-                    }
-                    return "0"
-                },
-                set: { newValue in
-                    if newValue.isEmpty {
-                        set.distance = 0
-                    } else if let number = Double(newValue) {
-                        set.distance = number
+            TextField("", text: $distanceText, prompt: Text(placeholder))
+                .frame(maxWidth: 50, maxHeight: 15)
+                .keyboardType(.decimalPad)
+                .focused($isFocused)
+                .submitLabel(.done)
+                .onAppear {
+                    // If distance is 0, leave the field empty to display the placeholder.
+                    if distance == 0 {
+                        distanceText = ""
                     } else {
-                        set.distance = 0
+                        distanceText = String(format: "%.1f", distance)
                     }
                 }
-            ), prompt:Text(placeholder))
-            .frame(maxWidth: 50, maxHeight: 15)
-            .focused($isKeyboardActive)
-            .keyboardType(.decimalPad)
-            .submitLabel(.done)
-            .onSubmit {
-                exerciseViewModel.updateSet(set, newDistance: set.distance)
-            }
+                .onChange(of: distanceText) { newValue in
+                    if let newDistance = Double(newValue) {
+                        distance = newDistance
+                    }
+                }
+                .onSubmit {
+                    if let newDistance = Double(distanceText) {
+                        distance = newDistance
+                    }
+                }
+                .onChange(of: isFocused) { focused in
+                    if !focused {
+                        if let newDistance = Double(distanceText) {
+                            distance = newDistance
+                        }
+                    }
+                }
         }
-        
     }
+}
+extension ExerciseSectionView {
+    func setDistanceField(for set: Set) -> some View {
+            let placeholder: String = {
+                if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.distance != 0 }) {
+                    return String(format: "%.1f", historicalSet.distance)
+                }
+                return "0"
+            }()
+            
+            return DistanceTextField(distance: Binding(
+                get: { set.distance },
+                set: { newValue in set.distance = newValue }
+            ), placeholder: placeholder)
+        }
 }
 
 
