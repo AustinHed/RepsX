@@ -9,7 +9,8 @@ import Foundation
 import SwiftData
 import SwiftUI
 
-@Observable class CategoryViewModel {
+@Observable
+class CategoryViewModel {
     
     private var modelContext: ModelContext
     

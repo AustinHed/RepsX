@@ -3,11 +3,17 @@ import SwiftData
 
 struct ListOfExerciseTemplatesView<Destination: View>: View {
     
-    // Fetch ExerciseTemplates
-    @Query(filter: #Predicate<ExerciseTemplate>{
-        exerciseTemplate in exerciseTemplate.hidden == false
+    // Fetch standard ExerciseTemplates
+    @Query(filter: #Predicate<ExerciseTemplate>{ exerciseTemplate in
+        exerciseTemplate.standard == true
     }, sort: \ExerciseTemplate.name)
-    var exercises: [ExerciseTemplate]
+    var standardExercises: [ExerciseTemplate]
+    
+    //fetch custom ExerciseTemplates
+    @Query(filter: #Predicate<ExerciseTemplate>{ exerciseTemplate in
+        exerciseTemplate.standard == false &&
+        exerciseTemplate.hidden == false
+    }, sort: \ExerciseTemplate.name) var customExercises: [ExerciseTemplate]
     
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -47,11 +53,18 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
     
     // Computed property that returns all available categories from the fetched exercises.
     var categories: [CategoryModel] {
-        let cats = exercises.compactMap { $0.category }
+        let cats = standardExercises.compactMap { $0.category }
+        let cats2 = customExercises.compactMap { $0.category }
         var uniqueCategories: [CategoryModel] = []
-        
+
         for cat in cats {
             // Check uniqueness based on the category name. If you have an id, use that instead.
+            if !uniqueCategories.contains(where: { $0.id == cat.id }) {
+                uniqueCategories.append(cat)
+            }
+        }
+        
+        for cat in cats2 {
             if !uniqueCategories.contains(where: { $0.id == cat.id }) {
                 uniqueCategories.append(cat)
             }
@@ -61,11 +74,20 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
     }
     
     // Computed property that filters exercises based on the selected category.
-    var filteredExercises: [ExerciseTemplate] {
+    var filteredStandardExercises: [ExerciseTemplate] {
         if let selected = selectedCategory {
-            return exercises.filter { $0.category == selected }
+            return standardExercises.filter { $0.category == selected }
         } else {
-            return exercises
+            return standardExercises
+        }
+    }
+    
+    //all custom exercises for a selected category
+    var filteredCustomExercises: [ExerciseTemplate] {
+        if let selected = selectedCategory {
+            return customExercises.filter { $0.category == selected }
+        } else {
+            return customExercises
         }
     }
     
@@ -73,12 +95,25 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
         NavigationStack {
             List {
                 
-                // List the filtered exercise templates.
-                ForEach(filteredExercises) { exercise in
-                    NavigationLink(exercise.name) {
-                        destinationBuilder(exercise)
+                Section("Standard Exercises") {
+                    // List the filtered exercise templates.
+                    ForEach(filteredStandardExercises) { exercise in
+                        NavigationLink(exercise.name) {
+                            destinationBuilder(exercise)
+                        }
                     }
                 }
+                
+                if !filteredCustomExercises.isEmpty {
+                    Section("Custom Exercises") {
+                        ForEach(filteredCustomExercises) { exercise in
+                            NavigationLink(exercise.name) {
+                                destinationBuilder(exercise)
+                            }
+                        }
+                    }
+                }
+                
             }
             .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)

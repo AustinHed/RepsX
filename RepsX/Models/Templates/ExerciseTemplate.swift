@@ -15,17 +15,20 @@ class ExerciseTemplate: Identifiable {
     var category: CategoryModel
     var modality: ExerciseModality
     var hidden: Bool
+    var standard: Bool
     
     init(id: UUID = UUID(),
          name: String = "Unknown Exercise",
          category: CategoryModel = CategoryModel(name: "Other"),
          modality: ExerciseModality = .repetition, //defaults to reps and weight modality
-         hidden: Bool = false //defaults to the "nonhidden / non deleted" state
+         hidden: Bool = false, //defaults to the "nonhidden / non deleted" state
+         standard: Bool = false
         ){
         self.id = id
         self.name = name
         self.modality = modality 
         self.category = category
         self.hidden = hidden
+        self.standard = standard
     }
 }

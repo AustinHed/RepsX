@@ -10,8 +10,23 @@ import SwiftData
 
 struct ListOfCategoriesView<Destination: View>: View {
     
-    //Fetch categories
-    @Query(sort: \CategoryModel.name) var categories: [CategoryModel]
+    //Fetch standard categories
+    @Query(
+        filter: #Predicate<CategoryModel>{ category in
+            category.standard == true
+        },
+        sort: \CategoryModel.name
+    ) var standardCategories: [CategoryModel]
+    
+    //Fetch custom categories
+    @Query(
+        filter: #Predicate<CategoryModel>{ category in
+            category.standard == false
+        },
+        sort: \CategoryModel.name
+    ) var customCategories: [CategoryModel]
+    
+    //environment
     @Environment(\.modelContext) private var modelContext
     
     //dismiss
@@ -53,11 +68,22 @@ struct ListOfCategoriesView<Destination: View>: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(categories) { category in
-                    NavigationLink(category.name) {
-                        destinationBuilder(category)
+                //default
+                Section ("Default Categories"){
+                    ForEach(standardCategories) { category in
+                        Text(category.name)
                     }
                 }
+                
+                //custom
+                Section("Custom Categories"){
+                    ForEach(customCategories) { category in
+                        NavigationLink(category.name) {
+                            destinationBuilder(category)
+                        }
+                    }
+                }
+                
             }
             .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)

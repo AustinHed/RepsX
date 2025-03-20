@@ -23,33 +23,64 @@ struct SelectExerciseView: View {
     //the passable onSelect
     var onExerciseSelected:(ExerciseTemplate) -> Void
     
-    // Query all predefined exercises, sorted by name.
-    //@Query(sort: \ExerciseTemplate.name) var allExercises: [ExerciseTemplate]
-    @Query(filter: #Predicate { (exercise:ExerciseTemplate) in
-        // Only include exercise templates where hidden is false.
-        return !exercise.hidden
-    }, sort: \ExerciseTemplate.name) var allExercises: [ExerciseTemplate]
+    // Fetch standard ExerciseTemplates
+    @Query(filter: #Predicate<ExerciseTemplate>{ exerciseTemplate in
+        exerciseTemplate.standard == true
+    }, sort: \ExerciseTemplate.name)
+    var standardExercises: [ExerciseTemplate]
     
-    var filteredExercises: [ExerciseTemplate] {
-        allExercises.filter { $0.category.id == category.id }
+    //fetch custom ExerciseTemplates
+    @Query(filter: #Predicate<ExerciseTemplate>{ exerciseTemplate in
+        exerciseTemplate.standard == false &&
+        exerciseTemplate.hidden == false
+    }, sort: \ExerciseTemplate.name)
+    var customExercises: [ExerciseTemplate]
+    
+    var filteredStandardExercises: [ExerciseTemplate] {
+        standardExercises.filter { $0.category.id == category.id }
+    }
+    
+    var filteredCustomExercises: [ExerciseTemplate] {
+        customExercises.filter { $0.category.id == category.id }
     }
     
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         
-        List(filteredExercises){ exercise in
-            Button {
-                onExerciseSelected(exercise)
-                isSelectingExercise = false
-            } label: {
-                HStack{
-                    Text(exercise.name)
+        List{
+            
+            Section("Standard Exercises") {
+                ForEach(filteredStandardExercises) { exercise in
+                    Button {
+                        onExerciseSelected(exercise)
+                        isSelectingExercise = false
+                    } label: {
+                        HStack{
+                            Text(exercise.name)
+                        }
+                        .foregroundStyle(.black)
+                        
+                    }
                 }
-                .foregroundStyle(.black)
-                
             }
-
+            
+            if !filteredCustomExercises.isEmpty{
+                Section("Custom Exercises") {
+                    ForEach(filteredCustomExercises) { exercise in
+                        Button {
+                            onExerciseSelected(exercise)
+                            isSelectingExercise = false
+                        } label: {
+                            HStack{
+                                Text(exercise.name)
+                            }
+                            .foregroundStyle(.black)
+                        }
+                    }
+                }
+            }
+            
         }
         .navigationTitle(category.name)
         .navigationBarTitleDisplayMode(.inline)

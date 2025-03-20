@@ -21,12 +21,12 @@ func initializeDefaultDataIfNeeded(context: ModelContext) {
         if existingCategories.isEmpty {
             // Create six default categories.
             defaultCategories = [
-                CategoryModel(name: "Chest"),
-                CategoryModel(name: "Legs"),
-                CategoryModel(name: "Back"),
-                CategoryModel(name: "Shoulders"),
-                CategoryModel(name: "Arms"),
-                CategoryModel(name: "Core")
+                CategoryModel(name: "Chest", standard: true),
+                CategoryModel(name: "Legs", standard: true),
+                CategoryModel(name: "Back", standard: true),
+                CategoryModel(name: "Shoulders", standard: true),
+                CategoryModel(name: "Arms", standard: true),
+                CategoryModel(name: "Core", standard: true)
             ]
             defaultCategories.forEach { context.insert($0) }
         } else {
@@ -44,56 +44,56 @@ func initializeDefaultDataIfNeeded(context: ModelContext) {
             
             if let chestCat = defaultCategories.first(where: { $0.name == "Chest" }) {
                 defaultExercises.append(contentsOf: [
-                    ExerciseTemplate(name: "Bench Press", category: chestCat, modality: .repetition),
-                    ExerciseTemplate(name: "Incline Dumbbell Press", category: chestCat, modality: .repetition),
-                    ExerciseTemplate(name: "Decline Press", category: chestCat, modality: .repetition),
-                    ExerciseTemplate(name: "Cable Fly", category: chestCat, modality: .repetition),
-                    ExerciseTemplate(name: "Chest Dips", category: chestCat, modality: .repetition)
+                    ExerciseTemplate(name: "Bench Press", category: chestCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Incline Dumbbell Press", category: chestCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Decline Press", category: chestCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Cable Fly", category: chestCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Chest Dips", category: chestCat, modality: .repetition, standard: true)
                 ])
             }
             if let legsCat = defaultCategories.first(where: { $0.name == "Legs" }) {
                 defaultExercises.append(contentsOf: [
-                    ExerciseTemplate(name: "Squat", category: legsCat, modality: .repetition),
-                    ExerciseTemplate(name: "Leg Press", category: legsCat, modality: .repetition),
-                    ExerciseTemplate(name: "Walking Lunge", category: legsCat, modality: .repetition),
-                    ExerciseTemplate(name: "Leg Extension", category: legsCat, modality: .repetition),
-                    ExerciseTemplate(name: "Hamstring Curl", category: legsCat, modality: .repetition)
+                    ExerciseTemplate(name: "Squat", category: legsCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Leg Press", category: legsCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Walking Lunge", category: legsCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Leg Extension", category: legsCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Hamstring Curl", category: legsCat, modality: .repetition, standard: true)
                 ])
             }
             if let backCat = defaultCategories.first(where: { $0.name == "Back" }) {
                 defaultExercises.append(contentsOf: [
-                    ExerciseTemplate(name: "Deadlift", category: backCat, modality: .repetition),
-                    ExerciseTemplate(name: "Pull-Up", category: backCat, modality: .repetition),
-                    ExerciseTemplate(name: "Barbell Row", category: backCat, modality: .repetition),
-                    ExerciseTemplate(name: "Lat Pulldown", category: backCat, modality: .repetition),
-                    ExerciseTemplate(name: "Seated Cable Row", category: backCat, modality: .repetition)
+                    ExerciseTemplate(name: "Deadlift", category: backCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Pull-Up", category: backCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Barbell Row", category: backCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Lat Pulldown", category: backCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Seated Cable Row", category: backCat, modality: .repetition, standard: true)
                 ])
             }
             if let shouldersCat = defaultCategories.first(where: { $0.name == "Shoulders" }) {
                 defaultExercises.append(contentsOf: [
-                    ExerciseTemplate(name: "Overhead Press", category: shouldersCat, modality: .repetition),
-                    ExerciseTemplate(name: "Lateral Raise", category: shouldersCat, modality: .repetition),
-                    ExerciseTemplate(name: "Front Raise", category: shouldersCat, modality: .repetition),
-                    ExerciseTemplate(name: "Reverse Fly", category: shouldersCat, modality: .repetition),
-                    ExerciseTemplate(name: "Arnold Press", category: shouldersCat, modality: .repetition)
+                    ExerciseTemplate(name: "Overhead Press", category: shouldersCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Lateral Raise", category: shouldersCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Front Raise", category: shouldersCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Reverse Fly", category: shouldersCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Arnold Press", category: shouldersCat, modality: .repetition, standard: true)
                 ])
             }
             if let armsCat = defaultCategories.first(where: { $0.name == "Arms" }) {
                 defaultExercises.append(contentsOf: [
-                    ExerciseTemplate(name: "Bicep Curl", category: armsCat, modality: .repetition),
-                    ExerciseTemplate(name: "Hammer Curl", category: armsCat, modality: .repetition),
-                    ExerciseTemplate(name: "Tricep Pushdown", category: armsCat, modality: .repetition),
-                    ExerciseTemplate(name: "Skullcrusher", category: armsCat, modality: .repetition),
-                    ExerciseTemplate(name: "Cable Curl", category: armsCat, modality: .repetition)
+                    ExerciseTemplate(name: "Bicep Curl", category: armsCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Hammer Curl", category: armsCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Tricep Pushdown", category: armsCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Skullcrusher", category: armsCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Cable Curl", category: armsCat, modality: .repetition, standard: true)
                 ])
             }
             if let coreCat = defaultCategories.first(where: { $0.name == "Core" }) {
                 defaultExercises.append(contentsOf: [
-                    ExerciseTemplate(name: "Plank", category: coreCat, modality: .repetition),
-                    ExerciseTemplate(name: "Crunch", category: coreCat, modality: .repetition),
-                    ExerciseTemplate(name: "Russian Twist", category: coreCat, modality: .repetition),
-                    ExerciseTemplate(name: "Leg Raise", category: coreCat, modality: .repetition),
-                    ExerciseTemplate(name: "Mountain Climber", category: coreCat, modality: .repetition)
+                    ExerciseTemplate(name: "Plank", category: coreCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Crunch", category: coreCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Russian Twist", category: coreCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Leg Raise", category: coreCat, modality: .repetition, standard: true),
+                    ExerciseTemplate(name: "Mountain Climber", category: coreCat, modality: .repetition, standard: true)
                 ])
             }
             

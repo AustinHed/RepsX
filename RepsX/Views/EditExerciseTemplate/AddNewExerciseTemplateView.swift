@@ -5,8 +5,23 @@ struct AddNewExerciseTemplateView: View {
     // Optionally provided default category
     var category: CategoryModel?
     
-    // Fetch all CategoryModel objects.
-    @Query(sort: \CategoryModel.name, order: .reverse) var categories: [CategoryModel]
+    //Fetch standard categories
+    @Query(
+        filter: #Predicate<CategoryModel>{ category in
+            category.standard == true
+        },
+        sort: \CategoryModel.name
+    ) var standardCategories: [CategoryModel]
+    
+    //Fetch custom categories
+    @Query(
+        filter: #Predicate<CategoryModel>{ category in
+            category.standard == false
+        },
+        sort: \CategoryModel.name
+    ) var customCategories: [CategoryModel]
+    
+    //environment
     @Environment(\.modelContext) private var modelContext
     
     // View Models (if needed)
@@ -139,15 +154,31 @@ extension AddNewExerciseTemplateView {
     private var categoryPickerSheet: some View {
         NavigationStack {
             List {
-                ForEach(categories.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }) { cat in
-                    Button {
-                        selectedCategory = cat
-                        isCategoryPickerPresented = false
-                    } label: {
-                        Text(cat.name)
-                            .foregroundStyle(.black)
+                
+                Section("Default Categories"){
+                    ForEach(standardCategories) { cat in
+                        Button {
+                            selectedCategory = cat
+                            isCategoryPickerPresented = false
+                        } label: {
+                            Text(cat.name)
+                                .foregroundStyle(.black)
+                        }
                     }
                 }
+                
+                Section("Custom Categories"){
+                    ForEach(customCategories) { cat in
+                        Button {
+                            selectedCategory = cat
+                            isCategoryPickerPresented = false
+                        } label: {
+                            Text(cat.name)
+                                .foregroundStyle(.black)
+                        }
+                    }
+                }
+                
             }
             .navigationTitle("Select Category")
             .navigationBarTitleDisplayMode(.inline)

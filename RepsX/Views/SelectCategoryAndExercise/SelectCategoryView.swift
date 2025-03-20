@@ -39,15 +39,34 @@ struct SelectCategoryView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(categories) { category in
-                    NavigationLink(destination: SelectExerciseView(
-                        category: category,
-                        isSelectingExercise: $isSelectingExercise,
-                        onExerciseSelected: onExerciseSelected
-                    )) {
-                        Text(category.name)
+                Section("Default Categories") {
+                    ForEach(categories) { category in
+                        if category.standard == true {
+                            NavigationLink(destination: SelectExerciseView(
+                                category: category,
+                                isSelectingExercise: $isSelectingExercise,
+                                onExerciseSelected: onExerciseSelected
+                            )) {
+                                Text(category.name)
+                            }
+                        }
                     }
                 }
+                
+                Section("Custom Categories") {
+                    ForEach(categories) { category in
+                        if category.standard == false {
+                            NavigationLink(destination: SelectExerciseView(
+                                category: category,
+                                isSelectingExercise: $isSelectingExercise,
+                                onExerciseSelected: onExerciseSelected
+                            )) {
+                                Text(category.name)
+                            }
+                        }
+                    }
+                }
+
             }
             .navigationTitle("Select Category")
             .navigationBarTitleDisplayMode(.inline)
