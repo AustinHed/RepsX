@@ -28,7 +28,9 @@ class CategoryViewModel {
     //delete
     func deleteCategory(_ category: CategoryModel) {
         //first, delete category
-        modelContext.delete(category)
+        //modelContext.delete(category)
+        //instead of deleting, we're just hiding it
+        category.isHidden = true
         //then, save
         save()
     }
@@ -43,11 +45,15 @@ class CategoryViewModel {
     
     //fetch
     func fetchCategories() -> [CategoryModel] {
-        let descriptor = FetchDescriptor<CategoryModel>(sortBy: [SortDescriptor(\.name, order: .reverse)])
+        let descriptor = FetchDescriptor<CategoryModel>(
+            predicate:#Predicate<CategoryModel> { category in
+                category.isHidden == false
+            },
+            sortBy: [SortDescriptor(\.name, order: .reverse)])
         do {
             return try modelContext.fetch(descriptor)
         } catch {
-            print("Error fetching workouts: \(error)")
+            print("Error fetching categories: \(error)")
             return []
         }
     }
@@ -57,9 +63,7 @@ class CategoryViewModel {
         do {
             try modelContext.save()
         } catch {
-            print("Error saving exercise: \(error.localizedDescription)")
+            print("Error saving categories: \(error.localizedDescription)")
         }
     }
-    
-    
 }

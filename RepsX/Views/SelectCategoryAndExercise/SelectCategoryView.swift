@@ -15,11 +15,26 @@ struct SelectCategoryView: View {
     @Binding var isSelectingExercise: Bool
     var onExerciseSelected: (ExerciseTemplate) -> Void
     
-    //Fetch categories
-    @Query(sort: \CategoryModel.name) var categories: [CategoryModel]
+    //Fetch standard categories
+    @Query(
+        filter: #Predicate<CategoryModel>{ category in
+            category.standard == true &&
+            category.isHidden == false
+        },
+        sort: \CategoryModel.name
+    ) var standardCategories: [CategoryModel]
+    
+    //Fetch custom categories
+    @Query(
+        filter: #Predicate<CategoryModel>{ category in
+            category.standard == false &&
+            category.isHidden == false
+        },
+        sort: \CategoryModel.name
+    ) var customCategories: [CategoryModel]
+    
     @Environment(\.modelContext) private var modelContext
     
-
     //View Model - category
     private var categoryViewModel: CategoryViewModel {
         CategoryViewModel(modelContext: modelContext)
@@ -40,8 +55,20 @@ struct SelectCategoryView: View {
         NavigationStack {
             List {
                 Section("Default Categories") {
-                    ForEach(categories) { category in
-                        if category.standard == true {
+                    ForEach(standardCategories) { category in
+                        NavigationLink(destination: SelectExerciseView(
+                            category: category,
+                            isSelectingExercise: $isSelectingExercise,
+                            onExerciseSelected: onExerciseSelected
+                        )) {
+                            Text(category.name)
+                        }
+                    }
+                }
+                
+                if !customCategories.isEmpty {
+                    Section("Custom Categories") {
+                        ForEach(customCategories) { category in
                             NavigationLink(destination: SelectExerciseView(
                                 category: category,
                                 isSelectingExercise: $isSelectingExercise,
@@ -53,20 +80,7 @@ struct SelectCategoryView: View {
                     }
                 }
                 
-                Section("Custom Categories") {
-                    ForEach(categories) { category in
-                        if category.standard == false {
-                            NavigationLink(destination: SelectExerciseView(
-                                category: category,
-                                isSelectingExercise: $isSelectingExercise,
-                                onExerciseSelected: onExerciseSelected
-                            )) {
-                                Text(category.name)
-                            }
-                        }
-                    }
-                }
-
+                
             }
             .navigationTitle("Select Category")
             .navigationBarTitleDisplayMode(.inline)
@@ -92,12 +106,12 @@ struct SelectCategoryView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
                         
-//                        NavigationLink("Edit Exercises") {
-//                            ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises") { exercise in
-//                                EditExerciseTemplateView(exerciseTemplate: exercise)
-//                            }
-//                                
-//                        }
+                        //                        NavigationLink("Edit Exercises") {
+                        //                            ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises") { exercise in
+                        //                                EditExerciseTemplateView(exerciseTemplate: exercise)
+                        //                            }
+                        //
+                        //                        }
                         
                         NavigationLink("Edit Categories") {
                             ListOfCategoriesView(navigationTitle: "Edit Categories") { category in

@@ -8,7 +8,8 @@ struct AddNewExerciseTemplateView: View {
     //Fetch standard categories
     @Query(
         filter: #Predicate<CategoryModel>{ category in
-            category.standard == true
+            category.standard == true &&
+            category.isHidden == false
         },
         sort: \CategoryModel.name
     ) var standardCategories: [CategoryModel]
@@ -16,7 +17,8 @@ struct AddNewExerciseTemplateView: View {
     //Fetch custom categories
     @Query(
         filter: #Predicate<CategoryModel>{ category in
-            category.standard == false
+            category.standard == false &&
+            category.isHidden == false
         },
         sort: \CategoryModel.name
     ) var customCategories: [CategoryModel]

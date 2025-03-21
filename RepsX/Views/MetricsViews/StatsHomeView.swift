@@ -11,24 +11,15 @@ import SwiftData
 
 // Example StatsView
 struct StatsHomeView: View {
-    // Fetch workouts from SwiftData.
-    @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
+    // Fetch workouts from SwiftData for hte L14 days
+    @Query(filter: Workout.currentPredicate(),
+           sort: \Workout.startTime) var workouts: [Workout]
+    
+    //fetch all exercises for the L14D
+    @Query(filter: Exercise.currentPredicate()
+    ) var exercisesList: [Exercise]
+    
     @Environment(\.modelContext) private var modelContext
-    
-    //variable lookback period
-    @State var lookbackRange = 14
-    
-    //lookback period
-    private var lookbackPeriod: Date {
-        let calendar = Calendar.current
-        // We want to include today, so we go back lookback - 1 days
-        return calendar.startOfDay(for: calendar.date(byAdding: .day, value: -(lookbackRange-1), to: Date()) ?? Date())
-    }
-    
-    // Filter workouts to only those within lookback
-    private var recentWorkouts: [Workout] {
-        workouts.filter { $0.startTime >= lookbackPeriod }
-    }
     
     @Binding var selectedTab: ContentView.Tab
     
@@ -42,6 +33,7 @@ struct StatsHomeView: View {
                 }
                 //category
                 Section {
+                    Text("hiding category chart")
                     categoryDistributionChart
                 }
                 
@@ -96,10 +88,10 @@ extension StatsHomeView {
         let calendar = Calendar.current
         
         // Group the workouts by the start of their day.
-        let grouped = Dictionary(grouping: recentWorkouts, by: { calendar.startOfDay(for: $0.startTime) })
+        let grouped = Dictionary(grouping: workouts, by: { calendar.startOfDay(for: $0.startTime) })
         
         // Create an array for each day in the last X days—even if there is no workout for a day.
-        let stats = (0..<lookbackRange).compactMap { offset -> (Date, TimeInterval) in
+        let stats = (0..<14).compactMap { offset -> (Date, TimeInterval) in
             // Generate each day from today going back lookbackRange days.
             let day = calendar.date(byAdding: .day, value: -offset, to: Date())!
             let startOfDay = calendar.startOfDay(for: day)
@@ -113,9 +105,9 @@ extension StatsHomeView {
     
     //Average time calculation
     private var averageWorkoutTime: TimeInterval {
-        guard !recentWorkouts.isEmpty else { return 0 }
-        let totalTime = recentWorkouts.reduce(0) { $0 + $1.workoutLength }
-        let avgSeconds = totalTime / TimeInterval(lookbackRange)
+        guard !workouts.isEmpty else { return 0 }
+        let totalTime = workouts.reduce(0) { $0 + $1.workoutLength }
+        let avgSeconds = totalTime / TimeInterval(14)
         return avgSeconds / 60
     }
     
@@ -128,8 +120,8 @@ extension StatsHomeView {
         // For example, if lookbackRange is 7:
         // - Current period: today through 6 days ago.
         // - Previous period: 7 days ago through 13 days ago.
-        let previousStart = calendar.startOfDay(for: calendar.date(byAdding: .day, value: -(lookbackRange * 2 - 1), to: Date()) ?? Date())
-        let previousEnd = calendar.startOfDay(for: calendar.date(byAdding: .day, value: -lookbackRange, to: Date()) ?? Date())
+        let previousStart = calendar.startOfDay(for: calendar.date(byAdding: .day, value: -(14 * 2 - 1), to: Date()) ?? Date())
+        let previousEnd = calendar.startOfDay(for: calendar.date(byAdding: .day, value: -14, to: Date()) ?? Date())
         
         // Filter workouts that occurred in the previous period.
         let previousWorkouts = workouts.filter {
@@ -139,7 +131,7 @@ extension StatsHomeView {
         guard !previousWorkouts.isEmpty else { return 0 }
         
         let totalTime = previousWorkouts.reduce(0) { $0 + $1.workoutLength }
-        let avgSeconds = totalTime / TimeInterval(lookbackRange)
+        let avgSeconds = totalTime / TimeInterval(14)
         return avgSeconds / 60
     }
     
@@ -156,7 +148,7 @@ extension StatsHomeView {
     private var workoutDurationHeader: Text {
         if periodPercentageDifference != 0 {
             return Text("Over the past ") +
-            Text("\(lookbackRange) days, ")
+            Text("\(14) days, ")
                 .bold()
                 .foregroundColor(.blue) +
             Text("you averaged ") +
@@ -170,7 +162,7 @@ extension StatsHomeView {
             Text(" change vs the previous 14 day period")
         } else {
             return Text("Over the past ") +
-            Text("\(lookbackRange) days, ")
+            Text("\(14) days, ")
                 .bold()
                 .foregroundColor(.blue) +
             Text("you averaged ") +
@@ -221,22 +213,27 @@ extension StatsHomeView {
     
     //Daily stats, returned as a tuple (name, count, percentage)
     private var overallCategoryDistribution: [(category: String, count: Int, percentage: Double)] {
+        
         // Gather all exercises from the recent workouts.
-        let exercises = recentWorkouts.flatMap { $0.exercises }
+        let exercises = exercisesList
+        
+        // Build a frequency dictionary.
         var frequency: [String: Int] = [:]
         
-        // Count each exercise’s category, if available.
         for exercise in exercises {
-            
-            if let categoryName = exercise.category?.name, !categoryName.isEmpty {
-                frequency[categoryName, default: 0] += 1
+            //only look at non-hidden categories
+            if exercise.category?.isHidden != true {
+                if let categoryName = exercise.category?.name, !categoryName.isEmpty {
+                    frequency[categoryName, default: 0] += 1
+                }
             }
+            
         }
         
         let total = frequency.values.reduce(0, +)
         return frequency.map { (category: $0.key,
-                                count: $0.value,
-                                percentage: total > 0 ? (Double($0.value) / Double(total) * 100) : 0) }
+                                 count: $0.value,
+                                 percentage: total > 0 ? (Double($0.value) / Double(total) * 100) : 0) }
     }
     
     //most common category count
@@ -293,9 +290,29 @@ extension StatsHomeView {
     }
 }
 
+extension Workout {
+    static func currentPredicate() -> Predicate<Workout> {
+        let currentDate = Date.now
+        let fourteenDaysAgo = Calendar.current.date(byAdding: .day, value: -14, to: currentDate)!
+        
+        return #Predicate<Workout> { workout in
+            workout.startTime > fourteenDaysAgo
+        }
+    }
+}
 
-#Preview {
-    StatsHomeView(selectedTab: .constant(.stats))
+extension Exercise {
+    static func currentPredicate() -> Predicate<Exercise> {
+        let currentDate = Date.now
+        let fourteenDaysAgo = Calendar.current.date(byAdding: .day, value: -14, to: currentDate)!
+        
+        return #Predicate<Exercise> { exercise in
+            //if the exercise does not have a parent workout, just give it a date that will ensure it doesn't show up
+            exercise.workout?.startTime ?? fourteenDaysAgo > fourteenDaysAgo &&
+            //exercise must have a category associated
+                exercise.category != nil
+        }
+    }
 }
 
 

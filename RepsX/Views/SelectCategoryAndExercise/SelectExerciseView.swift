@@ -28,18 +28,17 @@ struct SelectExerciseView: View {
         exerciseTemplate.standard == true
     }, sort: \ExerciseTemplate.name)
     var standardExercises: [ExerciseTemplate]
-    
+    //only show exercises that match the given category
+    var filteredStandardExercises: [ExerciseTemplate] {
+        standardExercises.filter { $0.category.id == category.id }
+    }
     //fetch custom ExerciseTemplates
     @Query(filter: #Predicate<ExerciseTemplate>{ exerciseTemplate in
         exerciseTemplate.standard == false &&
         exerciseTemplate.hidden == false
     }, sort: \ExerciseTemplate.name)
     var customExercises: [ExerciseTemplate]
-    
-    var filteredStandardExercises: [ExerciseTemplate] {
-        standardExercises.filter { $0.category.id == category.id }
-    }
-    
+    //only show exercises that match the given category
     var filteredCustomExercises: [ExerciseTemplate] {
         customExercises.filter { $0.category.id == category.id }
     }
@@ -50,17 +49,19 @@ struct SelectExerciseView: View {
         
         List{
             
-            Section("Standard Exercises") {
-                ForEach(filteredStandardExercises) { exercise in
-                    Button {
-                        onExerciseSelected(exercise)
-                        isSelectingExercise = false
-                    } label: {
-                        HStack{
-                            Text(exercise.name)
+            if !filteredStandardExercises.isEmpty{
+                Section("Default Exercises") {
+                    ForEach(filteredStandardExercises) { exercise in
+                        Button {
+                            onExerciseSelected(exercise)
+                            isSelectingExercise = false
+                        } label: {
+                            HStack{
+                                Text(exercise.name)
+                            }
+                            .foregroundStyle(.black)
+                            
                         }
-                        .foregroundStyle(.black)
-                        
                     }
                 }
             }

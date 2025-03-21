@@ -20,7 +20,10 @@ class Exercise {
     //standard variables
     var id: UUID
     var name: String
+    // This ensures that if the category is deleted, the reference will be set to nil.
+    @Relationship(deleteRule: .nullify)
     var category: CategoryModel?
+    
     var order: Int
     var intensity: Int?
     var modality: ExerciseModality

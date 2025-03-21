@@ -10,7 +10,13 @@ import SwiftData
 
 struct ChooseNewCategoryView: View {
     //Fetch categories
-    @Query(sort: \CategoryModel.name) var categories: [CategoryModel]
+    @Query(
+        filter: #Predicate<CategoryModel>{ category in
+            category.isHidden == false
+        },
+        sort: \CategoryModel.name
+    ) var categories: [CategoryModel]
+    
     @Environment(\.modelContext) private var modelContext
     //dismiss
     @Environment(\.dismiss) private var dismiss
