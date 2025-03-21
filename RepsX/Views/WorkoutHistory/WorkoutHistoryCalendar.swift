@@ -106,7 +106,7 @@ struct WorkoutHistoryCalendarView: View {
                     Image(systemName: "chevron.left")
                         .font(.title3)
                 }
-                (Spacer(minLength: 15))
+                (Spacer(minLength: 40))
                 
                 // Right navigation button.
                 Button(action: {
@@ -131,6 +131,7 @@ struct WorkoutHistoryCalendarView: View {
                 Text(headerText)
                     .font(.headline)
                     .frame(maxWidth: .infinity)
+                Spacer()
                 Spacer()
 
                 // Expand/contract toggle button with extra left padding.

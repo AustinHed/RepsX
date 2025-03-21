@@ -30,7 +30,7 @@ struct RoutinesView: View {
     @State private var isLinkActive = false
     
     //Routing around
-    @Binding var selectedTab: ContentView.Tab
+    @Binding var selectedTab: MainTabbedView.TabOptions
     
     var body: some View {
         NavigationStack{
@@ -80,7 +80,7 @@ struct RoutinesView: View {
                 .hidden()
             )
         }
-        .tint(userThemeViewModel.primaryColor)
+        //.tint(userThemeViewModel.primaryColor)
     }
 }
 

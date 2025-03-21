@@ -1,74 +1,103 @@
 import SwiftUI
 import SwiftData
 
-//enum of tabs
-enum TabOptions: Int, CaseIterable {
-    case history = 0
-    case routines
-    case stats
-    case settings
-    
-    //title to use on the bar
-    var title: String {
-        switch self {
-        case .history:
-            return "History"
-        case .routines:
-            return "Routines"
-        case .stats:
-            return "Stats"
-        case .settings:
-            return "Settings"
-        }
-    }
-    
-    //systemImage icon to use on the bar
-    var icon: String {
-        switch self {
-        case .history:
-            return "list.bullet"
-        case .routines:
-            return "list.bullet.rectangle"
-        case .stats:
-            return "chart.bar"
-        case .settings:
-            return "gear"
-            
-        }
-    }
-}
-
 struct MainTabbedView: View {
     
-    @State var selectedTab = 0
+    @State private var selectedTab: TabOptions = .history
+    
+    @Environment(\.modelContext) private var modelContext
+    
+    //This hides the bar at the bottom of the screen
+    init() {
+        UITabBar.appearance().isHidden = true
+    }
+    
+    //enum of tabs
+    enum TabOptions: CaseIterable {
+        case history, routines, stats, settings
+        
+        //title to use on the bar
+        var title: String {
+            switch self {
+            case .history:
+                return "History"
+            case .routines:
+                return "Routines"
+            case .stats:
+                return "Stats"
+            case .settings:
+                return "Settings"
+            }
+        }
+        
+        //systemImage icon to use on the bar
+        var icon: String {
+            switch self {
+            case .history:
+                return "list.bullet"
+            case .routines:
+                return "list.bullet.rectangle"
+            case .stats:
+                return "chart.bar"
+            case .settings:
+                return "gear"
+                
+            }
+        }
+    }
+    
     
     var body: some View {
         ZStack(alignment:.bottom) {
             
             //the views to show - currently placeholders
             TabView(selection: $selectedTab) {
-                Text("History")
-                    .tag(0)
+                WorkoutHistoryView(selectedTab: $selectedTab)
+                    .tag(TabOptions.history)
+                    .toolbar(.hidden)
                 
-                Text("Routines")
-                    .tag(1)
+                RoutinesView(selectedTab: $selectedTab)
+                    .tag(TabOptions.routines)
+                    .toolbar(.hidden)
                 
-                Text("Stats")
-                    .tag(2)
+                StatsHomeView(selectedTab: $selectedTab)
+                    .tag(TabOptions.stats)
                 
-                Text("Settings")
-                    .tag(3)
+                SettingsView(selectedTab: $selectedTab)
+                    .tag(TabOptions.settings)
+                    .toolbar(.hidden)
             }
             
+            
             //the tab bar on the bottom
-            ZStack{
+            ZStack {
+                Rectangle()
+                    .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.white.opacity(0.0), // lower opacity at the top
+                                    Color.white.opacity(0.8)  // higher opacity at the bottom
+                                ]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                    .frame(height:120)
+                    
                 bottomBar()
+                    .frame(height: 60)
+                    .background(
+                        Capsule()
+                            .fill(Color.white)
+                            .shadow(color: .gray.opacity(0.5), radius: 5)
+                    )
+                    .padding(.horizontal, 17)
+                    .padding(.bottom, 20)
+                    .padding(.top, 20)
             }
-            .frame(height: 70)
-            .background(.purple.opacity(0.2))
-            .cornerRadius(35)
-            .padding(.horizontal, 26)
         }
+        .ignoresSafeArea(edges: .bottom)
+        .toolbar(.hidden)
     }
 }
 
@@ -78,18 +107,18 @@ extension MainTabbedView {
         HStack(spacing: 10) {
             Spacer()
             Image(systemName: imageName)
-                .foregroundStyle(isActive ? .black : .gray)
+                .foregroundStyle(.black)
             //if the tab is selected, change the color
             if isActive{
                 Text(title)
-                    //.font(.system(size:14))
                     .foregroundStyle(isActive ? .black : .gray)
+                    //.fontWeight(isActive ? .bold : .regular)
             }
             Spacer()
         }
         //if the tab is selected, make it more prominent
-        .frame(width: isActive ? .infinity : 60, height: 60)
-        .background(isActive ? .purple.opacity(0.4) : .clear)
+        .frame(width: isActive ? .infinity : 60, height: 50)
+        .background(isActive ? .blue.opacity(0.3) : .clear)
         .cornerRadius(30)
     }
 }
@@ -100,9 +129,9 @@ extension MainTabbedView {
         HStack{
             ForEach((TabOptions.allCases), id: \.self){ item in
                 Button{
-                    selectedTab = item.rawValue
+                    selectedTab = item
                 } label: {
-                    CustomTabItem(imageName: item.icon, title: item.title, isActive: (selectedTab == item.rawValue))
+                    CustomTabItem(imageName: item.icon, title: item.title, isActive: (selectedTab == item))
                 }
             }
         }
@@ -112,4 +141,5 @@ extension MainTabbedView {
 
 #Preview {
     MainTabbedView()
+        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self])
 }

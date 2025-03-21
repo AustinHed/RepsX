@@ -42,8 +42,9 @@ struct WorkoutHistoryView: View {
         UserThemeViewModel(modelContext: modelContext)
     }
     
+    //MARK: - tab
     //binding vars
-    @Binding var selectedTab: ContentView.Tab
+    @Binding var selectedTab: MainTabbedView.TabOptions
     @State var coordinator = WorkoutCoordinator.shared
     
     // Group workouts by month and year (e.g., "February 2025")

@@ -12,7 +12,7 @@ struct SettingsView: View {
     
     @Environment(\.modelContext) private var modelContext
     
-    @Binding var selectedTab: ContentView.Tab
+    @Binding var selectedTab: MainTabbedView.TabOptions
     var body: some View {
         NavigationStack{
             List{
