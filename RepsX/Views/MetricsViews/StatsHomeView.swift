@@ -227,6 +227,7 @@ extension StatsHomeView {
         
         // Count each exercise’s category, if available.
         for exercise in exercises {
+            
             if let categoryName = exercise.category?.name, !categoryName.isEmpty {
                 frequency[categoryName, default: 0] += 1
             }

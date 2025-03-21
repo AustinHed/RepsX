@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 @Model
-class CategoryModel: Hashable {
+class CategoryModel: Hashable, Equatable {
     
     //standard variables
     var id: UUID

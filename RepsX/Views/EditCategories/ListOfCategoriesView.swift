@@ -71,19 +71,22 @@ struct ListOfCategoriesView<Destination: View>: View {
                 //default
                 Section ("Default Categories"){
                     ForEach(standardCategories) { category in
-                        Text(category.name)
-                    }
-                }
-                
-                //custom
-                Section("Custom Categories"){
-                    ForEach(customCategories) { category in
                         NavigationLink(category.name) {
                             destinationBuilder(category)
                         }
                     }
                 }
                 
+                //custom
+                if !customCategories.isEmpty {
+                    Section("Custom Categories"){
+                        ForEach(customCategories) { category in
+                            NavigationLink(category.name) {
+                                destinationBuilder(category)
+                            }
+                        }
+                    }
+                }
             }
             .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)

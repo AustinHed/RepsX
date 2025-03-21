@@ -48,12 +48,18 @@ class ExerciseTemplateViewModel {
     // MARK: Delete
     /// Deletes the provided PredefinedExercise from the context.
     func deleteExerciseTemplate(_ exerciseTemplate: ExerciseTemplate) {
-        //does not delete, but instead marks the exercise as "hidden"
-        exerciseTemplate.hidden = true
-        //updates the name to include hidden
-        exerciseTemplate.name += " (deleted)"
-        //modelContext.delete(exercise)
+        modelContext.delete(exerciseTemplate)
         save()
+        /*
+         previous - keeping in case i need this again
+         //does not delete, but instead marks the exercise as "hidden"
+         exerciseTemplate.hidden = true
+         //updates the name to include hidden
+         exerciseTemplate.name += " (deleted)"
+         //modelContext.delete(exercise)
+         save()
+         */
+        
     }
     
     // MARK: - Fetch Predefined Exercises
@@ -63,7 +69,21 @@ class ExerciseTemplateViewModel {
         do {
             return try modelContext.fetch(descriptor)
         } catch {
-            print("Error fetching predefined exercises: \(error.localizedDescription)")
+            print("Error fetching exercise templates: \(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    func fetchExercisesForCategory(category: CategoryModel) -> [ExerciseTemplate] {
+        let categoryValue = category.id
+        let descriptor = FetchDescriptor<ExerciseTemplate>(predicate: #Predicate { exerciseTemplate in
+            exerciseTemplate.category.id == categoryValue
+        })
+        
+        do {
+            return try modelContext.fetch(descriptor)
+        } catch {
+            print("error fetching exercise templates for category \(category). Error: \(error.localizedDescription)")
             return []
         }
     }

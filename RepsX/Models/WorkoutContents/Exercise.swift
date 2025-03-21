@@ -39,7 +39,7 @@ class Exercise {
          workout: Workout,
          order: Int = 0,
          intensity: Int? = nil,
-         modality: ExerciseModality = .repetition,
+         modality: ExerciseModality = .repetition, //TODO: not all exercises are reps - should be allowed others
          templateId: UUID
         ) {
         self.id = id //unique ID

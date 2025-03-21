@@ -6,18 +6,27 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct EditCategoryView: View {
     
     //the category you want to edit
     @State var category: CategoryModel
     
+    //query for all exercises for a category
+    
     //model context
     @Environment(\.modelContext) private var modelContext
     
+    //view model
     private var categoryViewModel:CategoryViewModel {
         CategoryViewModel(modelContext: modelContext)
     }
+    //view model
+    private var exerciseTemplateViewModel:ExerciseTemplateViewModel {
+        ExerciseTemplateViewModel(modelContext: modelContext)
+    }
+    @State var exercises: [ExerciseTemplate] = []
     
     //theme view Model
     private var userThemeViewModel: UserThemeViewModel {
@@ -30,33 +39,51 @@ struct EditCategoryView: View {
     var body: some View {
         
         NavigationStack{
+
             List{
                 //update name
-                Section("Category Name"){
-                    TextField("Category", text: $category.name)
-                    // Called when the user taps Return
-                        .onSubmit {
-                            categoryViewModel.updateCategory(category, newName: category.name)
-                            
-                        }
-                        .foregroundStyle(.black)
-                    
+                Section("Name"){
+                    if category.standard {
+                        Text(category.name)
+                    } else {
+                        TextField("Category", text: $category.name)
+                            .onSubmit {
+                                categoryViewModel.updateCategory(category, newName: category.name)
+                            }
+                            .foregroundStyle(.black)
+                    }
                 }
                 
-                //delete button
-                Section() {
-                    Button("Delete (WIP)"){
-                        //TODO: Fix how deletes work, currently causes a crash
-                        //one option - just prevent delete if there are exercises associated
-                        //would need to show all associated Exercises
-                        //other option - hide lmao
-//                        categoryViewModel.deleteCategory(category)
-//                        dismiss()
+                //Exercises
+                if !exercises.isEmpty {
+                    Section("Exercises") {
+                        ForEach(exercises){ exercise in
+                            if exercise.category == category {
+                                NavigationLink(exercise.name) {
+                                    EditExerciseTemplateView(exerciseTemplate: exercise)
+                                }
+                            }
+                        }
                     }
-                    .foregroundStyle(.red)
                 }
+                
+                
+                //delete button
+                if category.standard{
+                    //nothing
+                } else {
+                    Section() {
+                        Button("Delete"){
+                            categoryViewModel.deleteCategory(category)
+                            dismiss()
+                        }
+                        .disabled(!exercises.isEmpty)
+                        .foregroundStyle(.red)
+                    } footer: { Text("To delete a custom category, first ensure there are no exercises in the category") }
+                }
+
             }
-            .navigationTitle(Text("Edit Category"))
+            .navigationTitle(Text(category.standard ? "View Category" : "Edit Category"))
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(true)
             //MARK: Toolbar
@@ -69,15 +96,19 @@ struct EditCategoryView: View {
                     .foregroundStyle(userThemeViewModel.primaryColor)
                 }
             }
+            //MARK: On Appear
+            .onDisappear {
+                exercises = []
+            }
+            .onAppear {
+                let newCategories = exerciseTemplateViewModel.fetchExercisesForCategory(category: category)
+                    .filter { newCategory in
+                        // Replace `id` with the unique property or ensure CategoryModel is Equatable
+                        !exercises.contains(where: { $0.id == newCategory.id })
+                    }
+                exercises.append(contentsOf: newCategories)
+            }
         }
         
     }
-}
-
-#Preview {
-    
-    let category:CategoryModel = CategoryModel(name: "Chest")
-    @Environment(\.modelContext) var modelContext
-    let categoryViewModel:CategoryViewModel = CategoryViewModel(modelContext: modelContext)
-    //EditCategoryView(category: category, categoryViewModel: categoryViewModel)
 }

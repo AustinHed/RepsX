@@ -12,7 +12,6 @@ import SwiftData
 func initializeDefaultDataIfNeeded(context: ModelContext) {
     do {
         // MARK: - Categories
-        
         // Fetch existing categories.
         let categoryDescriptor = FetchDescriptor<CategoryModel>()
         let existingCategories = try context.fetch(categoryDescriptor)
@@ -38,6 +37,7 @@ func initializeDefaultDataIfNeeded(context: ModelContext) {
         // Fetch existing predefined exercises.
         let exerciseDescriptor = FetchDescriptor<ExerciseTemplate>()
         let existingExercises = try context.fetch(exerciseDescriptor)
+        
         var allExerciseTemplates: [ExerciseTemplate] = []
         if existingExercises.isEmpty {
             var defaultExercises: [ExerciseTemplate] = []
@@ -107,6 +107,7 @@ func initializeDefaultDataIfNeeded(context: ModelContext) {
         
         let routineDescriptor = FetchDescriptor<Routine>()
         let existingRoutines = try context.fetch(routineDescriptor)
+        
         if existingRoutines.isEmpty {
             // Helper function for looking up an exercise template by name.
             func template(named name: String) -> ExerciseTemplate? {
