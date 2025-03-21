@@ -33,7 +33,6 @@ struct StatsHomeView: View {
                 }
                 //category
                 Section {
-                    Text("hiding category chart")
                     categoryDistributionChart
                 }
                 
@@ -75,6 +74,10 @@ struct StatsHomeView: View {
             }
             .navigationTitle("Stats")
             .listSectionSpacing(12)
+            .safeAreaInset(edge: .bottom) {
+                // Add extra space (e.g., 100 points)
+                Color.clear.frame(height: 50)
+            }
         }
     }
 }

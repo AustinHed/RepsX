@@ -107,17 +107,17 @@ extension MainTabbedView {
         HStack(spacing: 10) {
             Spacer()
             Image(systemName: imageName)
-                .foregroundStyle(.black)
+                .foregroundStyle(isActive ? .black : .black.opacity(0.8))
             //if the tab is selected, change the color
             if isActive{
                 Text(title)
-                    .foregroundStyle(isActive ? .black : .gray)
-                    //.fontWeight(isActive ? .bold : .regular)
+                    .foregroundStyle(.black)
             }
             Spacer()
         }
         //if the tab is selected, make it more prominent
-        .frame(width: isActive ? .infinity : 60, height: 50)
+        .frame(maxWidth: isActive ? .infinity : 60)
+        .frame(height: 50)
         .background(isActive ? .blue.opacity(0.3) : .clear)
         .cornerRadius(30)
     }
