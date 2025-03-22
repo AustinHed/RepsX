@@ -67,6 +67,7 @@ struct EditRoutine: View {
                 
             }
             .navigationTitle(routine.name == "" ? "New Routine" : routine.name)
+            .navigationBarTitleDisplayMode(.inline)
             //MARK: Toolbar
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -149,7 +150,7 @@ extension EditRoutine {
         routine: Routine,
         routineViewModel: RoutineViewModel
     ) -> some View {
-        Section {
+        Section ("Name") {
             // Edit Name
             TextField("Name this Routine", text: Binding(
                 get: { routine.name },
@@ -167,7 +168,7 @@ extension EditRoutine {
 //MARK: Exercise Rows
 extension EditRoutine {
     func exercisesSection(for routine: Routine) -> some View {
-        Section{
+        Section ("Exercises"){
             ForEach(routine.exercises, id: \.self) { exercise in
                 NavigationLink {
                     EditExerciseInRoutineView(exerciseInRoutine: exercise)

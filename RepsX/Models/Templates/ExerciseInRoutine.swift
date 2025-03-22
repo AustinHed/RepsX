@@ -34,7 +34,7 @@ class ExerciseInRoutine: Identifiable {
     }
     
     // Relationship to the routine it belongs in.
-    @Relationship(deleteRule: .cascade, inverse: \Routine.exercises)
+    @Relationship(inverse: \Routine.exercises)
     var routine: Routine?
     
     init(id: UUID = UUID(),
