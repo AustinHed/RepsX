@@ -22,7 +22,9 @@ struct StatsHomeView: View {
     //chosen theme string
 
     
+    //environment
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.themeColor) var themeColor
     
     @Binding var selectedTab: MainTabbedView.TabOptions
     
@@ -82,6 +84,7 @@ struct StatsHomeView: View {
                 Color.clear.frame(height: 50)
             }
         }
+        .tint(themeColor)
     }
 }
 
@@ -156,25 +159,25 @@ extension StatsHomeView {
             return Text("Over the past ") +
             Text("\(14) days, ")
                 .bold()
-                .foregroundColor(.blue) +
+                .foregroundColor(themeColor) +
             Text("you averaged ") +
             Text("\(Int(averageWorkoutTime)) minutes")
                 .bold()
-                .foregroundColor(.blue) +
+                .foregroundColor(themeColor) +
             Text(" of exercise per day. That's a ") +
             Text("\(periodPercentageDifference, specifier: "%.0f")%")
                 .bold()
-                .foregroundColor(.blue) +
+                .foregroundColor(themeColor) +
             Text(" change vs the previous 14 day period")
         } else {
             return Text("Over the past ") +
             Text("\(14) days, ")
                 .bold()
-                .foregroundColor(.blue) +
+                .foregroundColor(themeColor) +
             Text("you averaged ") +
             Text("\(Int(averageWorkoutTime)) minutes")
                 .bold()
-                .foregroundColor(.blue) +
+                .foregroundColor(themeColor) +
             Text(" of exercise per day.")
         }
     }
@@ -187,7 +190,8 @@ extension StatsHomeView {
                     x: .value("Date", stat.day, unit: .day),
                     y: .value("Workout Time (mins)", stat.totalTime / 60)
                 )
-                .clipShape(Capsule())  // Gives the bars a pill-like appearance.
+                .clipShape(Capsule())
+                .foregroundStyle(themeColor)
             }
         }
         .padding(.vertical)
@@ -262,11 +266,11 @@ extension StatsHomeView {
         
         return Text("\(commonCategoryName) ")
             .bold()
-            .foregroundColor(.blue)
+            .foregroundColor(themeColor)
         + Text("was your favorite category, making up ")
         + Text("\(commonCategoryPercentage)%")
             .bold()
-            .foregroundColor(.blue)
+            .foregroundColor(themeColor)
         + Text(" exercises logged")
     }
     
@@ -280,7 +284,7 @@ extension StatsHomeView {
                     angularInset: 2
                 )
                 .cornerRadius(5)
-                .foregroundStyle(entry.count == mostCommonCount ? Color.blue : Color.blue.opacity(0.5))
+                .foregroundStyle(entry.count == mostCommonCount ? themeColor : themeColor.opacity(0.5))
             }
         }
         .frame(height: 100)

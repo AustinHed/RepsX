@@ -11,11 +11,11 @@ import Foundation
 
 struct SelectCategoryView: View {
     
-    //dismiss var
+    //Dismiss
     @Binding var isSelectingExercise: Bool
     var onExerciseSelected: (ExerciseTemplate) -> Void
     
-    //Fetch standard categories
+    //Queries
     @Query(
         filter: #Predicate<CategoryModel>{ category in
             category.standard == true &&
@@ -23,8 +23,6 @@ struct SelectCategoryView: View {
         },
         sort: \CategoryModel.name
     ) var standardCategories: [CategoryModel]
-    
-    //Fetch custom categories
     @Query(
         filter: #Predicate<CategoryModel>{ category in
             category.standard == false &&
@@ -33,13 +31,14 @@ struct SelectCategoryView: View {
         sort: \CategoryModel.name
     ) var customCategories: [CategoryModel]
     
+    //Environment
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
     
-    //View Model - category
+    //View Models
     private var categoryViewModel: CategoryViewModel {
         CategoryViewModel(modelContext: modelContext)
     }
-    //View Model - exerciseTemplate
     private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
@@ -47,9 +46,6 @@ struct SelectCategoryView: View {
     //toggles
     @State var isAddingExercise: Bool = false
     @State var isEditingCategories:Bool = false
-    
-    //environment and context
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
@@ -105,14 +101,6 @@ struct SelectCategoryView: View {
                 //edit exercises and categories
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        
-                        //                        NavigationLink("Edit Exercises") {
-                        //                            ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises") { exercise in
-                        //                                EditExerciseTemplateView(exerciseTemplate: exercise)
-                        //                            }
-                        //
-                        //                        }
-                        
                         NavigationLink("Edit Categories") {
                             ListOfCategoriesView(navigationTitle: "Edit Categories") { category in
                                 EditCategoryView(category: category)

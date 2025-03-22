@@ -13,15 +13,14 @@ struct ChooseNewModalityView: View {
     //the exercise template to edit
     @State var exerciseTemplate: ExerciseTemplate
     
-    //model context
+    //environment
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.themeColor) var themeColor
+    @Environment(\.dismiss) private var dismiss
     
     private var exerciseTemplateViewModel:ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
-    
-    //dismiss
-    @Environment(\.dismiss) private var dismiss
         
     
     var body: some View {
@@ -96,7 +95,7 @@ struct ChooseNewModalityView: View {
         }
     }
     
-    //MARK: this is what i should use to add the checkmark
+    //MARK: Add checkmark
     @ViewBuilder
     private func modalityLabel(for modality: ExerciseModality) -> some View {
         if exerciseTemplate.modality == modality {
@@ -105,7 +104,7 @@ struct ChooseNewModalityView: View {
                     .foregroundStyle(.black)
                 Spacer()
                 Image(systemName: "checkmark")
-                    .foregroundColor(.blue)
+                    .foregroundColor(themeColor)
             }
         } else {
             Text(modality.rawValue.capitalizingFirstLetter())

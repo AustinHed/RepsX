@@ -13,20 +13,17 @@ struct EditExerciseTemplateView: View {
     //the exercise template to edit
     @State var exerciseTemplate: ExerciseTemplate
     
-    //model context
+    //environment
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.themeColor) var themeColor
+    @Environment(\.dismiss) private var dismiss
     
     private var exerciseTemplateViewModel:ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
     
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
-    }
-    
     //dismiss
-    @Environment(\.dismiss) private var dismiss
+    
     
     var body: some View {
         
@@ -116,7 +113,3 @@ extension EditExerciseTemplateView {
     }
 }
 
-//#Preview {
-//    let exerciseTemplate = ExerciseTemplate(name: "Test")
-//    EditExerciseTemplateView(exerciseTemplate: exerciseTemplate)
-//}

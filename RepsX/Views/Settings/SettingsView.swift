@@ -12,6 +12,9 @@ struct SettingsView: View {
     
     @Environment(\.modelContext) private var modelContext
     
+    //theme color
+    @Environment(\.themeColor) var themeColor
+    
     @Binding var selectedTab: MainTabbedView.TabOptions
     var body: some View {
         NavigationStack{
@@ -74,6 +77,7 @@ struct SettingsView: View {
         .onAppear{
             initializeDefaultThemes(in: modelContext)
         }
+        .tint(themeColor)
     }
 }
 

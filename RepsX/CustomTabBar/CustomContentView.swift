@@ -125,7 +125,7 @@ extension MainTabbedView {
         //if the tab is selected, make it more prominent
         .frame(maxWidth: isActive ? .infinity : 60)
         .frame(height: 50)
-        .background(isActive ? .blue.opacity(0.3) : .clear)
+        .background(isActive ? Color(hexString: selectedTheme.first!.primaryHex).opacity(0.3) : .clear)
         .cornerRadius(30)
     }
 }

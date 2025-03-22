@@ -25,6 +25,8 @@ struct AddNewExerciseTemplateView: View {
     
     //environment
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.themeColor) var themeColor
+    @Environment(\.dismiss) private var dismiss
     
     // View Models (if needed)
     private var categoryViewModel: CategoryViewModel {
@@ -33,15 +35,6 @@ struct AddNewExerciseTemplateView: View {
     private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
-    
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
-    }
-    
-    //dismiss
-    @Environment(\.dismiss) private var dismiss
-    
     // State for the template
     @State var templateName: String = ""
     
@@ -74,7 +67,7 @@ struct AddNewExerciseTemplateView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundStyle(userThemeViewModel.primaryColor)
+                    .foregroundStyle(themeColor)
                 }
                 
                 //done button
@@ -90,7 +83,7 @@ struct AddNewExerciseTemplateView: View {
                         }
                     }
                     .disabled(templateName.isEmpty || selectedCategory == nil)
-                    .foregroundStyle((templateName.isEmpty || selectedCategory == nil) ? Color.gray : userThemeViewModel.primaryColor)
+                    .foregroundStyle((templateName.isEmpty || selectedCategory == nil) ? Color.gray : themeColor)
                 }
             }
             //MARK: On Appear
@@ -110,7 +103,7 @@ struct AddNewExerciseTemplateView: View {
                 modalityPickerSheet()
             }
         }
-        .tint(userThemeViewModel.primaryColor)
+        .tint(themeColor)
     }
 }
 

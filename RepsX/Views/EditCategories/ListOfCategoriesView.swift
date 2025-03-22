@@ -30,19 +30,14 @@ struct ListOfCategoriesView<Destination: View>: View {
     
     //environment
     @Environment(\.modelContext) private var modelContext
-    
-    //dismiss
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.themeColor) var themeColor
     
     //View Model
     private var categoryViewModel: CategoryViewModel {
         CategoryViewModel(modelContext: modelContext)
     }
     
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
-    }
     
     //selected category
     @State private var selectedCategory:CategoryModel? = nil
@@ -101,7 +96,7 @@ struct ListOfCategoriesView<Destination: View>: View {
                     } label: {
                         Image(systemName:"plus.circle")
                     }
-                    .foregroundStyle(userThemeViewModel.primaryColor)
+                    .foregroundStyle(themeColor)
 
                 }
             }
@@ -115,7 +110,7 @@ struct ListOfCategoriesView<Destination: View>: View {
                 AddNewCategoryView()
             }
         }
-        .tint(userThemeViewModel.primaryColor)
+        .tint(themeColor)
     }
 }
 

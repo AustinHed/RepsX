@@ -9,13 +9,10 @@ import SwiftUI
 
 struct AddNewCategoryView: View {
     
-    //model context
+    //environment
     @Environment(\.modelContext) private var modelContext
-
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
-    }
+    @Environment(\.themeColor) var themeColor
+    @Environment(\.dismiss) private var dismiss
     
     //view model
     private var categoryViewModel:CategoryViewModel {
@@ -24,9 +21,6 @@ struct AddNewCategoryView: View {
     
     //name to edit
     @State private var newName:String = ""
-    
-    //dismiss
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack{
@@ -45,7 +39,7 @@ struct AddNewCategoryView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundStyle(userThemeViewModel.primaryColor)
+                    .foregroundStyle(themeColor)
                 }
                 //save button
                 ToolbarItem(placement: .topBarTrailing) {
@@ -53,7 +47,7 @@ struct AddNewCategoryView: View {
                         categoryViewModel.addCategory(name: newName)
                         dismiss()
                     }
-                    .foregroundStyle(newName.isEmpty ? Color.gray: userThemeViewModel.primaryColor)
+                    .foregroundStyle(newName.isEmpty ? Color.gray: themeColor)
                     .disabled(Bool(newName.isEmpty))
                 }
             }

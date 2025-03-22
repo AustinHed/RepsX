@@ -9,6 +9,8 @@ struct StatsSummaryView: View {
     let filter: ChartFilter
     let lookback: LookbackOption //if allTime, then 0
     
+    @Environment(\.themeColor) var themeColor
+    
     init(dataPoints: [ChartDataPoint],
          minDataPoints: [ChartDataPoint]? = nil,
          maxDataPoints: [ChartDataPoint]? = nil,
@@ -341,32 +343,32 @@ extension StatsSummaryView {
         if lookback.rawValue == 0 {
             //all time
             return Text("Your ")
-            + Text("All-Time").bold().foregroundColor(.blue)
+            + Text("All-Time").bold().foregroundColor(themeColor)
             + Text(" average ")
             + Text("\(humanReadableMetric)")
             + verb
             + Text("\(direction) ").bold().foregroundColor(changeColor)
             + Text("\(changePercentString)%").bold().foregroundColor(changeColor)
             + Text(", from ")
-            + Text("\(baselineString) ").bold().foregroundStyle(.blue)
+            + Text("\(baselineString) ").bold().foregroundStyle(themeColor)
             + Text(metricValue)
             + Text(" to ")
-            + Text("\(endingString) ").bold().foregroundStyle(.blue)
+            + Text("\(endingString) ").bold().foregroundStyle(themeColor)
             + Text(metricValue)
             + Text(".")
         } else {
             return Text("Over the last ")
-                + Text("\(lookback.rawValue) days").bold().foregroundStyle(.blue)
+            + Text("\(lookback.rawValue) days").bold().foregroundStyle(themeColor)
                 + Text(" your average ")
                 + Text("\(humanReadableMetric)")
                 + verb
                 + Text("\(direction) ").bold().foregroundColor(changeColor)
                 + Text("\(changePercentString)%").bold().foregroundColor(changeColor)
                 + Text(", from ")
-                + Text("\(baselineString) ").bold().foregroundStyle(.blue)
+            + Text("\(baselineString) ").bold().foregroundStyle(themeColor)
                 + Text(metricValue)
                 + Text(" to ")
-                + Text("\(endingString) ").bold().foregroundStyle(.blue)
+            + Text("\(endingString) ").bold().foregroundStyle(themeColor)
                 + Text(metricValue)
                 + Text(".")
         }
@@ -390,15 +392,15 @@ extension StatsSummaryView {
             if lookback.rawValue == 0 {
                 //all time
                 return Text("Your")
-                + Text(" All-Time ").bold().foregroundStyle(.blue)
+                + Text(" All-Time ").bold().foregroundStyle(themeColor)
                 + Text(" minutes of exercise logged is ")
-                + Text("\(currentTotal, specifier: "%.0f") minutes.").bold().foregroundStyle(.blue)
+                + Text("\(currentTotal, specifier: "%.0f") minutes.").bold().foregroundStyle(themeColor)
             } else {
                 //limited time
                 return Text("Since ")
-                + Text("\(formattedStartDate)").bold().foregroundStyle(.blue)
+                + Text("\(formattedStartDate)").bold().foregroundStyle(themeColor)
                     + Text(", you logged ")
-                    + Text("\(currentTotal, specifier: "%.0f") minutes of exercise.").bold().foregroundStyle(.blue)
+                + Text("\(currentTotal, specifier: "%.0f") minutes of exercise.").bold().foregroundStyle(themeColor)
                 
             }
         
@@ -406,15 +408,15 @@ extension StatsSummaryView {
             if lookback.rawValue == 0 {
                 //all time
                 return Text("Your")
-                + Text(" All-Time ").bold().foregroundStyle(.blue)
+                + Text(" All-Time ").bold().foregroundStyle(themeColor)
                 + Text(" total sets completed is ")
-                + Text("\(currentTotal, specifier: "%.0f") sets.").bold().foregroundStyle(.blue)
+                + Text("\(currentTotal, specifier: "%.0f") sets.").bold().foregroundStyle(themeColor)
             } else {
                 //limited time
                 return Text("Since ")
-                    + Text("\(formattedStartDate)").bold().foregroundStyle(.blue)
+                    + Text("\(formattedStartDate)").bold().foregroundStyle(themeColor)
                     + Text(", you completed ")
-                    + Text("\(currentTotal, specifier: "%.0f") sets.").bold().foregroundStyle(.blue)
+                    + Text("\(currentTotal, specifier: "%.0f") sets.").bold().foregroundStyle(themeColor)
                 
             }
         
@@ -422,16 +424,16 @@ extension StatsSummaryView {
             if lookback.rawValue == 0 {
                 //all time
                 return Text("Your")
-                + Text(" All-Time ").bold().foregroundStyle(.blue)
+                + Text(" All-Time ").bold().foregroundStyle(themeColor)
                 + Text(" total reps completed is ")
-                + Text("\(currentTotal, specifier: "%.0f") reps.").bold().foregroundStyle(.blue)
+                + Text("\(currentTotal, specifier: "%.0f") reps.").bold().foregroundStyle(themeColor)
                 
             } else {
                 //limited time
                 return Text("Since ")
-                    + Text("\(formattedStartDate)").bold().foregroundStyle(.blue)
+                    + Text("\(formattedStartDate)").bold().foregroundStyle(themeColor)
                     + Text(", you completed ")
-                    + Text("\(currentTotal, specifier: "%.0f") reps.").bold().foregroundStyle(.blue)
+                    + Text("\(currentTotal, specifier: "%.0f") reps.").bold().foregroundStyle(themeColor)
                 
             }
         
@@ -439,16 +441,16 @@ extension StatsSummaryView {
             if lookback.rawValue == 0 {
                 //all time
                 return Text("Your")
-                + Text(" All-Time ").bold().foregroundStyle(.blue)
+                + Text(" All-Time ").bold().foregroundStyle(themeColor)
                 + Text(" total lift volume is ")
-                + Text("\(currentTotal, specifier: "%.0f") lbs of volume.").bold().foregroundStyle(.blue)
+                + Text("\(currentTotal, specifier: "%.0f") lbs of volume.").bold().foregroundStyle(themeColor)
                 
             } else {
                 //limited time
                 return Text("Since ")
-                    + Text("\(formattedStartDate)").bold().foregroundStyle(.blue)
+                    + Text("\(formattedStartDate)").bold().foregroundStyle(themeColor)
                     + Text(", you lifted ")
-                    + Text("\(currentTotal, specifier: "%.0f") lbs of volume.").bold().foregroundStyle(.blue)
+                    + Text("\(currentTotal, specifier: "%.0f") lbs of volume.").bold().foregroundStyle(themeColor)
                 
             }
         
@@ -457,56 +459,56 @@ extension StatsSummaryView {
             if lookback.rawValue == 0 {
                 // all time
                 return Text("Your")
-                + Text(" All-Time ").bold().foregroundStyle(.blue)
+                + Text(" All-Time ").bold().foregroundStyle(themeColor)
                 + Text(" average intensity is ")
-                + Text("\(currentAverage, specifier: "%.1f")").bold().foregroundStyle(.blue)
+                + Text("\(currentAverage, specifier: "%.1f")").bold().foregroundStyle(themeColor)
                 + Text("units.")
                 
             } else {
                 //limited time
                 return Text("Since ")
-                + Text("\(formattedStartDate)").bold().foregroundStyle(.blue)
+                + Text("\(formattedStartDate)").bold().foregroundStyle(themeColor)
                 + Text(", your average intensity was ")
-                + Text("\(currentAverage, specifier: "%.1f")").bold().foregroundStyle(.blue)
+                + Text("\(currentAverage, specifier: "%.1f")").bold().foregroundStyle(themeColor)
                 + Text(".")
             }
                 
         case .category(let category):
             if lookback.rawValue == 0 {
                 return Text("Your ")
-                + Text("All-Time ").bold().foregroundStyle(.blue)
+                + Text("All-Time ").bold().foregroundStyle(themeColor)
                 + Text("\(category.name) PR ")
                 + Text("is ")
-                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(.blue)
+                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(themeColor)
                 + Text(", achieved on ")
-                + Text("\(maxDataPoint.date)").bold().foregroundStyle(.blue)
+                + Text("\(maxDataPoint.date)").bold().foregroundStyle(themeColor)
             } else {
                 return Text("Your ")
-                + Text("\(lookback.rawValue)-day ").bold().foregroundStyle(.blue)
+                + Text("\(lookback.rawValue)-day ").bold().foregroundStyle(themeColor)
                 + Text("\(category.name) PR ")
                 + Text("was ")
-                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(.blue)
+                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(themeColor)
                 + Text(", achieved on ")
-                + Text("\(maxDataPoint.date)").bold().foregroundStyle(.blue)
+                + Text("\(maxDataPoint.date)").bold().foregroundStyle(themeColor)
             }
         
         case .exercise(let exercise):
             if lookback.rawValue == 0 {
                 return Text("Your ")
-                + Text("All-Time ").bold().foregroundStyle(.blue)
+                + Text("All-Time ").bold().foregroundStyle(themeColor)
                 + Text("\(exercise.name) PR ")
                 + Text("is ")
-                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(.blue)
+                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(themeColor)
                 + Text(", achieved on ")
-                + Text("\(maxDataPoint.date)").bold().foregroundStyle(.blue)
+                + Text("\(maxDataPoint.date)").bold().foregroundStyle(themeColor)
             } else {
                 return Text("Your ")
-                + Text("\(lookback.rawValue)-day ").bold().foregroundStyle(.blue)
+                + Text("\(lookback.rawValue)-day ").bold().foregroundStyle(themeColor)
                 + Text("\(exercise.name) PR ")
                 + Text("was ")
-                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(.blue)
+                + Text("\(maxDataPoint.value, specifier: "%.1f") lbs").bold().foregroundStyle(themeColor)
                 + Text(", achieved on ")
-                + Text("\(maxDataPoint.date)").bold().foregroundStyle(.blue)
+                + Text("\(maxDataPoint.date)").bold().foregroundStyle(themeColor)
             }
         
         default:

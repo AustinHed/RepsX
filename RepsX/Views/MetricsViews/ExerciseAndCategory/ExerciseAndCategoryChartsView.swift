@@ -14,6 +14,8 @@ struct ExerciseAndCategoryChartsView: View {
     // Store the selected lookback option.
     @State private var selectedLookback: LookbackOption = .thirty
     
+    @Environment(\.themeColor) var themeColor
+    
     // Compute the lookback period. If "All Time" is selected, return nil.
     private var lookbackPeriod: Date? {
         if selectedLookback == .all {
@@ -62,6 +64,7 @@ struct ExerciseAndCategoryChartsView: View {
                 LazyVStack(spacing:12) {
                     
                     //picker
+                    //TODO: make a custom picker
                     Picker("Lookback", selection: $selectedLookback) {
                         ForEach(LookbackOption.allCases) { option in
                             Text(option.description).tag(option)
@@ -270,7 +273,7 @@ extension ExerciseAndCategoryChartsView {
                     width: MarkDimension(floatLiteral: markerSize-1)
                 )
                 .cornerRadius(markerSize / 2) // Capsule-like appearance.
-                .foregroundStyle(.blue.opacity(0.4))
+                .foregroundStyle(themeColor.opacity(0.4))
             }
             
             //median line
@@ -280,13 +283,13 @@ extension ExerciseAndCategoryChartsView {
                     y: .value("Median Weight", point.value)
                 )
                 .interpolationMethod(.catmullRom)
-                .foregroundStyle(.blue.opacity(0.8))
+                .foregroundStyle(themeColor.opacity(0.8))
                 .lineStyle(StrokeStyle(lineWidth: 4))
                 
                 if let selected = selectedWeightDataPoint {
                     RuleMark(x: .value("Date", selected.date, unit: .day))
-                        .lineStyle(StrokeStyle(lineWidth: 2, dash: [5]))
-                        .foregroundStyle(.blue)
+                        .lineStyle(StrokeStyle(lineWidth: 2, dash: []))
+                        .foregroundStyle(themeColor)
                 }
             }
             
@@ -299,7 +302,7 @@ extension ExerciseAndCategoryChartsView {
                 .symbol {
                     ZStack {
                         Circle()
-                            .fill(Color.blue)
+                            .fill(themeColor)
                             .frame(width: markerSize, height: markerSize)
                         Circle()
                             .stroke(Color.white, lineWidth: 2)
@@ -378,8 +381,8 @@ extension ExerciseAndCategoryChartsView {
             
             if let selected = selectedSetsDataPoint {
                 RuleMark(x: .value("Date", selected.date, unit: .day))
-                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [5]))
-                    .foregroundStyle(.blue)
+                    .lineStyle(StrokeStyle(lineWidth: 2, dash: []))
+                    .foregroundStyle(themeColor)
             }
         }
         .interactiveChartOverlay(data: setChartData, selectedDataPoint: $selectedSetsDataPoint) { $0.date }
@@ -462,8 +465,8 @@ extension ExerciseAndCategoryChartsView {
             //the visual line marker
             if let selected = selectedVolumeDataPoint {
                 RuleMark(x: .value("Date", selected.date, unit: .day))
-                    .lineStyle(StrokeStyle(lineWidth: 2, dash: [5]))
-                    .foregroundStyle(.blue)
+                    .lineStyle(StrokeStyle(lineWidth: 2, dash: []))
+                    .foregroundStyle(themeColor)
             }
         }
         .interactiveChartOverlay(data: volumeChartData, selectedDataPoint: $selectedVolumeDataPoint) { $0.date }

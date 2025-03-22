@@ -12,29 +12,21 @@ struct EditCategoryView: View {
     
     //the category you want to edit
     @State var category: CategoryModel
-    
-    //query for all exercises for a category
-    
+        
     //model context
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.themeColor) var themeColor
+    @Environment(\.dismiss) private var dismiss
     
-    //view model
+    //view models
     private var categoryViewModel:CategoryViewModel {
         CategoryViewModel(modelContext: modelContext)
     }
-    //view model
     private var exerciseTemplateViewModel:ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
     @State var exercises: [ExerciseTemplate] = []
     
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
-    }
-    
-    //dismiss
-    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         
@@ -93,7 +85,7 @@ struct EditCategoryView: View {
                     Button("Back") {
                         dismiss()
                     }
-                    .foregroundStyle(userThemeViewModel.primaryColor)
+                    .foregroundStyle(themeColor)
                 }
             }
             //MARK: On Appear

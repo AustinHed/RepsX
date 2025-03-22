@@ -19,6 +19,7 @@ struct EditRoutine: View {
     //Environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.themeColor) var themeColor
     
     //ViewModels
     private var workoutViewModel: WorkoutViewModel {
@@ -27,11 +28,7 @@ struct EditRoutine: View {
     private var routineViewModel: RoutineViewModel {
         RoutineViewModel(modelContext: modelContext)
     }
-    
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
-    }
+
     
     //Add Exercise
     @State private var isSelectingExercise: Bool = false
@@ -52,7 +49,7 @@ struct EditRoutine: View {
                         //finally, dismiss the EditRoutineView
                         dismiss()
                     }
-                    .foregroundStyle(userThemeViewModel.primaryColor)
+                    .foregroundStyle(themeColor)
                     
                 }
                 
@@ -113,7 +110,7 @@ struct EditRoutine: View {
                     } label: {
                         Image(systemName: "ellipsis.circle")
                     }
-                    .foregroundStyle(userThemeViewModel.primaryColor)
+                    .foregroundStyle(themeColor)
                     
                 }
             }
@@ -135,7 +132,7 @@ struct EditRoutine: View {
             }
             
         }
-        .tint(userThemeViewModel.primaryColor)
+        .tint(themeColor)
     }
 }
 
@@ -197,7 +194,7 @@ extension EditRoutine {
             } label: {
                 Text("Add Exercise")
             }
-            .foregroundStyle(userThemeViewModel.primaryColor)
+            .foregroundStyle(themeColor)
         }
     }
 }

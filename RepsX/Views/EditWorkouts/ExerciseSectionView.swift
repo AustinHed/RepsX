@@ -10,6 +10,7 @@ import SwiftUI
 struct ExerciseSectionView: View {
     
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.themeColor) var themeColor
     
     //initialized Exercise
     @State var exercise: Exercise
@@ -22,11 +23,7 @@ struct ExerciseSectionView: View {
     private var exerciseViewModel: ExerciseViewModel {
         ExerciseViewModel(modelContext: modelContext)
     }
-    
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
-    }
+
     
     //focus states
     @FocusState var isKeyboardActive: Bool //to dismiss the keyboard
@@ -44,7 +41,7 @@ struct ExerciseSectionView: View {
             HStack  {
                 
                 //number
-                exerciseNumberField(index: index, set: set, primaryColor: userThemeViewModel.primaryColor)
+                exerciseNumberField(index: index, set: set, primaryColor: themeColor)
                 
                 //values to display, based on modality
                 ///ex. weight x reps, distance x time
@@ -84,7 +81,7 @@ struct ExerciseSectionView: View {
         }
 
         //add button
-        addButton(primaryColor:userThemeViewModel.primaryColor)
+        addButton(primaryColor: themeColor)
     }
     
 }

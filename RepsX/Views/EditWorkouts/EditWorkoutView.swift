@@ -9,8 +9,10 @@ import SwiftUI
 
 struct EditWorkoutView: View {
     
+    //environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.themeColor) var themeColor
     
     //the initialized workout
     @State var workout: Workout
@@ -20,11 +22,6 @@ struct EditWorkoutView: View {
     //viewModel
     private var workoutViewModel: WorkoutViewModel {
         WorkoutViewModel(modelContext: modelContext)
-    }
-    
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
     }
     
     // Focus state to detect when the name field loses focus
@@ -97,7 +94,7 @@ struct EditWorkoutView: View {
             
             
         }
-        .tint(userThemeViewModel.primaryColor)
+        .tint(themeColor)
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(workoutViewModel.toolbarDate(workout.startTime))
         //MARK: Toolbar
@@ -113,7 +110,7 @@ struct EditWorkoutView: View {
                 } label: {
                     Image(systemName: "timer")
                 }
-                .foregroundStyle(userThemeViewModel.primaryColor)
+                .foregroundStyle(themeColor)
                 
             }
             //Reorder & Delete
@@ -141,7 +138,7 @@ struct EditWorkoutView: View {
                 } label: {
                     Image(systemName:"ellipsis.circle")
                 }
-                .foregroundStyle(userThemeViewModel.primaryColor)
+                .foregroundStyle(themeColor)
                 .confirmationDialog("Are you sure you want to delete this Workout", isPresented: $showDeleteConfirmation, titleVisibility: .visible) {
                     Button("Delete", role: .destructive) {
                         workoutViewModel.deleteWorkout(workout)
@@ -161,12 +158,12 @@ struct EditWorkoutView: View {
                 workout: workout,
                 workoutViewModel: workoutViewModel,
                 mode: mode,
-                primaryColor: userThemeViewModel.primaryColor
+                primaryColor: themeColor
             )
         }
         //Reorder / Delete
         .sheet(isPresented: $isReordering) {
-            ReorderExercisesView(workoutViewModel: workoutViewModel, workout: workout, primaryColor: userThemeViewModel.primaryColor)
+            ReorderExercisesView(workoutViewModel: workoutViewModel, workout: workout, primaryColor: themeColor)
         }
         //add new exercise
         .sheet(isPresented: $isSelectingExercise) {
@@ -181,6 +178,7 @@ struct EditWorkoutView: View {
                     }
                 )
             }
+            .tint(themeColor)
             
         }
         //swap existing exercise
@@ -211,7 +209,7 @@ struct EditWorkoutView: View {
         //Timer
         .sheet(isPresented: $showTimer) {
             Spacer()
-            ExerciseTimer(primaryColor:userThemeViewModel.primaryColor)
+            ExerciseTimer(primaryColor:themeColor)
                 .padding(.bottom, 10)
                 .presentationDetents([.height(70)])
                 .presentationBackgroundInteraction(.enabled)
@@ -269,7 +267,7 @@ extension EditWorkoutView {
             } label: {
                 Text("\(workoutViewModel.formattedDate(workout.startTime))")
             }
-            .foregroundStyle(userThemeViewModel.primaryColor)
+            .foregroundStyle(themeColor)
         }
     }
 }
@@ -289,7 +287,7 @@ extension EditWorkoutView {
                     Text("-")
                 }
             }
-            .foregroundStyle(userThemeViewModel.primaryColor)
+            .foregroundStyle(themeColor)
         }
     }
 }
@@ -343,7 +341,7 @@ extension EditWorkoutView {
             } label: {
                 Image(systemName: "ellipsis")
             }
-            .foregroundStyle(userThemeViewModel.primaryColor)
+            .foregroundStyle(themeColor)
         }
     }
 }
@@ -356,7 +354,7 @@ extension EditWorkoutView{
         } label: {
             Text("Add Exercise")
         }
-        .foregroundStyle(userThemeViewModel.primaryColor)
+        .foregroundStyle(themeColor)
     }
 }
 

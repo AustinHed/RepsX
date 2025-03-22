@@ -17,16 +17,14 @@ struct ChooseNewCategoryView: View {
         sort: \CategoryModel.name
     ) var categories: [CategoryModel]
     
+    //environment
     @Environment(\.modelContext) private var modelContext
-    //dismiss
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.themeColor) var themeColor
+    
     //view model
     private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
-    }
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
     }
     
     var exerciseTemplate:ExerciseTemplate
@@ -38,7 +36,7 @@ struct ChooseNewCategoryView: View {
                     exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newCategory: category)
                     dismiss()
                 } label: {
-                    categoryLabel(for: category, userThemeViewModel: userThemeViewModel)
+                    categoryLabel(for: category)
                 }
             }
             .navigationTitle("Choose category")
@@ -49,14 +47,14 @@ struct ChooseNewCategoryView: View {
     
     //this creates the list of categories to select from
     @ViewBuilder
-    private func categoryLabel(for category: CategoryModel, userThemeViewModel: UserThemeViewModel) -> some View {
+    private func categoryLabel(for category: CategoryModel) -> some View {
         if exerciseTemplate.category == category {
             HStack {
                 Text(category.name)
                     .foregroundStyle(.black)
                 Spacer()
                 Image(systemName: "checkmark")
-                    .foregroundStyle(userThemeViewModel.primaryColor)
+                    .foregroundStyle(themeColor)
             }
         } else {
             Text(category.name)

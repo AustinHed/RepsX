@@ -13,16 +13,13 @@ struct RoutinesView: View {
     
     //Fetch all existing routines
     @Query(sort: \Routine.name, order: .forward) var routines: [Routine]
+    
+    @Environment(\.themeColor) var themeColor
     @Environment(\.modelContext) private var modelContext
     
     //routines view model
     private var routineViewModel:RoutineViewModel {
         RoutineViewModel(modelContext: modelContext)
-    }
-    
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
     }
     
     //new routine AND toggle to invoke navigation link
@@ -39,7 +36,7 @@ struct RoutinesView: View {
                     NavigationLink {
                         EditRoutine(routine: routine, selectedTab: $selectedTab)
                     } label: {
-                        RoutineLabel(routine: routine, color: userThemeViewModel.primaryColor)
+                        RoutineLabel(routine: routine, color: themeColor)
                     }
                     //MARK: Swipe Actions
                     .swipeActions(edge: .trailing) {
@@ -80,7 +77,7 @@ struct RoutinesView: View {
                 .hidden()
             )
         }
-        //.tint(userThemeViewModel.primaryColor)
+        .tint(themeColor)
     }
 }
 

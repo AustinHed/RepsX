@@ -12,15 +12,15 @@ import SwipeActions
 
 struct WorkoutHistoryView: View {
     
-    //Fetch all workouts
+    //Queries
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
-    //TODO: pass this array when opening a workout, to be used to access Exercise History when viewing an exercise
-    
-    @Environment(\.modelContext) private var modelContext
-    
-    //Fetch favorited routines
     @Query(filter: #Predicate{(routine:Routine) in
         return routine.favorite}, sort: \Routine.name) var favoriteRoutines: [Routine]
+    //TODO: pass this array when opening a workout, to be used to access Exercise History when viewing an exercise
+    //environment
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.themeColor) var themeColor
+    
     
     //toggle to edit workouts, existing or new
     @State private var editNewWorkout: Bool = false
@@ -37,10 +37,7 @@ struct WorkoutHistoryView: View {
         WorkoutViewModel(modelContext: modelContext)
     }
     
-    //theme view Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
-    }
+    
     
     //MARK: - tab
     //binding vars
@@ -71,48 +68,70 @@ struct WorkoutHistoryView: View {
     //MARK: Body
     var body: some View {
         NavigationStack {
-            
-            ScrollView{
-                LazyVStack(spacing: 12) {
-                    
-                    // Calendar at the top
-                    WorkoutHistoryCalendarView(workouts: workouts)
-                        .background(Color.white)
-                        .cornerRadius(16)
-                        .padding(.horizontal)
-                        .padding(.top)
-                    
-                    ForEach(workouts) { workout in
-                        //logViewRow
-                        SwipeView{
-                            WorkoutHistoryRow(workout: workout)
-                                .onTapGesture {
-                                    selectedWorkout = workout
-                                }
-                        }
-                        //swipe actions
-                        trailingActions: { _ in
-                            SwipeAction(
-                                systemImage: "trash",
-                                backgroundColor: .red
-                            ){
-                                workoutToDelete = workout
-                            }
-                            .foregroundStyle(.white)
-
-                        }
-                        .swipeMinimumDistance(25)
-                        .swipeActionCornerRadius(16)
-                        .padding(.horizontal, 16)
+            ZStack{
+                themeColor.opacity(0.2)
+                    .edgesIgnoringSafeArea(.all)
+                WavyBackground(startPoint: 50,
+                               endPoint: 120,
+                               point1x: 0.6,
+                               point1y: 0.1,
+                               point2x: 0.4,
+                               point2y: 0.015,
+                               color: themeColor.opacity(0.2)
+                )
+                    .edgesIgnoringSafeArea(.all)
+                WavyBackground(startPoint: 120,
+                               endPoint: 50,
+                               point1x: 0.4,
+                               point1y: 0.01,
+                               point2x: 0.6,
+                               point2y: 0.25,
+                               color: themeColor.opacity(0.2)
+                )
+                    .edgesIgnoringSafeArea(.all)
+                ScrollView{
+                    LazyVStack(spacing: 12) {
                         
+                        // Calendar at the top
+                        WorkoutHistoryCalendarView(workouts: workouts)
+                            .background(Color.white)
+                            .cornerRadius(16)
+                            .padding(.horizontal)
+                            .padding(.top)
+                        
+                        ForEach(workouts) { workout in
+                            //logViewRow
+                            SwipeView{
+                                WorkoutHistoryRow(workout: workout)
+                                    .onTapGesture {
+                                        selectedWorkout = workout
+                                    }
+                            }
+                            //swipe actions
+                            trailingActions: { _ in
+                                SwipeAction(
+                                    systemImage: "trash",
+                                    backgroundColor: .red
+                                ){
+                                    workoutToDelete = workout
+                                }
+                                .foregroundStyle(.white)
+
+                            }
+                            .swipeMinimumDistance(25)
+                            .swipeActionCornerRadius(16)
+                            .padding(.horizontal, 16)
+                            
+                        }
                     }
                 }
+                //.background(Color(UIColor.systemGroupedBackground))
+                //.background(themeColor.opacity(0.1))
+                //.background(WavyBackground())
+                .animation(.easeInOut(duration: 0.3), value: workouts)
+                .contentMargins(.horizontal,0)
+                .navigationTitle("History")
             }
-            .background(Color(UIColor.systemGroupedBackground))
-            .animation(.easeInOut(duration: 0.3), value: workouts)
-            .contentMargins(.horizontal,0)
-            .navigationTitle("History")
-            
             //MARK: Toolbar
             //add workout button
             .toolbar {
@@ -202,7 +221,7 @@ extension WorkoutHistoryView {
             } label: {
                 Image(systemName: "plus.circle")
             }
-            .foregroundStyle(userThemeViewModel.primaryColor)
+            .foregroundStyle(themeColor)
         }
     }
 }
@@ -227,7 +246,7 @@ extension WorkoutHistoryView {
                                     editNewWorkout = false
                                     selectedWorkout = nil
                                 }
-                                .foregroundStyle(userThemeViewModel.primaryColor)
+                                .foregroundStyle(themeColor)
                             }
                         }
                 }
@@ -249,7 +268,7 @@ extension WorkoutHistoryView {
                             }
                             selectedWorkout = nil
                         }
-                        .foregroundStyle(userThemeViewModel.primaryColor)
+                        .foregroundStyle(themeColor)
                     }
                 }
         }
@@ -267,7 +286,7 @@ extension WorkoutHistoryView {
                                     workoutViewModel.updateWorkout(workout, newEndTime: Date())
                                     coordinator.showEditWorkout.toggle()
                                 }
-                                .foregroundStyle(userThemeViewModel.primaryColor)
+                                .foregroundStyle(themeColor)
                             }
                         }
                 }

@@ -19,6 +19,7 @@ struct ExpandableChartView<Content: View>: View {
     //chart type (sets, reps, etc.)
     var chartType:ChartFilter
     
+    @Environment(\.themeColor) var themeColor
     
     // State to track if the chart is expanded or collapsed.
     @State private var isExpanded = false
@@ -111,7 +112,7 @@ struct ExpandableChartView<Content: View>: View {
                     Spacer()
                     Image(systemName: "chevron.down")
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(themeColor)
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 10)

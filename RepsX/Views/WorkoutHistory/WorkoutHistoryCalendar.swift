@@ -174,6 +174,7 @@ struct WorkoutHistoryCalendarView: View {
                                 if hasWorkout(on: date) {
                                     return themeColor.opacity(0.3)
                                 } else if calendar.isDate(date, inSameDayAs: Date()) {
+                                    //todays date
                                     return themeColor.opacity(0.1)
                                 } else {
                                     return Color.clear
@@ -206,6 +207,7 @@ struct WorkoutHistoryCalendarView: View {
                             if hasWorkout(on: date) {
                                 return themeColor.opacity(0.3)
                             } else if calendar.isDate(date, inSameDayAs: Date()) {
+                                //todays date
                                 return themeColor.opacity(0.1)
                             } else {
                                 return Color.clear

@@ -15,17 +15,14 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
         exerciseTemplate.hidden == false
     }, sort: \ExerciseTemplate.name) var customExercises: [ExerciseTemplate]
     
+    //environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.themeColor) var themeColor
     
     // View Model
     private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
-    }
-    
-    // Theme View Model
-    private var userThemeViewModel: UserThemeViewModel {
-        UserThemeViewModel(modelContext: modelContext)
     }
     
     //Filter options
@@ -159,7 +156,7 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
                     } label: {
                         Image(systemName: "plus.circle")
                     }
-                    .foregroundStyle(userThemeViewModel.primaryColor)
+                    .foregroundStyle(themeColor)
                 }
             }
             // MARK: Sheets
