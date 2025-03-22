@@ -15,14 +15,14 @@ final class UserTheme {
     var id: UUID
     var name: String
     
-    //the three colors for a given theme
+    //the two colors for a given theme
     var primaryHex: String
     var secondaryHex: String
     
     //whether this is the current theme
     var isSelected: Bool
 
-    //init, which requires all three colors
+    //init, which requires both colors
     init(id: UUID = UUID(),
          name: String,
          primaryHex: String,

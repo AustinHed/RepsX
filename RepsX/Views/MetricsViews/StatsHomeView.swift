@@ -11,13 +11,16 @@ import SwiftData
 
 // Example StatsView
 struct StatsHomeView: View {
+    
+    //MARK: Queries
     // Fetch workouts from SwiftData for hte L14 days
     @Query(filter: Workout.currentPredicate(),
            sort: \Workout.startTime) var workouts: [Workout]
-    
     //fetch all exercises for the L14D
     @Query(filter: Exercise.currentPredicate()
     ) var exercisesList: [Exercise]
+    //chosen theme string
+
     
     @Environment(\.modelContext) private var modelContext
     
@@ -293,6 +296,7 @@ extension StatsHomeView {
     }
 }
 
+//TODO: Move these to the respective models
 extension Workout {
     static func currentPredicate() -> Predicate<Workout> {
         let currentDate = Date.now

@@ -47,6 +47,11 @@ struct MainTabbedView: View {
     }
     
     
+    //captures the theme color for storage in the environment
+    @Query(filter: #Predicate<UserTheme> { theme in
+        theme.isSelected == true
+    }) var selectedTheme: [UserTheme]
+    
     var body: some View {
         ZStack(alignment:.bottom) {
             
@@ -98,6 +103,8 @@ struct MainTabbedView: View {
         }
         .ignoresSafeArea(edges: .bottom)
         .toolbar(.hidden)
+        //storing the color in the env
+        .environment(\.themeColor, Color(hexString: selectedTheme.first!.primaryHex))
     }
 }
 

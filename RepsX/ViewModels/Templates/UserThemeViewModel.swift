@@ -144,3 +144,5 @@ final class ThemeManager {
         refreshThemes() // Refresh after saving changes
     }
 }
+
+

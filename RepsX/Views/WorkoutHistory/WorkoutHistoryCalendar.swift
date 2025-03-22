@@ -84,6 +84,9 @@ struct WorkoutHistoryCalendarView: View {
         }
     }
     
+    //theme color
+    @Environment(\.themeColor) var themeColor
+    
     var body: some View {
         VStack(spacing: 10) {
             // Common header on the same horizontal plane.
@@ -105,6 +108,7 @@ struct WorkoutHistoryCalendarView: View {
                 }) {
                     Image(systemName: "chevron.left")
                         .font(.title3)
+                        .foregroundStyle(themeColor)
                 }
                 (Spacer(minLength: 40))
                 
@@ -124,6 +128,7 @@ struct WorkoutHistoryCalendarView: View {
                 }) {
                     Image(systemName: "chevron.right")
                         .font(.title3)
+                        .foregroundStyle(themeColor)
                 }
                 Spacer()
                 
@@ -143,6 +148,7 @@ struct WorkoutHistoryCalendarView: View {
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.title3)
                         .padding(.leading, 16)
+                        .foregroundStyle(themeColor)
                 }
             }
             .padding(.horizontal)
@@ -166,9 +172,9 @@ struct WorkoutHistoryCalendarView: View {
                             let isFuture = calendar.compare(date, to: Date(), toGranularity: .day) == .orderedDescending
                             let backgroundColor: Color = {
                                 if hasWorkout(on: date) {
-                                    return Color.green.opacity(0.3)
+                                    return themeColor.opacity(0.3)
                                 } else if calendar.isDate(date, inSameDayAs: Date()) {
-                                    return Color.blue.opacity(0.3)
+                                    return themeColor.opacity(0.1)
                                 } else {
                                     return Color.clear
                                 }
@@ -198,9 +204,9 @@ struct WorkoutHistoryCalendarView: View {
                         let isFuture = calendar.compare(date, to: Date(), toGranularity: .day) == .orderedDescending
                         let backgroundColor: Color = {
                             if hasWorkout(on: date) {
-                                return Color.green.opacity(0.3)
+                                return themeColor.opacity(0.3)
                             } else if calendar.isDate(date, inSameDayAs: Date()) {
-                                return Color.blue.opacity(0.3)
+                                return themeColor.opacity(0.1)
                             } else {
                                 return Color.clear
                             }
