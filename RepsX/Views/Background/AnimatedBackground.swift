@@ -1,14 +1,29 @@
-//
-//  WavyShape.swift
-//  RepsX
-//
-//  Created by Austin Hed on 3/22/25.
-//
-
 import SwiftUI
 
-// MARK: - Animatable Wavy Shape
+//TODO: Explore using TimelineView to be more performant
 
+// MARK: - Helper: WaveParameters
+struct WaveParameters {
+    var startPoint: CGFloat
+    var endPoint: CGFloat
+    var point1x: CGFloat
+    var point1y: CGFloat
+    var point2x: CGFloat
+    var point2y: CGFloat
+
+    func interpolate(to other: WaveParameters, fraction: CGFloat) -> WaveParameters {
+        WaveParameters(
+            startPoint: startPoint + (other.startPoint - startPoint) * fraction,
+            endPoint: endPoint + (other.endPoint - endPoint) * fraction,
+            point1x: point1x + (other.point1x - point1x) * fraction,
+            point1y: point1y + (other.point1y - point1y) * fraction,
+            point2x: point2x + (other.point2x - point2x) * fraction,
+            point2y: point2y + (other.point2y - point2y) * fraction
+        )
+    }
+}
+
+// MARK: - Animatable Wavy Shape
 struct WavyShape: Shape {
     var startPoint: CGFloat
     var endPoint: CGFloat
@@ -16,7 +31,7 @@ struct WavyShape: Shape {
     var point1y: CGFloat
     var point2x: CGFloat
     var point2y: CGFloat
-    
+
     // Combine all 6 values into one animatable data value using nested AnimatablePairs
     var animatableData: AnimatablePair<
         AnimatablePair<CGFloat, CGFloat>,
@@ -40,34 +55,33 @@ struct WavyShape: Shape {
             point2y = newValue.second.second.second
         }
     }
-    
+
     func path(in rect: CGRect) -> Path {
         let width = rect.width
         let height = rect.height
-        
+
         var path = Path()
         // Starting point on the left edge
         path.move(to: CGPoint(x: 0, y: startPoint))
-        
+
         // Draw a curve across the width
         path.addCurve(
             to: CGPoint(x: width, y: endPoint),
             control1: CGPoint(x: width * point1x, y: height * point1y),
             control2: CGPoint(x: width * point2x, y: height * point2y)
         )
-        
+
         // Close out the shape at the bottom
         path.addLine(to: CGPoint(x: width, y: height))
         path.addLine(to: CGPoint(x: 0, y: height))
         path.closeSubpath()
-        
+
         return path
     }
 }
 
 // MARK: - Animated Custom Background
-
-struct CustomBackground: View {
+struct CustomBackground2: View {
     var themeColor: Color
 
     // Wave parameters for the first layer
@@ -130,8 +144,8 @@ struct CustomBackground: View {
         }
         .onAppear {
             // Set up a timer to update the parameters every 10 seconds
-            Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
-                withAnimation(Animation.linear(duration: 10)) {
+            Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
+                withAnimation(Animation.linear(duration: 30)) {
                     // Randomize parameters for the first wave layer
                     firstStartPoint = CGFloat.random(in: 40...60)
                     firstEndPoint   = CGFloat.random(in: 110...130)
@@ -155,6 +169,6 @@ struct CustomBackground: View {
 
 // MARK: - Preview
 
-#Preview {
-    CustomBackground(themeColor: .red)
-}
+//#Preview {
+//    CustomBackground(themeColor: .red)
+//}

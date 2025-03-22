@@ -78,28 +78,7 @@ struct SelectThemeView: View {
             //Background
             .scrollContentBackground(.hidden)
             .background(
-                ZStack{
-                    userThemeViewModel.primaryColor.opacity(0.1)
-                        .edgesIgnoringSafeArea(.all)
-                    WavyBackground(startPoint: 50,
-                                   endPoint: 120,
-                                   point1x: 0.6,
-                                   point1y: 0.1,
-                                   point2x: 0.4,
-                                   point2y: 0.015,
-                                   color: userThemeViewModel.primaryColor.opacity(0.1)
-                    )
-                        .edgesIgnoringSafeArea(.all)
-                    WavyBackground(startPoint: 120,
-                                   endPoint: 50,
-                                   point1x: 0.4,
-                                   point1y: 0.01,
-                                   point2x: 0.6,
-                                   point2y: 0.25,
-                                   color: userThemeViewModel.primaryColor.opacity(0.1)
-                    )
-                        .edgesIgnoringSafeArea(.all)
-                }
+                CustomBackground(themeColor: userThemeViewModel.primaryColor)
             )
             
         }

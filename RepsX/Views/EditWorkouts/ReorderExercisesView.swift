@@ -11,6 +11,7 @@ struct ReorderExercisesView: View {
     
     //dismiss
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.themeColor) var themeColor
     //view model
     let workoutViewModel: WorkoutViewModel
     //workout to move
@@ -50,6 +51,11 @@ struct ReorderExercisesView: View {
                     .foregroundStyle(primaryColor)
                 }
             }
+            //MARK: Background
+            .scrollContentBackground(.hidden)
+            .background(
+                CustomBackground(themeColor: themeColor)
+            )
         }
         .onAppear {
             // Populate local state with the workout's exercises, sorted by their current order.

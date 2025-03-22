@@ -87,7 +87,8 @@ struct WavyBackground: View {
 
 import SwiftUI
 
-struct CustomBackground2: View {
+//note: adjust between CustomBackground and CustomBackground2 to use static or animated
+struct CustomBackground: View {
     var themeColor: Color
 
     // Use @State to allow the parameters to change and animate
@@ -136,29 +137,25 @@ struct CustomBackground2: View {
             .ignoresSafeArea()
         }
         .onAppear {
-            // Set up a timer to update the wave parameters every 60 seconds
-            Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
-                // Animate the change over 60 seconds for a slow, smooth transition
-                withAnimation(Animation.linear(duration: 10)) {
-                    firstStartPoint = CGFloat.random(in: 40...60)
-                    firstEndPoint = CGFloat.random(in: 110...130)
-                    firstPoint1x = CGFloat.random(in: 0.5...0.7)
-                    firstPoint1y = CGFloat.random(in: 0.0...0.02)
-                    firstPoint2x = CGFloat.random(in: 0.3...0.5)
-                    firstPoint2y = CGFloat.random(in: 0.2...0.3)
-                    
-                    secondStartPoint = CGFloat.random(in: 110...130)
-                    secondEndPoint = CGFloat.random(in: 40...60)
-                    secondPoint1x = CGFloat.random(in: 0.3...0.5)
-                    secondPoint1y = CGFloat.random(in: 0.0...0.02)
-                    secondPoint2x = CGFloat.random(in: 0.5...0.7)
-                    secondPoint2y = CGFloat.random(in: 0.2...0.3)
-                }
-            }
+            firstStartPoint = CGFloat.random(in: 40...60)
+            firstEndPoint = CGFloat.random(in: 110...130)
+            firstPoint1x = CGFloat.random(in: 0.5...0.7)
+            firstPoint1y = CGFloat.random(in: 0.0...0.02)
+            firstPoint2x = CGFloat.random(in: 0.3...0.5)
+            firstPoint2y = CGFloat.random(in: 0.2...0.3)
+            
+            secondStartPoint = CGFloat.random(in: 110...130)
+            secondEndPoint = CGFloat.random(in: 40...60)
+            secondPoint1x = CGFloat.random(in: 0.3...0.5)
+            secondPoint1y = CGFloat.random(in: 0.0...0.02)
+            secondPoint2x = CGFloat.random(in: 0.5...0.7)
+            secondPoint2y = CGFloat.random(in: 0.2...0.3)
+            
+            
         }
     }
 }
 
-#Preview {
-    CustomBackground2(themeColor: .red)
-}
+//#Preview {
+//    CustomBackground2(themeColor: .red)
+//}
