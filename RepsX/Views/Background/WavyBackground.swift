@@ -59,28 +59,106 @@ struct WavyBackground: View {
     }
 }
 
-#Preview {
-    ZStack {
-        Color.blue.opacity(0.2)
-            .edgesIgnoringSafeArea(.all)
-        WavyBackground(startPoint: 50,
-                       endPoint: 120,
-                       point1x: 0.6,
-                       point1y: 0.1,
-                       point2x: 0.4,
-                       point2y: 0.015,
-                       color: Color.blue.opacity(0.2)
-        )
-            .edgesIgnoringSafeArea(.all)
-        WavyBackground(startPoint: 120,
-                       endPoint: 50,
-                       point1x: 0.4,
-                       point1y: 0.01,
-                       point2x: 0.6,
-                       point2y: 0.25,
-                       color: Color.blue.opacity(0.2)
-        )
-            .edgesIgnoringSafeArea(.all)
+//#Preview {
+//    ZStack {
+//        Color.blue.opacity(0.2)
+//            .edgesIgnoringSafeArea(.all)
+//        WavyBackground(startPoint: 50,
+//                       endPoint: 120,
+//                       point1x: 0.6,
+//                       point1y: 0.1,
+//                       point2x: 0.4,
+//                       point2y: 0.015,
+//                       color: Color.blue.opacity(0.2)
+//        )
+//            .edgesIgnoringSafeArea(.all)
+//        WavyBackground(startPoint: 120,
+//                       endPoint: 50,
+//                       point1x: 0.4,
+//                       point1y: 0.01,
+//                       point2x: 0.6,
+//                       point2y: 0.25,
+//                       color: Color.blue.opacity(0.2)
+//        )
+//            .edgesIgnoringSafeArea(.all)
+//    }
+//    
+//}
+
+import SwiftUI
+
+struct CustomBackground2: View {
+    var themeColor: Color
+
+    // Use @State to allow the parameters to change and animate
+    @State private var firstStartPoint: CGFloat = 50
+    @State private var firstEndPoint: CGFloat = 120
+    @State private var firstPoint1x: CGFloat = 0.6
+    @State private var firstPoint1y: CGFloat = 0.1
+    @State private var firstPoint2x: CGFloat = 0.4
+    @State private var firstPoint2y: CGFloat = 0.015
+
+    @State private var secondStartPoint: CGFloat = 120
+    @State private var secondEndPoint: CGFloat = 50
+    @State private var secondPoint1x: CGFloat = 0.4
+    @State private var secondPoint1y: CGFloat = 0.01
+    @State private var secondPoint2x: CGFloat = 0.6
+    @State private var secondPoint2y: CGFloat = 0.25
+
+    var body: some View {
+        ZStack {
+            // Base background color layer
+            themeColor.opacity(0.1)
+                .ignoresSafeArea()
+            
+            // First wavy layer
+            WavyBackground(
+                startPoint: firstStartPoint,
+                endPoint: firstEndPoint,
+                point1x: firstPoint1x,
+                point1y: firstPoint1y,
+                point2x: firstPoint2x,
+                point2y: firstPoint2y,
+                color: themeColor.opacity(0.1)
+            )
+            .ignoresSafeArea()
+            
+            // Second wavy layer
+            WavyBackground(
+                startPoint: secondStartPoint,
+                endPoint: secondEndPoint,
+                point1x: secondPoint1x,
+                point1y: secondPoint1y,
+                point2x: secondPoint2x,
+                point2y: secondPoint2y,
+                color: themeColor.opacity(0.1)
+            )
+            .ignoresSafeArea()
+        }
+        .onAppear {
+            // Set up a timer to update the wave parameters every 60 seconds
+            Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
+                // Animate the change over 60 seconds for a slow, smooth transition
+                withAnimation(Animation.linear(duration: 10)) {
+                    firstStartPoint = CGFloat.random(in: 40...60)
+                    firstEndPoint = CGFloat.random(in: 110...130)
+                    firstPoint1x = CGFloat.random(in: 0.5...0.7)
+                    firstPoint1y = CGFloat.random(in: 0.0...0.02)
+                    firstPoint2x = CGFloat.random(in: 0.3...0.5)
+                    firstPoint2y = CGFloat.random(in: 0.2...0.3)
+                    
+                    secondStartPoint = CGFloat.random(in: 110...130)
+                    secondEndPoint = CGFloat.random(in: 40...60)
+                    secondPoint1x = CGFloat.random(in: 0.3...0.5)
+                    secondPoint1y = CGFloat.random(in: 0.0...0.02)
+                    secondPoint2x = CGFloat.random(in: 0.5...0.7)
+                    secondPoint2y = CGFloat.random(in: 0.2...0.3)
+                }
+            }
+        }
     }
-    
+}
+
+#Preview {
+    CustomBackground2(themeColor: .red)
 }

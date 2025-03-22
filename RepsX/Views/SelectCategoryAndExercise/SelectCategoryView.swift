@@ -34,6 +34,7 @@ struct SelectCategoryView: View {
     //Environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.themeColor) var themeColor
     
     //View Models
     private var categoryViewModel: CategoryViewModel {
@@ -120,6 +121,32 @@ struct SelectCategoryView: View {
                     EditCategoryView(category: category)
                 }
             }
+            //MARK: Background
+            .scrollContentBackground(.hidden)
+            .background(
+                ZStack{
+                    themeColor.opacity(0.1)
+                        .edgesIgnoringSafeArea(.all)
+                    WavyBackground(startPoint: 50,
+                                   endPoint: 120,
+                                   point1x: 0.6,
+                                   point1y: 0.1,
+                                   point2x: 0.4,
+                                   point2y: 0.015,
+                                   color: themeColor.opacity(0.1)
+                    )
+                        .edgesIgnoringSafeArea(.all)
+                    WavyBackground(startPoint: 120,
+                                   endPoint: 50,
+                                   point1x: 0.4,
+                                   point1y: 0.01,
+                                   point2x: 0.6,
+                                   point2y: 0.25,
+                                   color: themeColor.opacity(0.1)
+                    )
+                        .edgesIgnoringSafeArea(.all)
+                }
+            )
         }
         
     }

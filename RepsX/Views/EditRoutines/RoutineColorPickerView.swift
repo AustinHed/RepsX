@@ -1,5 +1,6 @@
 import SwiftUI
 
+//TODO: REMOVE
 struct ColorPickerGrid: View {
     @Environment(\.dismiss) private var dismiss
 

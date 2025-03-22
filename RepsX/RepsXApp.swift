@@ -18,6 +18,7 @@ struct RepsXApp: App {
             MainTabbedView()
                 .globalKeyboardDoneButton()
                 .environment(ThemeManager(modelContext: modelContext))
+                
         }
         .modelContainer(for: [
             Workout.self,

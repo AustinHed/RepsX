@@ -103,7 +103,32 @@ struct ExerciseAndCategoryChartsView: View {
                 // Add extra space (e.g., 100 points)
                 Color.clear.frame(height: 50)
             }
-            .background(Color(UIColor.systemGroupedBackground))
+            //Background
+            .scrollContentBackground(.hidden)
+            .background(
+                ZStack{
+                    themeColor.opacity(0.1)
+                        .edgesIgnoringSafeArea(.all)
+                    WavyBackground(startPoint: 50,
+                                   endPoint: 120,
+                                   point1x: 0.6,
+                                   point1y: 0.1,
+                                   point2x: 0.4,
+                                   point2y: 0.015,
+                                   color: themeColor.opacity(0.1)
+                    )
+                        .edgesIgnoringSafeArea(.all)
+                    WavyBackground(startPoint: 120,
+                                   endPoint: 50,
+                                   point1x: 0.4,
+                                   point1y: 0.01,
+                                   point2x: 0.6,
+                                   point2y: 0.25,
+                                   color: themeColor.opacity(0.1)
+                    )
+                        .edgesIgnoringSafeArea(.all)
+                }
+            )
 
         }
     }

@@ -52,6 +52,15 @@ struct MainTabbedView: View {
         theme.isSelected == true
     }) var selectedTheme: [UserTheme]
     
+    var selectedThemeString: String {
+        if selectedTheme.isEmpty {
+            return "#FF5733"
+        } else {
+            return selectedTheme.first!.primaryHex
+        }
+        
+    }
+    
     var body: some View {
         ZStack(alignment:.bottom) {
             
@@ -104,7 +113,13 @@ struct MainTabbedView: View {
         .ignoresSafeArea(edges: .bottom)
         .toolbar(.hidden)
         //storing the color in the env
-        .environment(\.themeColor, Color(hexString: selectedTheme.first!.primaryHex))
+        .environment(\.themeColor, Color(hexString:selectedThemeString))
+        .onAppear{
+            //load default workout tempaltes if needed
+            initializeDefaultDataIfNeeded(context: modelContext)
+            initializeWorkoutsIfNeeded(context: modelContext)
+            initializeDefaultThemes(in: modelContext)
+        }
     }
 }
 
@@ -125,7 +140,7 @@ extension MainTabbedView {
         //if the tab is selected, make it more prominent
         .frame(maxWidth: isActive ? .infinity : 60)
         .frame(height: 50)
-        .background(isActive ? Color(hexString: selectedTheme.first!.primaryHex).opacity(0.3) : .clear)
+        .background(isActive ? Color(hexString: selectedThemeString).opacity(0.3) : .clear)
         .cornerRadius(30)
     }
 }
@@ -146,7 +161,7 @@ extension MainTabbedView {
     }
 }
 
-#Preview {
-    MainTabbedView()
-        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self])
-}
+//#Preview {
+//    MainTabbedView()
+//        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self])
+//}

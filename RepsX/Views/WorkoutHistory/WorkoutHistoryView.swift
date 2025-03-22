@@ -69,26 +69,7 @@ struct WorkoutHistoryView: View {
     var body: some View {
         NavigationStack {
             ZStack{
-                themeColor.opacity(0.2)
-                    .edgesIgnoringSafeArea(.all)
-                WavyBackground(startPoint: 50,
-                               endPoint: 120,
-                               point1x: 0.6,
-                               point1y: 0.1,
-                               point2x: 0.4,
-                               point2y: 0.015,
-                               color: themeColor.opacity(0.2)
-                )
-                    .edgesIgnoringSafeArea(.all)
-                WavyBackground(startPoint: 120,
-                               endPoint: 50,
-                               point1x: 0.4,
-                               point1y: 0.01,
-                               point2x: 0.6,
-                               point2y: 0.25,
-                               color: themeColor.opacity(0.2)
-                )
-                    .edgesIgnoringSafeArea(.all)
+                CustomBackground(themeColor: themeColor)
                 ScrollView{
                     LazyVStack(spacing: 12) {
                         
@@ -125,9 +106,6 @@ struct WorkoutHistoryView: View {
                         }
                     }
                 }
-                //.background(Color(UIColor.systemGroupedBackground))
-                //.background(themeColor.opacity(0.1))
-                //.background(WavyBackground())
                 .animation(.easeInOut(duration: 0.3), value: workouts)
                 .contentMargins(.horizontal,0)
                 .navigationTitle("History")
@@ -147,11 +125,6 @@ struct WorkoutHistoryView: View {
             }
             .fullScreenCover(isPresented: $coordinator.showEditWorkout) { coordinatorWorkoutEditor }
             //MARK: On Appear
-            .onAppear{
-                //load default workout tempaltes if needed
-                initializeDefaultDataIfNeeded(context: modelContext)
-                initializeWorkoutsIfNeeded(context: modelContext)
-            }
             .safeAreaInset(edge: .bottom) {
                 // Add extra space (e.g., 100 points)
                 Color.clear.frame(height: 70)
