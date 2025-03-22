@@ -69,17 +69,21 @@ struct MainTabbedView: View {
                 WorkoutHistoryView(selectedTab: $selectedTab)
                     .tag(TabOptions.history)
                     .toolbar(.hidden)
+                    .globalKeyboardDoneButton()
                 
                 RoutinesView(selectedTab: $selectedTab)
                     .tag(TabOptions.routines)
                     .toolbar(.hidden)
+                    .globalKeyboardDoneButton()
                 
                 StatsHomeView(selectedTab: $selectedTab)
                     .tag(TabOptions.stats)
+                    .globalKeyboardDoneButton()
                 
                 SettingsView(selectedTab: $selectedTab)
                     .tag(TabOptions.settings)
                     .toolbar(.hidden)
+                    .globalKeyboardDoneButton()
             }
             
             

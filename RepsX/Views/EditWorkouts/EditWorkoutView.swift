@@ -249,12 +249,10 @@ extension EditWorkoutView {
             .onSubmit {
                 // Called when the user taps Return
                 workoutViewModel.updateWorkout(workout, newName: workout.name)
-                print("updated name returned, workoutName \(workout.name)")
             }
             .onChange(of: nameFieldFocused) {
                 if !nameFieldFocused {
                     workoutViewModel.updateWorkout(workout, newName: workout.name)
-                    print("updated name not focused, workoutName \(workout.name)")
                 }
             }
         }
@@ -355,7 +353,6 @@ extension EditWorkoutView{
     func addButton(workoutViewModel:WorkoutViewModel) -> some View {
         Button {
             isSelectingExercise.toggle()
-            print("add exercise button")
         } label: {
             Text("Add Exercise")
         }

@@ -18,12 +18,12 @@ struct ExerciseSectionView: View {
     //most recent exercise
     ///the previous sets from when a user performed this exercise. Used to show past weight lifted
     @State private var previousSets: [Set] = []
+    @State private var didLoadPreviousSets: Bool = false
     
     //viewModel
     private var exerciseViewModel: ExerciseViewModel {
         ExerciseViewModel(modelContext: modelContext)
     }
-
     
     //focus states
     @FocusState var isKeyboardActive: Bool //to dismiss the keyboard
@@ -63,9 +63,12 @@ struct ExerciseSectionView: View {
                 
             }
             .onAppear {
+                if !didLoadPreviousSets{
                     previousSets = exerciseViewModel.fetchMostRecentWorkout(for: exercise.templateId)
-                print("template Id: \(exercise.templateId)")
-                print("\(previousSets.count)")
+                    didLoadPreviousSets = true
+                }
+                    
+                
             }
             //MARK: Swipe Actions
             .swipeActions(edge: .trailing) {
