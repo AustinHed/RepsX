@@ -154,7 +154,6 @@ extension AddNewExerciseTemplateView {
     private var categoryPickerSheet: some View {
         NavigationStack {
             List {
-                
                 Section("Default Categories"){
                     ForEach(standardCategories) { cat in
                         Button {
@@ -167,18 +166,19 @@ extension AddNewExerciseTemplateView {
                     }
                 }
                 
-                Section("Custom Categories"){
-                    ForEach(customCategories) { cat in
-                        Button {
-                            selectedCategory = cat
-                            isCategoryPickerPresented = false
-                        } label: {
-                            Text(cat.name)
-                                .foregroundStyle(.black)
+                if !customCategories.isEmpty {
+                    Section("Custom Categories"){
+                        ForEach(customCategories) { cat in
+                            Button {
+                                selectedCategory = cat
+                                isCategoryPickerPresented = false
+                            } label: {
+                                Text(cat.name)
+                                    .foregroundStyle(.black)
+                            }
                         }
                     }
                 }
-                
             }
             .navigationTitle("Select Category")
             .navigationBarTitleDisplayMode(.inline)
@@ -189,6 +189,11 @@ extension AddNewExerciseTemplateView {
                     }
                 }
             }
+            //MARK: Background
+            .scrollContentBackground(.hidden)
+            .background(
+                CustomBackground(themeColor: themeColor)
+            )
         }
         .environment(\.modelContext, modelContext)
     }

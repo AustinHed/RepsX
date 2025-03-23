@@ -31,31 +31,49 @@ struct EditExerciseTemplateView: View {
             List{
                 //update name
                 Section("Name"){
-                    TextField("Exercise", text: $exerciseTemplate.name)
-                        .onSubmit {
-                            exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newName: exerciseTemplate.name)
-                        }
-                        .foregroundStyle(.black)
-                    
+                    if exerciseTemplate.standard {
+                        Text(exerciseTemplate.name)
+                            .foregroundStyle(.black)
+                    } else {
+                        TextField("Exercise", text: $exerciseTemplate.name)
+                            .onSubmit {
+                                exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newName: exerciseTemplate.name)
+                            }
+                            .foregroundStyle(.black)
+                    }
                 }
+                
                 
                 //update category
                 Section("Category"){
-                    NavigationLink(exerciseTemplate.category.name) {
-                        ChooseNewCategoryView( exerciseTemplate: exerciseTemplate)
+                    if exerciseTemplate.standard {
+                        Text(exerciseTemplate.category.name)
+                    } else {
+                        NavigationLink(exerciseTemplate.category.name) {
+                            ChooseNewCategoryView( exerciseTemplate: exerciseTemplate)
+                        }
                     }
+                    
                 }
                 
                 //choose modality section
                 Section {
-                    NavigationLink {
-                        ChooseNewModalityView(exerciseTemplate: exerciseTemplate)
-                    } label: {
+                    if exerciseTemplate.standard {
                         VStack (alignment: .leading){
                             Text(exerciseTemplate.modality.rawValue.capitalizingFirstLetter())
                             modalityDetail
                         }
+                    } else {
+                        NavigationLink {
+                            ChooseNewModalityView(exerciseTemplate: exerciseTemplate)
+                        } label: {
+                            VStack (alignment: .leading){
+                                Text(exerciseTemplate.modality.rawValue.capitalizingFirstLetter())
+                                modalityDetail
+                            }
+                        }
                     }
+                    
                 } header: {
                     Text("Modality")
                 } footer: {
@@ -69,6 +87,7 @@ struct EditExerciseTemplateView: View {
                         dismiss()
                     }
                     .foregroundStyle(.red)
+                    .disabled(exerciseTemplate.standard)
                 }
             }
             .navigationTitle(Text("Edit Exercise"))

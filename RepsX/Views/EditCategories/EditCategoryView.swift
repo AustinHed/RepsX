@@ -26,6 +26,9 @@ struct EditCategoryView: View {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
     @State var exercises: [ExerciseTemplate] = []
+    var customExercises: [ExerciseTemplate] {
+        exercises.filter { !$0.standard }
+    }
     
     
     var body: some View {
@@ -46,11 +49,11 @@ struct EditCategoryView: View {
                     }
                 }
                 
-                //Exercises
+                //Standard Exercises
                 if !exercises.isEmpty {
-                    Section("Exercises") {
+                    Section("Standard Exercises") {
                         ForEach(exercises){ exercise in
-                            if exercise.category == category {
+                            if exercise.category == category && exercise.standard == true {
                                 NavigationLink(exercise.name) {
                                     EditExerciseTemplateView(exerciseTemplate: exercise)
                                 }
@@ -59,6 +62,18 @@ struct EditCategoryView: View {
                     }
                 }
                 
+                //Custom Exercises
+                if !customExercises.isEmpty {
+                    Section("Custom Exercises") {
+                        ForEach(customExercises){ exercise in
+                            if exercise.category == category {
+                                NavigationLink(exercise.name) {
+                                    EditExerciseTemplateView(exerciseTemplate: exercise)
+                                }
+                            }
+                        }
+                    }
+                }
                 
                 //delete button
                 if category.standard{

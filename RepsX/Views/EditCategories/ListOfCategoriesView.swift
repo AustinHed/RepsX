@@ -66,7 +66,7 @@ struct ListOfCategoriesView<Destination: View>: View {
         NavigationStack {
             List {
                 //default
-                Section ("Default Categories"){
+                Section ("Standard Categories"){
                     ForEach(standardCategories) { category in
                         NavigationLink(category.name) {
                             destinationBuilder(category)
