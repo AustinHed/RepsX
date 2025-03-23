@@ -83,7 +83,7 @@ struct StatsHomeView: View {
                 // Add extra space (e.g., 100 points)
                 Color.clear.frame(height: 50)
             }
-            //Background
+            //MARK: Background
             .scrollContentBackground(.hidden)
             .background(
                 CustomBackground(themeColor: themeColor)

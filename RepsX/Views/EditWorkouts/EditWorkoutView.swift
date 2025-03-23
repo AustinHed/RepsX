@@ -219,6 +219,10 @@ struct EditWorkoutView: View {
         .background(
             CustomBackground(themeColor: themeColor)
         )
+        .safeAreaInset(edge: .bottom) {
+            // Add extra space (e.g., 100 points)
+            Color.clear.frame(height: 50)
+        }
     }
     
 }

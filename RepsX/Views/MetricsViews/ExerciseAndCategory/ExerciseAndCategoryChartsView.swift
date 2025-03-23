@@ -47,57 +47,53 @@ struct ExerciseAndCategoryChartsView: View {
     let markerSize: CGFloat = 8
     
     var body: some View {
-        if medianChartData.isEmpty {
             ScrollView{
-                Text("Not enough data to generate insights. Please log additional workouts and check back later.")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.vertical, 10)
-                    .background(Color.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .padding(.horizontal)
-                    .navigationTitle(filter.navigationTitle)
-            }
-            .background(Color(UIColor.systemGroupedBackground))
-        } else {
-            ScrollView{
-                LazyVStack(spacing:12) {
-                    
-                    //picker
-                    //TODO: make a custom picker
-                    Picker("Lookback", selection: $selectedLookback) {
-                        ForEach(LookbackOption.allCases) { option in
-                            Text(option.description).tag(option)
-                        }
+                //TODO: make a custom picker
+                Picker("Lookback", selection: $selectedLookback) {
+                    ForEach(LookbackOption.allCases) { option in
+                        Text(option.description).tag(option)
                     }
-                    .pickerStyle(.segmented)
-                    .padding()
-                    
-                    //metrics
-                    StatsSummaryView(dataPoints: medianChartData, minDataPoints:minChartData, maxDataPoints:maxChartData, filter: filter, lookback: selectedLookback)
-                    
-                    //charts
-                    ExpandableChartView(title: "Weight", chartType: filter) {
-                        medianWeightChart
-                    }
-
-                    ExpandableChartView(title:"Sets", chartType: filter) {
-                        setCountChart
-                    }
-                    
-                    ExpandableChartView(title:"Volume", chartType: filter) {
-                        volumeCountChart
-                    }
-                                        
-                    //button
-                    if let template = exerciseTemplate {
-                        exerciseHistoryNavigationLink(workouts: workouts, exerciseTemplate: template)
-                    }
-                    
-                    Spacer()
                 }
-                .navigationTitle(filter.navigationTitle)
+                .pickerStyle(.segmented)
+                .padding()
                 
+                //Content
+                if medianChartData.isEmpty {
+                    Text("Not enough for the selected time period. Please log additional workouts and check back later.")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+                        .padding(.vertical, 10)
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.horizontal)
+                        .navigationTitle(filter.navigationTitle)
+                } else {
+                    LazyVStack(spacing:12) {
+                        //metrics
+                        StatsSummaryView(dataPoints: medianChartData, minDataPoints:minChartData, maxDataPoints:maxChartData, filter: filter, lookback: selectedLookback)
+                        
+                        //charts
+                        ExpandableChartView(title: "Weight", chartType: filter) {
+                            medianWeightChart
+                        }
+                        
+                        ExpandableChartView(title:"Sets", chartType: filter) {
+                            setCountChart
+                        }
+                        
+                        ExpandableChartView(title:"Volume", chartType: filter) {
+                            volumeCountChart
+                        }
+                        
+                        //button
+                        if let template = exerciseTemplate {
+                            exerciseHistoryNavigationLink(workouts: workouts, exerciseTemplate: template)
+                        }
+                        
+                        Spacer()
+                    }
+                    .navigationTitle(filter.navigationTitle)
+                }
             }
             .safeAreaInset(edge: .bottom) {
                 // Add extra space (e.g., 100 points)
@@ -108,11 +104,7 @@ struct ExerciseAndCategoryChartsView: View {
             .background(
                 CustomBackground(themeColor: themeColor)
             )
-
-        }
     }
-    
-    
 }
 
 //MARK: X Axis Labels
