@@ -48,17 +48,10 @@ class ExerciseTemplateViewModel {
     // MARK: Delete
     /// Deletes the provided PredefinedExercise from the context.
     func deleteExerciseTemplate(_ exerciseTemplate: ExerciseTemplate) {
+        //exerciseTemplate.hidden = true
+        //exerciseTemplate.name += " (deleted)"
         modelContext.delete(exerciseTemplate)
         save()
-        /*
-         previous - keeping in case i need this again
-         //does not delete, but instead marks the exercise as "hidden"
-         exerciseTemplate.hidden = true
-         //updates the name to include hidden
-         exerciseTemplate.name += " (deleted)"
-         //modelContext.delete(exercise)
-         save()
-         */
         
     }
     

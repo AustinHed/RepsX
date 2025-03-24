@@ -21,7 +21,7 @@ class Routine: Identifiable {
     var favorite: Bool
     
     init(id: UUID = UUID(),
-         name: String = "Unknown Exercise",
+         name: String = "Unknown Routine",
          exercises: [ExerciseInRoutine] = [],
          favorite: Bool = false
         ){

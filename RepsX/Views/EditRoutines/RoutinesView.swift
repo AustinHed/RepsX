@@ -29,20 +29,53 @@ struct RoutinesView: View {
     //Routing around
     @Binding var selectedTab: MainTabbedView.TabOptions
     
+    let columns = [
+        GridItem(.flexible(minimum: 160), spacing: 15),
+        GridItem(.flexible(minimum: 160), spacing: 15)
+    ]
+    
     var body: some View {
         NavigationStack{
-            List {
-                ForEach(routines) { routine in
-                    NavigationLink {
-                        EditRoutine(routine: routine, selectedTab: $selectedTab)
-                    } label: {
-                        RoutineLabel(routine: routine, color: themeColor)
-                    }
-                    //MARK: Swipe Actions
-                    .swipeActions(edge: .trailing) {
-                        deleteSwipeAction(for: routine)
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 15) {
+                    ForEach(routines) { routine in
+                        NavigationLink {
+                            EditRoutine(routine: routine, selectedTab: $selectedTab)
+                        } label: {
+                            RoutineItem(routine: routine)
+                        }
+                        .contextMenu {
+                            //favorite
+                            Button {
+                                routineViewModel.favoriteRoutine(routine)
+                            } label: {
+                                HStack{
+                                    Text("Favorite")
+                                        .foregroundStyle(.black)
+                                    Spacer()
+                                    Image(systemName:"star.circle.fill")
+                                        .foregroundStyle(.yellow)
+                                }
+                            }
+                            
+                            //delete
+                            Button {
+                                withAnimation {
+                                    routineViewModel.deleteRoutine(routine)
+                                }
+                            } label: {
+                                HStack{
+                                    Text("Delete")
+                                        .foregroundStyle(.red)
+                                    Spacer()
+                                    Image(systemName:"trash.fill")
+                                        .foregroundStyle(.red)
+                                }
+                            }
+                        }
                     }
                 }
+                .padding(.horizontal, 15)
             }
             .navigationTitle("Routines")
             //MARK: Toolbar
@@ -121,3 +154,4 @@ extension RoutinesView {
         .tint(.red)
     }
 }
+

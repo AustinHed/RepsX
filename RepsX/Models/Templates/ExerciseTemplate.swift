@@ -17,12 +17,16 @@ class ExerciseTemplate: Identifiable {
     var hidden: Bool
     var standard: Bool
     
+    @Relationship(deleteRule: .cascade, inverse: \ExerciseInRoutine.exerciseTemplate)
+    var exerciseInRoutines: [ExerciseInRoutine]
+    
     init(id: UUID = UUID(),
          name: String = "Unknown Exercise",
          category: CategoryModel = CategoryModel(name: "Other"),
          modality: ExerciseModality = .repetition, //defaults to reps and weight modality
          hidden: Bool = false, //defaults to the "nonhidden / non deleted" state
-         standard: Bool = false
+         standard: Bool = false,
+         exerciseInRoutines: [ExerciseInRoutine] = [] //adding this so that, when I delete the template, it's also removed from Routines
         ){
         self.id = id
         self.name = name
@@ -30,5 +34,6 @@ class ExerciseTemplate: Identifiable {
         self.category = category
         self.hidden = hidden
         self.standard = standard
+        self.exerciseInRoutines = exerciseInRoutines
     }
 }

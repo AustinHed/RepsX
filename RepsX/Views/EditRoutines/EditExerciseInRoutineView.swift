@@ -61,8 +61,8 @@ struct EditExerciseInRoutineView: View {
 
                     
                     Button {
-                        exerciseInRoutineViewModel.deleteExerciseInRoutine(exerciseInRoutine)
                         dismiss()
+                        exerciseInRoutineViewModel.deleteExerciseInRoutine(exerciseInRoutine)
                     } label: {
                         Text("Delete")
                             .foregroundStyle(.red)
