@@ -26,7 +26,7 @@ struct StatsHomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.themeColor) var themeColor
     
-    @Binding var selectedTab: MainTabbedView.TabOptions
+    @Binding var selectedTab: ContentView.Tab
     
     var body: some View {
         NavigationStack {

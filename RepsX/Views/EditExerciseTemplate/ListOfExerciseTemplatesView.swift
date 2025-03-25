@@ -89,90 +89,85 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
     }
     
     var body: some View {
-        NavigationStack {
-            List {
-                
-                Section("Standard Exercises") {
-                    // List the filtered exercise templates.
-                    ForEach(filteredStandardExercises) { exercise in
-                        NavigationLink(exercise.name) {
-                            destinationBuilder(exercise)
-                        }
-                    }
-                }
-                
-                if !filteredCustomExercises.isEmpty {
-                    Section("Custom Exercises") {
-                        ForEach(filteredCustomExercises) { exercise in
-                            NavigationLink(exercise.name) {
-                                destinationBuilder(exercise)
-                            }
-                        }
-                    }
-                }
-                
-            }
-            .navigationTitle(navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            // MARK: Toolbar
-            .toolbar {
-                
-                //filter exercises
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Section("Filter by Category") {
-                            Button {
-                                selectedCategory = nil
-                            } label: {
-                                categoryFilterLabel(text: "All", category: nil)
-                            }
-                            
-                            ForEach(categories, id: \.self) {category in
-                                Button {
-                                    selectedCategory = category
-                                } label: {
-                                    categoryFilterLabel(text: category.name, category: category)
-                                }
-                            }
-                        }
-                        
-                        Section("Filter by Modality") {
-                            
-                        }
-                    } label: {
-                        if selectedCategory != nil {
-                            Image(systemName:"line.3.horizontal.circle.fill")
-                        } else {
-                            Image(systemName:"line.3.horizontal.decrease.circle")
-                        }
-                        
-                    }
-                }
-                
-                //add new exercise
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isAddingNewExercise.toggle()
-                    } label: {
-                        Image(systemName: "plus.circle")
-                    }
-                    .foregroundStyle(themeColor)
+        List {
+            Section("Standard Exercises") {
+                ForEach(filteredStandardExercises) { exercise in
+                    NavigationLink(exercise.name, value: exercise)
                 }
             }
-            // MARK: Sheets
-            .sheet(isPresented: $isAddingNewExercise) {
-                AddNewExerciseTemplateView()
+            
+            if !filteredCustomExercises.isEmpty {
+                Section("Custom Exercises") {
+                    ForEach(filteredCustomExercises) { exercise in
+                        NavigationLink(exercise.name, value: exercise)
+                    }
+                }
             }
-            .safeAreaInset(edge: .bottom) {
-                // Add extra space (e.g., 100 points)
-                Color.clear.frame(height: 100)
-            }
-            //MARK: Background
-            .scrollContentBackground(.hidden)
-            .background(
-                CustomBackground(themeColor: themeColor)
-            )
         }
+        .navigationTitle(navigationTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        //MARK: Destination
+        .navigationDestination(for: ExerciseTemplate.self) { exercise in
+            destinationBuilder(exercise)
+        }
+        // MARK: Toolbar
+        .toolbar {
+            
+            //filter exercises
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Section("Filter by Category") {
+                        Button {
+                            selectedCategory = nil
+                        } label: {
+                            categoryFilterLabel(text: "All", category: nil)
+                        }
+                        
+                        ForEach(categories, id: \.self) {category in
+                            Button {
+                                selectedCategory = category
+                            } label: {
+                                categoryFilterLabel(text: category.name, category: category)
+                            }
+                        }
+                    }
+                    
+                    Section("Filter by Modality") {
+                        
+                    }
+                } label: {
+                    if selectedCategory != nil {
+                        Image(systemName:"line.3.horizontal.circle.fill")
+                    } else {
+                        Image(systemName:"line.3.horizontal.decrease.circle")
+                    }
+                    
+                }
+            }
+            
+            //add new exercise
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isAddingNewExercise.toggle()
+                } label: {
+                    Image(systemName: "plus.circle")
+                }
+                .foregroundStyle(themeColor)
+            }
+        }
+        // MARK: Sheets
+        .sheet(isPresented: $isAddingNewExercise) {
+            AddNewExerciseTemplateView()
+        }
+        .safeAreaInset(edge: .bottom) {
+            // Add extra space (e.g., 100 points)
+            Color.clear.frame(height: 100)
+        }
+        //MARK: Background
+        .scrollContentBackground(.hidden)
+        .background(
+            CustomBackground(themeColor: themeColor)
+        )
     }
 }
 

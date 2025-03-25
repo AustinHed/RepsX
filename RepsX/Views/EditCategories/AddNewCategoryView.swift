@@ -35,7 +35,7 @@ struct AddNewCategoryView: View {
             //MARK: Toolbar
             .toolbar {
                 //cance; button
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button("Cancel") {
                         dismiss()
                     }
@@ -57,13 +57,5 @@ struct AddNewCategoryView: View {
                 CustomBackground(themeColor: themeColor)
             )
         }
-        
-        
     }
-}
-
-#Preview {
-    
-    AddNewCategoryView()
-    
 }

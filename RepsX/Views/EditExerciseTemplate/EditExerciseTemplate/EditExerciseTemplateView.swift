@@ -26,8 +26,6 @@ struct EditExerciseTemplateView: View {
     
     
     var body: some View {
-        
-        NavigationStack{
             List{
                 //update name
                 Section("Name"){
@@ -42,15 +40,14 @@ struct EditExerciseTemplateView: View {
                             .foregroundStyle(.black)
                     }
                 }
-                
-                
+
                 //update category
                 Section("Category"){
                     if exerciseTemplate.standard {
                         Text(exerciseTemplate.category.name)
                     } else {
                         NavigationLink(exerciseTemplate.category.name) {
-                            ChooseNewCategoryView( exerciseTemplate: exerciseTemplate)
+                            ChooseNewCategoryView(exerciseTemplate: exerciseTemplate)
                         }
                     }
                     
@@ -107,7 +104,6 @@ struct EditExerciseTemplateView: View {
             .background(
                 CustomBackground(themeColor: themeColor)
             )
-        }
         
     }
 }

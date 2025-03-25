@@ -27,7 +27,7 @@ struct RoutinesView: View {
     @State private var isLinkActive = false
     
     //Routing around
-    @Binding var selectedTab: MainTabbedView.TabOptions
+    @Binding var selectedTab: ContentView.Tab
     
     let columns = [
         GridItem(.flexible(minimum: 160), spacing: 15),

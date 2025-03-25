@@ -1,9 +1,9 @@
 import SwiftUI
 import SwiftData
 
-struct MainTabbedView: View {
+struct ContentView: View {
     
-    @State private var selectedTab: TabOptions = .history
+    @State private var selectedTab: Tab = .history
     
     @Environment(\.modelContext) private var modelContext
     
@@ -13,7 +13,7 @@ struct MainTabbedView: View {
     }
     
     //enum of tabs
-    enum TabOptions: CaseIterable {
+    enum Tab: CaseIterable {
         case history, routines, stats, settings
         
         //title to use on the bar
@@ -47,6 +47,12 @@ struct MainTabbedView: View {
     }
     
     
+    //Navigaton paths
+    @State private var historyPath: NavigationPath = .init()
+    @State private var routinesPath: NavigationPath = .init()
+    @State private var statsPath: NavigationPath = .init()
+    @State private var settingsPath: NavigationPath = .init()
+    
     //captures the theme color for storage in the environment
     @Query(filter: #Predicate<UserTheme> { theme in
         theme.isSelected == true
@@ -64,26 +70,36 @@ struct MainTabbedView: View {
     var body: some View {
         ZStack(alignment:.bottom) {
             
-            //the views to show - currently placeholders
             TabView(selection: $selectedTab) {
-                WorkoutHistoryView(selectedTab: $selectedTab)
-                    .tag(TabOptions.history)
-                    .toolbar(.hidden)
-                    .globalKeyboardDoneButton()
+                //History
+                NavigationStack (path: $historyPath){
+                    WorkoutHistoryView(selectedTab: $selectedTab)
+                        .globalKeyboardDoneButton()
+                }
+                .tag(Tab.history)
                 
-                RoutinesView(selectedTab: $selectedTab)
-                    .tag(TabOptions.routines)
-                    .toolbar(.hidden)
-                    .globalKeyboardDoneButton()
+                //Routines
+                NavigationStack(path: $routinesPath){
+                    RoutinesView(selectedTab: $selectedTab)
+                        .globalKeyboardDoneButton()
+                }
+                .tag(Tab.routines)
                 
-                StatsHomeView(selectedTab: $selectedTab)
-                    .tag(TabOptions.stats)
-                    .globalKeyboardDoneButton()
+                //Stats
+                NavigationStack(path: $historyPath){
+                    StatsHomeView(selectedTab: $selectedTab)
+                        .globalKeyboardDoneButton()
+                }
+                .tag(Tab.stats)
                 
-                SettingsView(selectedTab: $selectedTab)
-                    .tag(TabOptions.settings)
-                    .toolbar(.hidden)
-                    .globalKeyboardDoneButton()
+                //Settings
+                NavigationStack(path: $settingsPath){
+                    //SettingsView(selectedTab: $selectedTab)
+                    SettingsView(path: $settingsPath)
+                        .globalKeyboardDoneButton()
+                }
+                .tag(Tab.settings)
+                
             }
             
             
@@ -127,8 +143,8 @@ struct MainTabbedView: View {
     }
 }
 
-//MARK: tab item items
-extension MainTabbedView {
+//MARK: Tab visuals
+extension ContentView {
     func CustomTabItem(imageName:String, title: String, isActive:Bool) -> some View {
         HStack(spacing: 10) {
             Spacer()
@@ -149,15 +165,29 @@ extension MainTabbedView {
     }
 }
 
-//MARK: the tab bar
-extension MainTabbedView {
+//MARK: Tab Function
+extension ContentView {
     func bottomBar() -> some View {
         HStack{
-            ForEach((TabOptions.allCases), id: \.self){ item in
-                Button{
-                    selectedTab = item
+            ForEach(Tab.allCases, id: \.self) { tab in
+                Button {
+                    // Always reset the navigation stack for the selected tab
+                    switch tab {
+                    case .history:
+                        historyPath = .init()
+                    case .routines:
+                        routinesPath = .init()
+                    case .stats:
+                        statsPath = .init()
+                    case .settings:
+                        settingsPath = .init()
+                    }
+                    
+                    // Update the selected tab
+                    selectedTab = tab
+                    print("Selecting tab: \(tab)")
                 } label: {
-                    CustomTabItem(imageName: item.icon, title: item.title, isActive: (selectedTab == item))
+                    CustomTabItem(imageName: tab.icon, title: tab.title, isActive: (selectedTab == tab))
                 }
             }
         }
@@ -165,7 +195,3 @@ extension MainTabbedView {
     }
 }
 
-//#Preview {
-//    MainTabbedView()
-//        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self])
-//}

@@ -1,91 +1,99 @@
-//
-//  SettingsView.swift
-//  RepsX
-//
-//  Created by Austin Hed on 3/2/25.
-//
-
 import SwiftUI
 import SwiftData
+
+// Define a new destination type for Settings
+enum SettingsDestination: Hashable {
+    case theme
+    case appIcon //todo
+    
+    case exercises
+    case categories
+    
+    case feedback
+    case help
+    case acknowledgements
+    
+    case terms
+    case privacy
+    
+}
 
 struct SettingsView: View {
     
     @Environment(\.modelContext) private var modelContext
-    
-    //theme color
     @Environment(\.themeColor) var themeColor
+    @Binding var path: NavigationPath
     
-    @Binding var selectedTab: MainTabbedView.TabOptions
     var body: some View {
-        NavigationStack{
-            List{
-                Section("Personalization"){
-                    NavigationLink("Themes") {
-                        SelectThemeView()
-                    }
-                    
-                    NavigationLink("App Icon") {
-                        //tos
-                    }
+        List {
+            //Personalization
+            Section("Personalization") {
+                NavigationLink("Themes", value: SettingsDestination.theme)
+                NavigationLink("App Icon", value: SettingsDestination.appIcon)
+            }
+            
+            //Exercise and Categories
+            Section("Exercises and Categories") {
+                NavigationLink("Edit Exercises", value: SettingsDestination.exercises)
+                NavigationLink("Edit Categories", value: SettingsDestination.categories)
+            }
+            
+            Section("Feedback and Support") {
+                NavigationLink("Submit Feedback") {
+                    // to be implemented
                 }
-                
-                //exercises and categories
-                Section("Exercises and Categories"){
-                    
-                    
-                    NavigationLink("Edit Exercises") {
-                        ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises", destinationBuilder: { exercise in
-                            EditExerciseTemplateView(exerciseTemplate: exercise)
-                        })
-                    }
-                    
-                    NavigationLink("Edit Categories") {
-                        ListOfCategoriesView(navigationTitle: "Edit Categories", destinationBuilder: { category in
-                            EditCategoryView(category: category)
-                        })
-                    }
-                    
+                NavigationLink("Help and Support") {
+                    // to be implemented
                 }
-                
-                //feedback and support
-                Section("Feedback and Support"){
-                    NavigationLink("Submit Feedback") {
-                        //tos
-                    }
-                    NavigationLink("Help and Support") {
-                        //tos
-                    }
-                    
-                    NavigationLink("Acknowledgements") {
-                        //tos
-                    }
-                    
-                }
-                
-                //legal
-                Section("Legal"){
-                    NavigationLink("Terms of Service") {
-                        //tos
-                    }
-                    NavigationLink("Privacy Policy") {
-                        //tos
-                    }
+                NavigationLink("Acknowledgements") {
+                    // to be implemented
                 }
             }
-            .navigationTitle("Settings")
-            //Background
-            .scrollContentBackground(.hidden)
-            .background(
-                CustomBackground(themeColor: themeColor)
-            )
+            
+            Section("Legal") {
+                NavigationLink("Terms of Service") {
+                    // to be implemented
+                }
+                NavigationLink("Privacy Policy") {
+                    // to be implemented
+                }
+            }
         }
-        .onAppear{
+        //MARK: Background
+        .scrollContentBackground(.hidden)
+        .background(CustomBackground(themeColor: themeColor))
+        //MARK: Navigation Destinations
+        .navigationDestination(for: SettingsDestination.self) { destination in
+            switch destination {
+            case .theme:
+                SelectThemeView(path: $path)
+            case .appIcon:
+                Text("App Icon View") // Replace with your actual App Icon view.
+            case .exercises:
+                ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises") { exercise in
+                    EditExerciseTemplateView(exerciseTemplate: exercise)
+                }
+            case .categories:
+                ListOfCategoriesView(navigationTitle: "Edit Categories") { category in
+                    EditCategoryView(category: category)
+                }
+            case .feedback:
+                Text("Feedback View")
+            case .help:
+                Text("Help and Support View")
+            case .acknowledgements:
+                Text("Acknowledgements View")
+            case .terms:
+                Text("Terms of Service View")
+            case .privacy:
+                Text("Privacy Policy View")
+            }
+        }
+        //MARK: Other
+        .navigationTitle("Settings")
+        .onAppear {
             initializeDefaultThemes(in: modelContext)
         }
         .tint(themeColor)
     }
-}
-
-#Preview {
-    SettingsView(selectedTab: .constant(.settings))
 }

@@ -15,7 +15,7 @@ struct RepsXApp: App {
     var body: some Scene {
         
         WindowGroup {
-            MainTabbedView()
+            ContentView()
                 .globalKeyboardDoneButton()
                 .environment(ThemeManager(modelContext: modelContext))
                 

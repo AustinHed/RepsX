@@ -5,23 +5,19 @@ struct AddNewExerciseTemplateView: View {
     // Optionally provided default category
     var category: CategoryModel?
     
-    //Fetch standard categories
     @Query(
         filter: #Predicate<CategoryModel>{ category in
-            category.standard == true &&
             category.isHidden == false
         },
         sort: \CategoryModel.name
-    ) var standardCategories: [CategoryModel]
+    ) var categories: [CategoryModel]
     
-    //Fetch custom categories
-    @Query(
-        filter: #Predicate<CategoryModel>{ category in
-            category.standard == false &&
-            category.isHidden == false
-        },
-        sort: \CategoryModel.name
-    ) var customCategories: [CategoryModel]
+    var standardCategories: [CategoryModel] {
+        categories.filter {$0.standard == true}
+    }
+    var customCategories: [CategoryModel] {
+        categories.filter {$0.standard == false}
+    }
     
     //environment
     @Environment(\.modelContext) private var modelContext
@@ -35,6 +31,7 @@ struct AddNewExerciseTemplateView: View {
     private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
+    
     // State for the template
     @State var templateName: String = ""
     
@@ -48,7 +45,6 @@ struct AddNewExerciseTemplateView: View {
     
     var body: some View {
         NavigationStack{
-            
             List {
                 //exercise name
                 exerciseNameSection
@@ -92,6 +88,7 @@ struct AddNewExerciseTemplateView: View {
                 if selectedCategory == nil {
                     selectedCategory = category
                 }
+                print("\(themeColor)")
             }
             //MARK: Sheets
             //category picker
@@ -107,8 +104,9 @@ struct AddNewExerciseTemplateView: View {
             .background(
                 CustomBackground(themeColor: themeColor)
             )
+            .tint(themeColor)
         }
-        .tint(themeColor)
+
     }
 }
 
@@ -154,7 +152,7 @@ extension AddNewExerciseTemplateView {
     private var categoryPickerSheet: some View {
         NavigationStack {
             List {
-                Section("Default Categories"){
+                Section("Standard Categories"){
                     ForEach(standardCategories) { cat in
                         Button {
                             selectedCategory = cat
@@ -300,6 +298,11 @@ extension AddNewExerciseTemplateView {
                     }
                 }
             }
+            //MARK: Background
+            .scrollContentBackground(.hidden)
+            .background(
+                CustomBackground(themeColor: themeColor)
+            )
         }
     }
 }

@@ -63,58 +63,56 @@ struct ListOfCategoriesView<Destination: View>: View {
     }
     
     var body: some View {
-        NavigationStack {
-            List {
-                //default
-                Section ("Standard Categories"){
-                    ForEach(standardCategories) { category in
-                        NavigationLink(category.name) {
-                            destinationBuilder(category)
-                        }
-                    }
+        List {
+            //default
+            Section ("Standard Categories"){
+                ForEach(standardCategories) { category in
+                    NavigationLink(category.name, value: category)
                 }
-                
-                //custom
-                if !customCategories.isEmpty {
-                    Section("Custom Categories"){
-                        ForEach(customCategories) { category in
-                            NavigationLink(category.name) {
-                                destinationBuilder(category)
-                            }
-                        }
+            }
+            
+            //custom
+            if !customCategories.isEmpty {
+                Section("Custom Categories"){
+                    ForEach(customCategories) { category in
+                        NavigationLink(category.name, value: category)
                     }
                 }
             }
-            .navigationTitle(navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            //MARK: Toolbar
-            .toolbar{
-                //add new category
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        isAddingNewCategory.toggle()
-                    } label: {
-                        Image(systemName:"plus.circle")
-                    }
-                    .foregroundStyle(themeColor)
-
-                }
-            }
-            //MARK: Sheets
-            //edit category
-            .sheet(item: $selectedCategory) { category in
-                EditCategoryView(category: category)
-            }
-            //add new category
-            .sheet(isPresented: $isAddingNewCategory) {
-                AddNewCategoryView()
-            }
-            //MARK: Background
-            .scrollContentBackground(.hidden)
-            .background(
-                CustomBackground(themeColor: themeColor)
-            )
         }
+        .navigationTitle(navigationTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        //MARK: Destination
+        .navigationDestination(for: CategoryModel.self) { category in
+            destinationBuilder(category)
+        }
+        //MARK: Toolbar
+        .toolbar{
+            //add new category
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isAddingNewCategory.toggle()
+                } label: {
+                    Image(systemName:"plus.circle")
+                }
+                .foregroundStyle(themeColor)
+                
+            }
+        }
+        //MARK: Sheets
+        //edit category
+        .sheet(item: $selectedCategory) { category in
+            EditCategoryView(category: category)
+        }
+        //add new category
+        .sheet(isPresented: $isAddingNewCategory) {
+            AddNewCategoryView()
+        }
+        //MARK: Background
+        .scrollContentBackground(.hidden)
+        .background(
+            CustomBackground(themeColor: themeColor)
+        )
         .tint(themeColor)
     }
 }

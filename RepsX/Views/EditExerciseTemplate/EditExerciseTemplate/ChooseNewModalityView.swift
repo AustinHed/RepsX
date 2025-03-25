@@ -24,7 +24,7 @@ struct ChooseNewModalityView: View {
         
     
     var body: some View {
-        NavigationStack{
+        
             List{
                 //Reps
                 Section{
@@ -95,7 +95,7 @@ struct ChooseNewModalityView: View {
             .background(
                 CustomBackground(themeColor: themeColor)
             )
-        }
+        
     }
     
     //MARK: Add checkmark

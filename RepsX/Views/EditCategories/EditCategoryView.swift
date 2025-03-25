@@ -12,7 +12,7 @@ struct EditCategoryView: View {
     
     //the category you want to edit
     @State var category: CategoryModel
-        
+    
     //model context
     @Environment(\.modelContext) private var modelContext
     @Environment(\.themeColor) var themeColor
@@ -26,6 +26,9 @@ struct EditCategoryView: View {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
     @State var exercises: [ExerciseTemplate] = []
+    var standardExercises: [ExerciseTemplate] {
+        exercises.filter { $0.standard }
+    }
     var customExercises: [ExerciseTemplate] {
         exercises.filter { !$0.standard }
     }
@@ -33,94 +36,92 @@ struct EditCategoryView: View {
     
     var body: some View {
         
-        NavigationStack{
-
-            List{
-                //update name
-                Section("Name"){
-                    if category.standard {
-                        Text(category.name)
-                    } else {
-                        TextField("Category", text: $category.name)
-                            .onSubmit {
-                                categoryViewModel.updateCategory(category, newName: category.name)
-                            }
-                            .foregroundStyle(.black)
-                    }
-                }
-                
-                //Standard Exercises
-                if !exercises.isEmpty {
-                    Section("Standard Exercises") {
-                        ForEach(exercises){ exercise in
-                            if exercise.category == category && exercise.standard == true {
-                                NavigationLink(exercise.name) {
-                                    EditExerciseTemplateView(exerciseTemplate: exercise)
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                //Custom Exercises
-                if !customExercises.isEmpty {
-                    Section("Custom Exercises") {
-                        ForEach(customExercises){ exercise in
-                            if exercise.category == category {
-                                NavigationLink(exercise.name) {
-                                    EditExerciseTemplateView(exerciseTemplate: exercise)
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                //delete button
-                if category.standard{
-                    //nothing
+        List{
+            //update name
+            Section("Name"){
+                if category.standard {
+                    Text(category.name)
                 } else {
-                    Section() {
-                        Button("Delete"){
-                            categoryViewModel.deleteCategory(category)
-                            dismiss()
+                    TextField("Category", text: $category.name)
+                        .onSubmit {
+                            categoryViewModel.updateCategory(category, newName: category.name)
                         }
-                        .disabled(!exercises.isEmpty)
-                        .foregroundStyle(.red)
-                    } footer: { Text("To delete a custom category, first ensure there are no exercises in the category") }
+                        .foregroundStyle(.black)
                 }
-
             }
-            .navigationTitle(Text(category.standard ? "View Category" : "Edit Category"))
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(true)
-            //MARK: Toolbar
-            .toolbar {
-                //Back button
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Back") {
+            
+            //Standard Exercises
+            if !standardExercises.isEmpty {
+                Section("Standard Exercises") {
+                    ForEach(standardExercises){ exercise in
+                        if exercise.category == category && exercise.standard == true {
+                            NavigationLink(exercise.name, value: exercise)
+                        }
+                    }
+                }
+            }
+            
+            //Custom Exercises
+            if !customExercises.isEmpty {
+                Section("Custom Exercises") {
+                    ForEach(customExercises){ exercise in
+                        if exercise.category == category {
+                            NavigationLink(exercise.name, value: exercise)
+                        }
+                    }
+                }
+            }
+            
+            //delete button
+            if category.standard{
+                //nothing
+            } else {
+                Section() {
+                    Button("Delete"){
+                        categoryViewModel.deleteCategory(category)
                         dismiss()
                     }
-                    .foregroundStyle(themeColor)
-                }
+                    .disabled(!exercises.isEmpty)
+                    .foregroundStyle(.red)
+                } footer: { Text("To delete a custom category, first ensure there are no exercises in the category") }
             }
-            //MARK: On Appear
-            .onDisappear {
-                exercises = []
-            }
-            .onAppear {
-                let newCategories = exerciseTemplateViewModel.fetchExercisesForCategory(category: category)
-                    .filter { newCategory in
-                        // Replace `id` with the unique property or ensure CategoryModel is Equatable
-                        !exercises.contains(where: { $0.id == newCategory.id })
-                    }
-                exercises.append(contentsOf: newCategories)
-            }
-            //MARK: Background
-            .scrollContentBackground(.hidden)
-            .background(
-                CustomBackground(themeColor: themeColor)
-            )
+            
         }
+        .navigationTitle(Text(category.standard ? "View Category" : "Edit Category"))
+        .navigationBarTitleDisplayMode(.inline)
+        //MARK: Destination
+        .navigationDestination(for: ExerciseTemplate.self) { exercise in
+            EditExerciseTemplateView(exerciseTemplate: exercise)
+        }
+        //MARK: Toolbar
+        .toolbar {
+            //Back button
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button("Back") {
+                    dismiss()
+                }
+                .foregroundStyle(themeColor)
+            }
+        }
+        //MARK: On Appear
+        .onDisappear {
+            exercises = []
+        }
+        .onAppear {
+            let newCategories = exerciseTemplateViewModel.fetchExercisesForCategory(category: category)
+                .filter { newCategory in
+                    // Replace `id` with the unique property or ensure CategoryModel is Equatable
+                    !exercises.contains(where: { $0.id == newCategory.id })
+                }
+            exercises.append(contentsOf: newCategories)
+        }
+        //MARK: Background
+        .scrollContentBackground(.hidden)
+        .background(
+            CustomBackground(themeColor: themeColor)
+        )
+        //MARK: Other
+        .navigationBarBackButtonHidden(true)
         
     }
 }

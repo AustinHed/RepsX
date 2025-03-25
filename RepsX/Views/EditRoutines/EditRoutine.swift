@@ -14,7 +14,7 @@ struct EditRoutine: View {
     var routine: Routine
     
     //Tab View
-    @Binding var selectedTab: MainTabbedView.TabOptions
+    @Binding var selectedTab: ContentView.Tab
     
     //Environment
     @Environment(\.modelContext) private var modelContext

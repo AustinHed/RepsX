@@ -10,16 +10,18 @@ import SwiftData
 
 struct SelectThemeView: View {
     
-    //Fetch all themes
+    //MARK: Query
     @Query(sort: \UserTheme.name) var userThemes: [UserTheme]
-    //fetch selected theme
     @Query(filter: #Predicate<UserTheme> { $0.isSelected }) var selectedThemes: [UserTheme]
+    
     var selectedTheme: UserTheme {
         selectedThemes.first ?? UserTheme(name: "Default Theme",
                                           primaryHex: "#007AFF",
                                           secondaryHex: "#8E8E93"
         )
     }
+    
+    @Binding var path: NavigationPath
     
     //modelContext
     @Environment(\.modelContext) private var modelContext
@@ -28,12 +30,8 @@ struct SelectThemeView: View {
     private var userThemeViewModel: UserThemeViewModel {
         UserThemeViewModel(modelContext: modelContext)
     }
-    
-    //access the themes
-    
-    
+        
     var body: some View {
-        NavigationStack{
             List{
                 //theme options
                 ForEach(userThemes) { userTheme in
@@ -81,15 +79,14 @@ struct SelectThemeView: View {
                 CustomBackground(themeColor: userThemeViewModel.primaryColor)
             )
             
-        }
         .tint(userThemeViewModel.primaryColor)
     }
 }
 
-#Preview {
-    SelectThemeView()
-        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self, Routine.self, ExerciseInRoutine.self, UserTheme.self])
-}
+//#Preview {
+//    SelectThemeView()
+//        .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self, Routine.self, ExerciseInRoutine.self, UserTheme.self])
+//}
 
 
 

@@ -16,6 +16,12 @@ struct ChooseNewCategoryView: View {
         },
         sort: \CategoryModel.name
     ) var categories: [CategoryModel]
+    var standardCategories: [CategoryModel] {
+        categories.filter {$0.standard == true}
+    }
+    var customCategories: [CategoryModel] {
+        categories.filter {$0.standard == false}
+    }
     
     //environment
     @Environment(\.modelContext) private var modelContext
@@ -30,23 +36,38 @@ struct ChooseNewCategoryView: View {
     var exerciseTemplate:ExerciseTemplate
     
     var body: some View {
-        NavigationStack {
-            List(categories) { category in
-                Button {
-                    exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newCategory: category)
-                    dismiss()
-                } label: {
-                    categoryLabel(for: category)
+        List {
+            Section("Standard Categories") {
+                ForEach(standardCategories){ cat in
+                    Button {
+                        exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newCategory: cat)
+                        dismiss()
+                    } label: {
+                        categoryLabel(for: cat)
+                    }
                 }
             }
-            .navigationTitle("Choose category")
-            .navigationBarTitleDisplayMode(.inline)
-            //MARK: Background
-            .scrollContentBackground(.hidden)
-            .background(
-                CustomBackground(themeColor: themeColor)
-            )
+            
+            if !customCategories.isEmpty{
+                Section("Custom Categories"){
+                    ForEach(customCategories) { cat in
+                        Button {
+                            exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newCategory: cat)
+                            dismiss()
+                        } label: {
+                            categoryLabel(for: cat)
+                        }
+                    }
+                }
+            }
         }
+        .navigationTitle("Choose category")
+        .navigationBarTitleDisplayMode(.inline)
+        //MARK: Background
+        .scrollContentBackground(.hidden)
+        .background(
+            CustomBackground(themeColor: themeColor)
+        )
     }
     
     

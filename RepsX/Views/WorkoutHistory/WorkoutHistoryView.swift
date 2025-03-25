@@ -41,7 +41,7 @@ struct WorkoutHistoryView: View {
     
     //MARK: - tab
     //binding vars
-    @Binding var selectedTab: MainTabbedView.TabOptions
+    @Binding var selectedTab: ContentView.Tab
     @State var coordinator = WorkoutCoordinator.shared
     
     // Group workouts by month and year (e.g., "February 2025")
