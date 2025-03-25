@@ -38,12 +38,14 @@ struct RoutinesView: View {
         NavigationStack{
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 15) {
+                    //Routines
                     ForEach(routines) { routine in
                         NavigationLink {
                             EditRoutine(routine: routine, selectedTab: $selectedTab)
                         } label: {
                             RoutineItem(routine: routine)
                         }
+                        //favorite and delete
                         .contextMenu {
                             //favorite
                             Button {
@@ -59,7 +61,7 @@ struct RoutinesView: View {
                             }
                             
                             //delete
-                            Button {
+                            Button(role: .destructive) {
                                 withAnimation {
                                     routineViewModel.deleteRoutine(routine)
                                 }
@@ -72,7 +74,25 @@ struct RoutinesView: View {
                                         .foregroundStyle(.red)
                                 }
                             }
+
+                            
                         }
+                    }
+                    
+                    //Add button
+                    Button {
+                        newRoutine = routineViewModel.addRoutine(name: "New Routine")
+                        isLinkActive = true
+                    } label: {
+                        VStack{
+                            Spacer()
+                            Image(systemName:"plus.circle")
+                                .font(.system(size: 60))
+                                .foregroundStyle(themeColor)
+                                .frame(maxWidth: .infinity)
+                            Spacer()
+                        }
+                        .frame(minHeight: 140)
                     }
                 }
                 .padding(.horizontal, 15)
