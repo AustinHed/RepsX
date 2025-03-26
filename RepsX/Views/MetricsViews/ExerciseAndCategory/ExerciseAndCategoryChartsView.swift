@@ -373,7 +373,8 @@ extension ExerciseAndCategoryChartsView {
                 x: .value("Date", point.date, unit: .day),
                 y: .value("Total Sets", point.value)
             )
-            .clipShape(Capsule())
+            //.clipShape(Capsule())
+            .clipShape(RoundedRectangle(cornerRadius: 4))
             
             if let selected = selectedSetsDataPoint {
                 RuleMark(x: .value("Date", selected.date, unit: .day))
@@ -456,7 +457,8 @@ extension ExerciseAndCategoryChartsView {
                 x: .value("Date", point.date, unit: .day),
                 y: .value("Total Volume", point.value)
             )
-            .clipShape(Capsule())
+            //.clipShape(Capsule())
+            .clipShape(RoundedRectangle(cornerRadius: 4))
             
             //the visual line marker
             if let selected = selectedVolumeDataPoint {

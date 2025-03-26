@@ -221,7 +221,8 @@ extension StatsHomeView {
                     x: .value("Date", stat.day, unit: .day),
                     y: .value("Workout Time (mins)", stat.totalTime / 60)
                 )
-                .clipShape(Capsule())
+                //.clipShape(Capsule())
+                .clipShape(RoundedRectangle(cornerRadius: 4))
                 .foregroundStyle(themeColor)
             }
         }
@@ -314,7 +315,7 @@ extension StatsHomeView {
                     innerRadius: .ratio(0.6),
                     angularInset: 2
                 )
-                .cornerRadius(5)
+                .cornerRadius(4)
                 .foregroundStyle(entry.count == mostCommonCount ? themeColor : themeColor.opacity(0.5))
             }
         }
