@@ -21,8 +21,6 @@ struct SelectThemeView: View {
         )
     }
     
-    @Binding var path: NavigationPath
-    
     //modelContext
     @Environment(\.modelContext) private var modelContext
     

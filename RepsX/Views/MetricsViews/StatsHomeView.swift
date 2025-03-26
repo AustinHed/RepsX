@@ -9,6 +9,19 @@ import SwiftUI
 import Charts
 import SwiftData
 
+enum StatsDestination: Hashable {
+
+    case exercise
+    case category
+    
+    case duration
+    case volume
+    case sets
+    case reps
+    case intensity
+    
+}
+
 // Example StatsView
 struct StatsHomeView: View {
     
@@ -19,76 +32,89 @@ struct StatsHomeView: View {
     //fetch all exercises for the L14D
     @Query(filter: Exercise.currentPredicate()
     ) var exercisesList: [Exercise]
-    //chosen theme string
-
     
     //environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.themeColor) var themeColor
-    
-    @Binding var selectedTab: ContentView.Tab
-    
+        
     var body: some View {
-        NavigationStack {
-            List {
-                //duration
-                Section("Highlights"){
-                    
+        List {
+            //duration
+            Section("Highlights"){
                 rollingWorkoutDuration
-                }
-                //category
-                Section {
-                    categoryDistributionChart
+            }
+            //category
+            Section {
+                categoryDistributionChart
+            }
+            
+            Section("Specific Stats") {
+                NavigationLink(value: StatsDestination.exercise) {
+                    Text("Exercise")
                 }
                 
-                Section("Specific Stats") {
-                    
-                    NavigationLink("Exercise") {
-                        ListOfExerciseTemplatesView(navigationTitle: "Select an Exercise", allWorkouts: workouts) { exercise in
-                            ExerciseAndCategoryChartsView(filter: .exercise(exercise), workouts: workouts)
-                        }
-                    }
-                    
-                    NavigationLink("Category") {
-                        ListOfCategoriesView(navigationTitle:"Select a Category", allWorkouts: workouts) {
-                            category in
-                            ExerciseAndCategoryChartsView(filter: .category(category), workouts: workouts)
-                        }
-                    }
+                NavigationLink(value: StatsDestination.category) {
+                    Text("Category")
                 }
                 
-                Section("Overall Stats"){
-                    //favorite exercises
-                    //favorite categories
-                    NavigationLink("Workout Duration") {
-                        GeneralChartsView(filter: .length, workouts: workouts)
-                    }
-                    NavigationLink("Workout Volume") {
-                        GeneralChartsView(filter: .volume, workouts: workouts)
-                    }
-                    NavigationLink("Total Sets") {
-                        GeneralChartsView(filter: .sets, workouts: workouts)
-                    }
-                    NavigationLink("Total Reps") {
-                        GeneralChartsView(filter: .reps, workouts: workouts)
-                    }
-                    NavigationLink("Set Intensity") {
-                        GeneralChartsView(filter: .intensity, workouts: workouts)
-                    }
+            }
+            
+            Section("Overall Stats"){
+                //favorite exercises
+                //favorite categories
+                NavigationLink(value: StatsDestination.duration) {
+                    Text("Workout Duration")
+                }
+                NavigationLink(value: StatsDestination.volume) {
+                    Text("Workout Volume")
+                }
+                NavigationLink(value: StatsDestination.sets) {
+                    Text("Total Sets")
+                }
+                NavigationLink(value: StatsDestination.reps) {
+                    Text("Total Reps")
+                }
+                NavigationLink(value: StatsDestination.intensity) {
+                    Text("Set Intensity")
                 }
             }
-            .navigationTitle("Stats")
-            .listSectionSpacing(12)
-            .safeAreaInset(edge: .bottom) {
-                // Add extra space (e.g., 100 points)
-                Color.clear.frame(height: 50)
-            }
-            //MARK: Background
-            .scrollContentBackground(.hidden)
-            .background(
-                CustomBackground(themeColor: themeColor)
-            )
         }
+        .navigationTitle("Stats")
+        //MARK: Destination
+        .navigationDestination(for: StatsDestination.self) {
+            destination in
+            switch destination {
+            case .exercise:
+                ListOfExerciseTemplatesView(navigationTitle: "Select an Exercise", allWorkouts: workouts) { exercise in
+                    ExerciseAndCategoryChartsView(filter: .exercise(exercise), workouts: workouts)
+                }
+            case .category:
+                ListOfCategoriesView(navigationTitle:"Select a Category", allWorkouts: workouts) {
+                    category in
+                    ExerciseAndCategoryChartsView(filter: .category(category), workouts: workouts)
+                }
+            case .duration:
+                GeneralChartsView(filter: .length, workouts: workouts)
+            case .volume:
+                GeneralChartsView(filter: .volume, workouts: workouts)
+            case .sets:
+                GeneralChartsView(filter: .sets, workouts: workouts)
+            case .reps:
+                GeneralChartsView(filter: .reps, workouts: workouts)
+            case .intensity:
+                GeneralChartsView(filter: .intensity, workouts: workouts)
+            }
+        }
+        .listSectionSpacing(12)
+        .safeAreaInset(edge: .bottom) {
+            // Add extra space (e.g., 100 points)
+            Color.clear.frame(height: 50)
+        }
+        //MARK: Background
+        .scrollContentBackground(.hidden)
+        .background(
+            CustomBackground(themeColor: themeColor)
+        )
         .tint(themeColor)
     }
 }

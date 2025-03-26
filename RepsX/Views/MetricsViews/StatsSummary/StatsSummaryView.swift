@@ -138,7 +138,6 @@ extension StatsSummaryView {
     var currentDataPoints: [ChartDataPoint] {
         
         if lookback.rawValue != 0 {
-            print ("using limited time")
             return dataPoints.filter { point in
                 point.date >= currentPeriodStart && point.date <= today
             }
@@ -146,7 +145,6 @@ extension StatsSummaryView {
         } else {
             
             let oldestDataPointDate = dataPoints.min(by: { $0.date < $1.date })?.date ?? Date()
-            print("using all time")
             return dataPoints.filter { point in
                 point.date >= oldestDataPointDate && point.date <= today
             }

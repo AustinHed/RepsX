@@ -70,9 +70,7 @@ struct RoutinesView: View {
                                 Image(systemName:"trash.fill")
                                     .foregroundStyle(.red)
                             }
-                        }
-                        
-                        
+                        }                        
                     }
                 }
                 

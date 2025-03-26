@@ -22,7 +22,6 @@ struct SettingsView: View {
     
     @Environment(\.modelContext) private var modelContext
     @Environment(\.themeColor) var themeColor
-    @Binding var path: NavigationPath
     
     var body: some View {
         List {
@@ -66,7 +65,7 @@ struct SettingsView: View {
         .navigationDestination(for: SettingsDestination.self) { destination in
             switch destination {
             case .theme:
-                SelectThemeView(path: $path)
+                SelectThemeView()
             case .appIcon:
                 Text("App Icon View") // Replace with your actual App Icon view.
             case .exercises:

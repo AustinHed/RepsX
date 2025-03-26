@@ -193,19 +193,10 @@ struct EditWorkoutView: View {
                         } else {
                             print("can't find the exercise to replace")
                         }
-                        
                     }
                 )
             }
         }
-        .sheet(isPresented: $isReplacingExercise, content: {
-            SelectCategoryView(
-                isSelectingExercise: $isReplacingExercise,
-                onExerciseSelected: {exerciseTemplate in
-                    
-                }
-            )
-        })
         //Timer
         .sheet(isPresented: $showTimer) {
             Spacer()

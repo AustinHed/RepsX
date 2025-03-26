@@ -86,16 +86,15 @@ struct ContentView: View {
                 .tag(Tab.routines)
                 
                 //Stats
-                NavigationStack(path: $historyPath){
-                    StatsHomeView(selectedTab: $selectedTab)
+                NavigationStack(path: $statsPath){
+                    StatsHomeView()
                         .globalKeyboardDoneButton()
                 }
                 .tag(Tab.stats)
                 
                 //Settings
                 NavigationStack(path: $settingsPath){
-                    //SettingsView(selectedTab: $selectedTab)
-                    SettingsView(path: $settingsPath)
+                    SettingsView()
                         .globalKeyboardDoneButton()
                 }
                 .tag(Tab.settings)
