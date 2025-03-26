@@ -35,106 +35,107 @@ struct RoutinesView: View {
     ]
     
     var body: some View {
-        NavigationStack{
-            ScrollView {
-                LazyVGrid(columns: columns, spacing: 15) {
-                    //Routines
-                    ForEach(routines) { routine in
-                        NavigationLink {
-                            EditRoutine(routine: routine, selectedTab: $selectedTab)
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 15) {
+                //Routines
+                ForEach(routines) { routine in
+                    NavigationLink(value: routine) {
+                        RoutineItem(routine: routine)
+                    }
+                    //favorite and delete
+                    .contextMenu {
+                        //favorite
+                        Button {
+                            routineViewModel.favoriteRoutine(routine)
                         } label: {
-                            RoutineItem(routine: routine)
-                        }
-                        //favorite and delete
-                        .contextMenu {
-                            //favorite
-                            Button {
-                                routineViewModel.favoriteRoutine(routine)
-                            } label: {
-                                HStack{
-                                    Text("Favorite")
-                                        .foregroundStyle(.black)
-                                    Spacer()
-                                    Image(systemName:"star.circle.fill")
-                                        .foregroundStyle(.yellow)
-                                }
+                            HStack{
+                                Text("Favorite")
+                                    .foregroundStyle(.black)
+                                Spacer()
+                                Image(systemName:"star.circle.fill")
+                                    .foregroundStyle(.yellow)
                             }
-                            
-                            //delete
-                            Button(role: .destructive) {
-                                withAnimation {
-                                    routineViewModel.deleteRoutine(routine)
-                                }
-                            } label: {
-                                HStack{
-                                    Text("Delete")
-                                        .foregroundStyle(.red)
-                                    Spacer()
-                                    Image(systemName:"trash.fill")
-                                        .foregroundStyle(.red)
-                                }
+                        }
+                        
+                        //delete
+                        Button(role: .destructive) {
+                            withAnimation {
+                                routineViewModel.deleteRoutine(routine)
                             }
-
-                            
+                        } label: {
+                            HStack{
+                                Text("Delete")
+                                    .foregroundStyle(.red)
+                                Spacer()
+                                Image(systemName:"trash.fill")
+                                    .foregroundStyle(.red)
+                            }
                         }
-                    }
-                    
-                    //Add button
-                    Button {
-                        newRoutine = routineViewModel.addRoutine(name: "New Routine")
-                        isLinkActive = true
-                    } label: {
-                        VStack{
-                            Spacer()
-                            Image(systemName:"plus.circle")
-                                .font(.system(size: 60))
-                                .foregroundStyle(themeColor)
-                                .frame(maxWidth: .infinity)
-                            Spacer()
-                        }
-                        .frame(minHeight: 140)
+                        
+                        
                     }
                 }
-                .padding(.horizontal, 15)
-            }
-            .navigationTitle("Routines")
-            //MARK: Toolbar
-            .toolbar {
-                //Plus button
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        //action
-                        newRoutine = routineViewModel.addRoutine(name: "New Routine")
-                        isLinkActive = true
-                    } label: {
+                
+                //Add button
+                Button {
+                    newRoutine = routineViewModel.addRoutine(name: "New Routine")
+                    isLinkActive = true
+                } label: {
+                    VStack{
+                        Spacer()
                         Image(systemName:"plus.circle")
+                            .font(.system(size: 60))
+                            .foregroundStyle(themeColor)
+                            .frame(maxWidth: .infinity)
+                        Spacer()
                     }
+                    .frame(minHeight: 140)
                 }
-                
-                
             }
-            //MARK: Background
-            .scrollContentBackground(.hidden)
-            .background(
-                CustomBackground(themeColor: themeColor)
-            )
-            .background(
-                NavigationLink(
-                    destination: Group {
-                        if let routine = newRoutine {
-                            AddNewRoutineView(routine: routine)
-                        } else {
-                            EmptyView()
-                        }
-                    },
-                    isActive: $isLinkActive,
-                    label: {
+            
+            .padding(.horizontal, 15)
+        }
+        .navigationTitle("Routines")
+        //MARK: Destination
+        .navigationDestination(for: Routine.self, destination: { routine in
+            EditRoutine(routine: routine, selectedTab: $selectedTab )
+        })
+        //MARK: Toolbar
+        .toolbar {
+            //Plus button
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    //action
+                    newRoutine = routineViewModel.addRoutine(name: "New Routine")
+                    isLinkActive = true
+                } label: {
+                    Image(systemName:"plus.circle")
+                }
+            }
+            
+            
+        }
+        //MARK: Background
+        .scrollContentBackground(.hidden)
+        .background(
+            CustomBackground(themeColor: themeColor)
+        )
+        .background(
+            NavigationLink(
+                destination: Group {
+                    if let routine = newRoutine {
+                        AddNewRoutineView(routine: routine)
+                    } else {
                         EmptyView()
                     }
-                )
-                .hidden()
+                },
+                isActive: $isLinkActive,
+                label: {
+                    EmptyView()
+                }
             )
-        }
+            .hidden()
+        )
         .tint(themeColor)
     }
 }

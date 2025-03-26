@@ -28,115 +28,114 @@ struct EditRoutine: View {
     private var routineViewModel: RoutineViewModel {
         RoutineViewModel(modelContext: modelContext)
     }
-
+    
     
     //Add Exercise
     @State private var isSelectingExercise: Bool = false
     
     var body: some View {
-        NavigationStack{
-            List {
-                //start button
-                Section {
-                    Button("Start Workout"){
-                        //first, create a new workout from the current routine
-                        let newWorkout = workoutViewModel.addWorkoutFromRoutine(routine, date: Date())
-                        //then, pass that workout to the singleton WorkoutCoordinator to be used in LogView
-                        WorkoutCoordinator.shared.currentWorkout = newWorkout
-                        WorkoutCoordinator.shared.showEditWorkout = true
-                        //then, tell the TabView to navigate to .log
-                        selectedTab = .history
-                        //finally, dismiss the EditRoutineView
-                        dismiss()
-                    }
-                    .foregroundStyle(themeColor)
-                    
+        List {
+            //start button
+            Section {
+                Button("Start Workout"){
+                    //first, create a new workout from the current routine
+                    let newWorkout = workoutViewModel.addWorkoutFromRoutine(routine, date: Date())
+                    //then, pass that workout to the singleton WorkoutCoordinator to be used in LogView
+                    WorkoutCoordinator.shared.currentWorkout = newWorkout
+                    WorkoutCoordinator.shared.showEditWorkout = true
+                    selectedTab = .history
+                    dismiss()
                 }
-                
-                //name
-                nameSection(routine: routine, routineViewModel: routineViewModel)
-                
-                //exercises
-                exercisesSection(for: routine)
-                
-                //add exercise button
-                addExerciseButton(isSelectingExercise: $isSelectingExercise)
+                .foregroundStyle(themeColor)
                 
             }
-            .navigationTitle(routine.name == "" ? "New Routine" : routine.name)
-            .navigationBarTitleDisplayMode(.inline)
-            //MARK: Toolbar
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        //favorite routine
-                        Button (role: routine.favorite ? .destructive : nil){
-                            routineViewModel.favoriteRoutine(routine)
-                            print(routine.favorite)
-                        } label: {
-                            HStack{
-                                Text(routine.favorite ? "Unfavorite" : "Favorite")
-                                    .foregroundStyle(.black)
-                                Spacer()
-                                Image(systemName: "star.fill")
-                            }
-                        }
-                        
-                        //reorder exercises
-                        Button {
-                            //reorder
-                        } label: {
-                            HStack{
-                                Text("Reorder")
-                                Spacer()
-                                Image(systemName: "arrow.triangle.2.circlepath")
-                            }
-                        }
-                        
-                        //delete specific routine
-                        Button (role:.destructive) {
-                            //dismiss
-                            dismiss()
-                            //delete
-                            routineViewModel.deleteRoutine(routine)
-                        } label: {
-                            HStack{
-                                Text("Delete")
-                                Spacer()
-                                Image(systemName: "trash")
-                            }
-                        }
-                        
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                    }
-                    .foregroundStyle(themeColor)
-                    
-                }
-            }
-            //MARK: Sheets
-            //add exercise
-            .sheet(isPresented: $isSelectingExercise) {
-                NavigationStack{
-                    SelectCategoryView(
-                        isSelectingExercise: $isSelectingExercise,
-                        onExerciseSelected: { exerciseTemplate in
-                            //take the selected Exercise and add an ExerciseTemplate
-                            routineViewModel.addExerciseInRoutine(to: routine, exercise: exerciseTemplate)
-                            //dismiss
-                            isSelectingExercise = false
-                            
-                        }
-                    )
-                }
-            }
-            //MARK: Background
-            .scrollContentBackground(.hidden)
-            .background(
-                CustomBackground(themeColor: themeColor)
-            )
+            
+            //name
+            nameSection(routine: routine, routineViewModel: routineViewModel)
+            
+            //exercises
+            exercisesSection(for: routine)
+            
+            //add exercise button
+            addExerciseButton(isSelectingExercise: $isSelectingExercise)
             
         }
+        .navigationDestination(for: ExerciseInRoutine.self, destination: { exercise in
+            EditExerciseInRoutineView(exerciseInRoutine: exercise)
+        })
+        .navigationTitle(routine.name == "" ? "New Routine" : routine.name)
+        .navigationBarTitleDisplayMode(.inline)
+        //MARK: Toolbar
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    //favorite routine
+                    Button (role: routine.favorite ? .destructive : nil){
+                        routineViewModel.favoriteRoutine(routine)
+                        print(routine.favorite)
+                    } label: {
+                        HStack{
+                            Text(routine.favorite ? "Unfavorite" : "Favorite")
+                                .foregroundStyle(.black)
+                            Spacer()
+                            Image(systemName: "star.fill")
+                        }
+                    }
+                    
+                    //reorder exercises
+                    Button {
+                        //reorder
+                    } label: {
+                        HStack{
+                            Text("Reorder")
+                            Spacer()
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                        }
+                    }
+                    
+                    //delete specific routine
+                    Button (role:.destructive) {
+                        //dismiss
+                        dismiss()
+                        //delete
+                        routineViewModel.deleteRoutine(routine)
+                    } label: {
+                        HStack{
+                            Text("Delete")
+                            Spacer()
+                            Image(systemName: "trash")
+                        }
+                    }
+                    
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+                .foregroundStyle(themeColor)
+                
+            }
+        }
+        //MARK: Sheets
+        //add exercise
+        .sheet(isPresented: $isSelectingExercise) {
+            NavigationStack{
+                SelectCategoryView(
+                    isSelectingExercise: $isSelectingExercise,
+                    onExerciseSelected: { exerciseTemplate in
+                        //take the selected Exercise and add an ExerciseTemplate
+                        routineViewModel.addExerciseInRoutine(to: routine, exercise: exerciseTemplate)
+                        //dismiss
+                        isSelectingExercise = false
+                        
+                    }
+                )
+            }
+        }
+        //MARK: Background
+        .scrollContentBackground(.hidden)
+        .background(
+            CustomBackground(themeColor: themeColor)
+        )
+        
         .tint(themeColor)
     }
 }
@@ -172,17 +171,14 @@ extension EditRoutine {
     func exercisesSection(for routine: Routine) -> some View {
         Section ("Exercises"){
             ForEach(routine.exercises, id: \.self) { exercise in
-                NavigationLink {
-                    EditExerciseInRoutineView(exerciseInRoutine: exercise)
-                } label: {
-                    //TODO: what if not sets
+                NavigationLink(value: exercise) {
                     VStack(alignment:.leading){
                         Text(exercise.exerciseName)
                             .foregroundStyle(.black)
                         Text("\(exercise.setCount) Sets")
                             .font(.subheadline)
                             .foregroundStyle(.gray)
-                            
+                        
                     }
                 }
             }
