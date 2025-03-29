@@ -38,11 +38,20 @@ struct StatsHomeView: View {
     @Environment(\.themeColor) var themeColor
         
     var body: some View {
+
         List {
             //duration
             Section("Highlights"){
                 rollingWorkoutDuration
             }
+            .listRowBackground(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.white)
+                        .shadow(radius:2)
+                }
+                //.padding(.horizontal, 10)
+            )
             //category
             Section {
                 categoryDistributionChart

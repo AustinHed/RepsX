@@ -79,6 +79,7 @@ struct WorkoutHistoryView: View {
                             .cornerRadius(16)
                             .padding(.horizontal)
                             .padding(.top)
+                            .shadow(radius: 2)
                         
                         ForEach(workouts) { workout in
                             //logViewRow
@@ -102,6 +103,7 @@ struct WorkoutHistoryView: View {
                             .swipeMinimumDistance(25)
                             .swipeActionCornerRadius(16)
                             .padding(.horizontal, 16)
+                            .shadow(radius: 2)
                             
                         }
                     }

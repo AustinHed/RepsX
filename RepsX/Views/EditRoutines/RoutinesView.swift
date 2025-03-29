@@ -72,6 +72,7 @@ struct RoutinesView: View {
                             }
                         }                        
                     }
+                    .shadow(radius: 2)
                 }
                 
                 //Add button
