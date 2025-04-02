@@ -232,6 +232,7 @@ extension GeneralChartsView {
             )
             //.clipShape(Capsule())
             .clipShape(RoundedRectangle(cornerRadius: 4))
+            .opacity(selectedGeneralDataPoint == nil || selectedGeneralDataPoint?.date == point.date ? 1 : 0.3)
             
             if let selected = selectedGeneralDataPoint {
                 RuleMark(x: .value("Date", selected.date, unit: .day))

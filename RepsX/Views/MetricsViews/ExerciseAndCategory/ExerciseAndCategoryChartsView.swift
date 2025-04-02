@@ -271,7 +271,6 @@ extension ExerciseAndCategoryChartsView {
     private var medianWeightChart: some View {
         
         Chart {
-            
             //candlesticks
             ForEach(candlestickData) { point in
                 BarMark(
@@ -282,6 +281,7 @@ extension ExerciseAndCategoryChartsView {
                 )
                 .cornerRadius(markerSize / 2) // Capsule-like appearance.
                 .foregroundStyle(themeColor.opacity(0.4))
+                .opacity(selectedWeightDataPoint == nil || selectedWeightDataPoint?.date == point.date ? 1 : 0.3)
             }
             
             //median line
@@ -292,6 +292,7 @@ extension ExerciseAndCategoryChartsView {
                 )
                 .interpolationMethod(.catmullRom)
                 .foregroundStyle(themeColor.opacity(0.8))
+                .opacity(selectedWeightDataPoint == nil || selectedWeightDataPoint?.date == point.date ? 1 : 0.3)
                 .lineStyle(StrokeStyle(lineWidth: 4))
                 
                 if let selected = selectedWeightDataPoint {
@@ -316,7 +317,9 @@ extension ExerciseAndCategoryChartsView {
                             .stroke(Color.white, lineWidth: 2)
                             .frame(width: markerSize, height: markerSize)
                     }
+                    .opacity(selectedWeightDataPoint == nil || selectedWeightDataPoint?.date == point.date ? 1 : 0.3)
                 }
+                
             }
 
         }
@@ -387,6 +390,7 @@ extension ExerciseAndCategoryChartsView {
             )
             //.clipShape(Capsule())
             .clipShape(RoundedRectangle(cornerRadius: 4))
+            .opacity(selectedSetsDataPoint == nil || selectedSetsDataPoint?.date == point.date ? 1 : 0.3)
             
             if let selected = selectedSetsDataPoint {
                 RuleMark(x: .value("Date", selected.date, unit: .day))
@@ -471,6 +475,7 @@ extension ExerciseAndCategoryChartsView {
             )
             //.clipShape(Capsule())
             .clipShape(RoundedRectangle(cornerRadius: 4))
+            .opacity(selectedVolumeDataPoint == nil || selectedVolumeDataPoint?.date == point.date ? 1 : 0.3)
             
             //the visual line marker
             if let selected = selectedVolumeDataPoint {
