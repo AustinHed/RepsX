@@ -31,6 +31,7 @@ struct SettingsView: View {
                 NavigationLink("App Icon", value: SettingsDestination.appIcon)
             }
             
+            
             //Exercise and Categories
             Section("Exercises and Categories") {
                 NavigationLink("Edit Exercises", value: SettingsDestination.exercises)
@@ -57,6 +58,7 @@ struct SettingsView: View {
                     // to be implemented
                 }
             }
+            
         }
         //MARK: Background
         .scrollContentBackground(.hidden)
@@ -95,4 +97,8 @@ struct SettingsView: View {
         }
         .tint(themeColor)
     }
+}
+
+#Preview {
+    SettingsView()
 }

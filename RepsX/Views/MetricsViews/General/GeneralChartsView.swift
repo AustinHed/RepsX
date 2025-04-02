@@ -4,6 +4,7 @@ import Charts
 
 /// A view that charts one generic workout metric (duration, volume, sets, reps, or intensity) by day.
 struct GeneralChartsView: View {
+    
     let filter: ChartFilter  // Should be one of the generic cases.
     let workouts: [Workout]
     
@@ -46,25 +47,35 @@ struct GeneralChartsView: View {
             return workouts // "All Time" selected – no filtering.
         }
     }
+    
+    //for the custom picker animation
+    @Namespace private var pickerAnimation
 
     
     var body: some View {
         
-        if chartData.isEmpty {
-            Text("No data available for the selected period.")
-                .foregroundStyle(.secondary)
-        } else {
+        ScrollView{
+            customPicker()
+                .frame(height: 35)
+                .background(
+                    Capsule()
+                        .fill(Color.white)
+                )
+                .padding(.horizontal, 18)
+                .padding(.top, 10)
             
-            ScrollView{
+            //content
+            if chartData.isEmpty {
+                Text("Not enough for the selected time period. Please log additional workouts and check back later.")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                    .padding(.vertical, 10)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding(.horizontal)
+                    .navigationTitle(filter.navigationTitle)
+            } else {
                 LazyVStack(spacing: 12){
-                    //picker
-                    Picker("Lookback", selection: $selectedLookback) {
-                        ForEach(LookbackOption.allCases) { option in
-                            Text(option.description).tag(option)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .padding()
                     
                     //summary text
                     StatsSummaryView(dataPoints: chartData, filter: filter, lookback: selectedLookback)
@@ -81,18 +92,21 @@ struct GeneralChartsView: View {
                     Spacer()
                 }
             }
-            .safeAreaInset(edge: .bottom) {
-                // Add extra space (e.g., 100 points)
-                Color.clear.frame(height: 50)
-            }
-            .navigationTitle(filter.navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            //MARK: Background
-            .scrollContentBackground(.hidden)
-            .background(
-                CustomBackground(themeColor: themeColor)
-            )
+            
+            
         }
+        .safeAreaInset(edge: .bottom) {
+            // Add extra space (e.g., 100 points)
+            Color.clear.frame(height: 50)
+        }
+        .navigationTitle(filter.navigationTitle)
+        .navigationBarTitleDisplayMode(.inline)
+        //MARK: Background
+        .scrollContentBackground(.hidden)
+        .background(
+            CustomBackground(themeColor: themeColor)
+        )
+        
     }
 }
 
@@ -265,5 +279,54 @@ extension GeneralChartsView {
         }
     }
 }
+
+#Preview {
+    NavigationStack{
+            GeneralChartsView(filter: .length, workouts: [])
+    }
+    
+    
+}
+
+//MARK: Custom picker
+extension GeneralChartsView {
+
+    func customPicker() -> some View {
+        HStack(spacing: 0) {
+            ForEach(LookbackOption.allCases, id: \.self) { option in
+                Button {
+                    // Animate the change of the selected lookback option.
+                    withAnimation(.bouncy) {
+                        selectedLookback = option
+                    }
+                } label: {
+                    customPickerItem(title: option.description, isActive: (option == selectedLookback))
+                }
+            }
+        }
+        .padding(.horizontal, 3)
+    }
+
+    func customPickerItem(title: String, isActive: Bool) -> some View {
+        Text(title)
+            .font(.subheadline)
+            .foregroundStyle(.black)
+            .frame(height: 30)
+            .frame(maxWidth: .infinity)
+            .background(
+                ZStack {
+                    // Only add the background for the active option.
+                    if isActive {
+                        RoundedRectangle(cornerRadius: 30)
+                            .fill(themeColor.opacity(0.3))
+                            // Use matchedGeometryEffect with a shared id.
+                            .matchedGeometryEffect(id: "pickerBackground", in: pickerAnimation)
+                    }
+                }
+            )
+            .cornerRadius(30)
+    }
+}
+
 
 

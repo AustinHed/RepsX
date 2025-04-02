@@ -118,10 +118,10 @@ struct ExpandableChartView<Content: View>: View {
                 .padding(.vertical, 10)
                 .background(.white)
                 .clipShape(
-                    UnevenRoundedRectangle(topLeadingRadius: 16,
+                    UnevenRoundedRectangle(topLeadingRadius: 10,
                                            bottomLeadingRadius: 0,
                                            bottomTrailingRadius: 0,
-                                           topTrailingRadius: 16
+                                           topTrailingRadius: 10
                                            )
                 )
             }
@@ -139,7 +139,7 @@ struct ExpandableChartView<Content: View>: View {
                 }
         }
         .background(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 10)
                 .fill(Color(UIColor.systemBackground))
         )
         .padding(.horizontal)

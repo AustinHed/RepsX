@@ -46,16 +46,28 @@ struct ExerciseAndCategoryChartsView: View {
     //Dot and bar size
     let markerSize: CGFloat = 8
     
+    //for the custom picker animation
+    @Namespace private var pickerAnimation
+    
     var body: some View {
             ScrollView{
-                //TODO: make a custom picker
-                Picker("Lookback", selection: $selectedLookback) {
-                    ForEach(LookbackOption.allCases) { option in
-                        Text(option.description).tag(option)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .padding()
+//                //TODO: make a custom picker
+//                Picker("Lookback", selection: $selectedLookback) {
+//                    ForEach(LookbackOption.allCases) { option in
+//                        Text(option.description).tag(option)
+//                    }
+//                }
+//                .pickerStyle(.segmented)
+//                .padding()
+                
+                customPicker()
+                    .frame(height: 35)
+                    .background(
+                        Capsule()
+                            .fill(Color.white)
+                    )
+                    .padding(.horizontal, 18)
+                    .padding(.top, 10)
                 
                 //Content
                 if medianChartData.isEmpty {
@@ -524,4 +536,42 @@ extension ExerciseAndCategoryChartsView {
     }
 }
 
+//MARK: Custom Picker
+extension ExerciseAndCategoryChartsView {
+    func customPicker() -> some View {
+        HStack(spacing: 0) {
+            ForEach(LookbackOption.allCases, id: \.self) { option in
+                Button {
+                    // Animate the change of the selected lookback option.
+                    withAnimation(.bouncy) {
+                        selectedLookback = option
+                    }
+                } label: {
+                    customPickerItem(title: option.description, isActive: (option == selectedLookback))
+                }
+            }
+        }
+        .padding(.horizontal, 3)
+    }
+
+    func customPickerItem(title: String, isActive: Bool) -> some View {
+        Text(title)
+            .font(.subheadline)
+            .foregroundStyle(.black)
+            .frame(height: 30)
+            .frame(maxWidth: .infinity)
+            .background(
+                ZStack {
+                    // Only add the background for the active option.
+                    if isActive {
+                        RoundedRectangle(cornerRadius: 30)
+                            .fill(themeColor.opacity(0.3))
+                            // Use matchedGeometryEffect with a shared id.
+                            .matchedGeometryEffect(id: "pickerBackground", in: pickerAnimation)
+                    }
+                }
+            )
+            .cornerRadius(30)
+    }
+}
 

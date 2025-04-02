@@ -44,14 +44,7 @@ struct StatsHomeView: View {
             Section("Highlights"){
                 rollingWorkoutDuration
             }
-            .listRowBackground(
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.white)
-                        .shadow(radius:2)
-                }
-                //.padding(.horizontal, 10)
-            )
+            
             //category
             Section {
                 categoryDistributionChart
@@ -365,6 +358,10 @@ extension Exercise {
                 exercise.category != nil
         }
     }
+}
+
+#Preview {
+    StatsHomeView()
 }
 
 

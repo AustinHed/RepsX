@@ -184,7 +184,6 @@ extension ContentView {
                     
                     // Update the selected tab
                     selectedTab = tab
-                    print("Selecting tab: \(tab)")
                 } label: {
                     CustomTabItem(imageName: tab.icon, title: tab.title, isActive: (selectedTab == tab))
                 }
