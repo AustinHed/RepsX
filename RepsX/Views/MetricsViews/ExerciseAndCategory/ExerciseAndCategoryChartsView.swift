@@ -292,7 +292,7 @@ extension ExerciseAndCategoryChartsView {
                 )
                 .interpolationMethod(.catmullRom)
                 .foregroundStyle(themeColor.opacity(0.8))
-                .opacity(selectedWeightDataPoint == nil || selectedWeightDataPoint?.date == point.date ? 1 : 0.3)
+                .opacity(selectedWeightDataPoint == nil ? 1 : 0.3)
                 .lineStyle(StrokeStyle(lineWidth: 4))
                 
                 if let selected = selectedWeightDataPoint {

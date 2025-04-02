@@ -74,6 +74,13 @@ struct WorkoutHistoryCalendarView: View {
             calendar.isDate(workout.startTime, inSameDayAs: date)
         }
     }
+    //minutes worked out on a given day
+    private func minutesForDay(on date: Date) -> Int {
+        let calendar = Calendar.current
+        let totalSeconds = workouts.filter { calendar.isDate($0.startTime, inSameDayAs: date) }
+                                   .reduce(0.0) { $0 + $1.workoutLength }
+        return Int(totalSeconds / 60)
+    }
     
     // Common header text: week range when contracted, or month/year when expanded.
     private var headerText: String {
@@ -170,26 +177,37 @@ struct WorkoutHistoryCalendarView: View {
                         if let date = monthDates[index] {
                             let calendar = Calendar.current
                             let isFuture = calendar.compare(date, to: Date(), toGranularity: .day) == .orderedDescending
-                            let backgroundColor: Color = {
-                                if hasWorkout(on: date) {
-                                    return themeColor.opacity(0.3)
-                                } else if calendar.isDate(date, inSameDayAs: Date()) {
+                            let textColor: Color = {
+                                if calendar.isDate(date, inSameDayAs: Date()) {
                                     //todays date
-                                    return themeColor.opacity(0.1)
+                                    return themeColor
+                                } else if isFuture {
+                                    //future date
+                                    return Color.gray
                                 } else {
-                                    return Color.clear
+                                    //past date
+                                    return Color.primary
                                 }
                             }()
                             
-                            Text("\(calendar.component(.day, from: date))")
-                                .lineLimit(1)
-                                .fixedSize(horizontal: true, vertical: false)
-                                .frame(maxWidth: .infinity)
-                                .padding(8)
-                                
-                                .background(backgroundColor)
-                                .cornerRadius(30) //was 8
-                                .foregroundColor(isFuture ? .gray : .primary)
+                            VStack{
+                                //date (ex. 31)
+                                Text("\(calendar.component(.day, from: date))")
+                                    .lineLimit(1)
+                                    .fixedSize(horizontal: true, vertical: false)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.top,8)
+                                   
+                                    //.background(backgroundColor)
+                                    .cornerRadius(30) //was 8
+                                    .foregroundStyle(textColor)
+                                    .foregroundColor(isFuture ? .gray : .primary)
+                                    
+                                //minutes exercised that day
+                                Text("\(minutesForDay(on: date))m")
+                                    .font(.caption)
+                                    .foregroundStyle(minutesForDay(on: date) == 0 ? .clear : .black)
+                            }
                         } else {
                             Text("")
                                 .frame(maxWidth: .infinity, minHeight: 40)
@@ -203,14 +221,16 @@ struct WorkoutHistoryCalendarView: View {
                     ForEach(weekDates, id: \.self) { date in
                         let calendar = Calendar.current
                         let isFuture = calendar.compare(date, to: Date(), toGranularity: .day) == .orderedDescending
-                        let backgroundColor: Color = {
-                            if hasWorkout(on: date) {
-                                return themeColor.opacity(0.3)
-                            } else if calendar.isDate(date, inSameDayAs: Date()) {
+                        let textColor: Color = {
+                            if calendar.isDate(date, inSameDayAs: Date()) {
                                 //todays date
-                                return themeColor.opacity(0.1)
+                                return themeColor
+                            } else if isFuture {
+                                //future date
+                                return Color.gray
                             } else {
-                                return Color.clear
+                                //past date
+                                return Color.primary
                             }
                         }()
                         
@@ -218,15 +238,25 @@ struct WorkoutHistoryCalendarView: View {
                             Text(date, format: .dateTime.weekday(.narrow))
                                 .font(.caption)
                                 .frame(maxWidth: .infinity)
-                            Text("\(calendar.component(.day, from: date))")
-                                .lineLimit(1)
-                                .fixedSize(horizontal: true, vertical: false)
-                                .frame(maxWidth: .infinity)
-                                .padding(8)
-                               
-                                .background(backgroundColor)
-                                .cornerRadius(30) //was 8
-                                .foregroundColor(isFuture ? .gray : .primary)
+                            VStack{
+                                //date (ex. 31)
+                                Text("\(calendar.component(.day, from: date))")
+                                    .lineLimit(1)
+                                    .fixedSize(horizontal: true, vertical: false)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.top,8)
+                                   
+                                    //.background(backgroundColor)
+                                    .cornerRadius(30) //was 8
+                                    .foregroundStyle(textColor)
+                                    .foregroundColor(isFuture ? .gray : .primary)
+                                    
+                                //minutes exercised that day
+                                Text("\(minutesForDay(on: date))m")
+                                    .font(.caption)
+                                    .foregroundStyle(minutesForDay(on: date) == 0 ? .clear : .black)
+                            }
+                            
                         }
                         .frame(maxWidth: .infinity)
                     }
@@ -234,7 +264,6 @@ struct WorkoutHistoryCalendarView: View {
                 .padding()
             }
         }
-        //.padding()
     }
 }
 
