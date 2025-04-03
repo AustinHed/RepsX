@@ -55,21 +55,14 @@ struct SettingsView: View {
                             .fontWeight(.semibold)
                     }
                 }
-                NavigationLink("Help and Support") {
-                    // to be implemented
-                }
                 NavigationLink("Acknowledgements") {
                     // to be implemented
                 }
             }
             
             Section("Legal") {
-                NavigationLink("Terms of Service") {
-                    // to be implemented
-                }
-                NavigationLink("Privacy Policy") {
-                    // to be implemented
-                }
+                NavigationLink("Terms of Service", value: SettingsDestination.terms)
+                NavigationLink("Privacy Policy", value: SettingsDestination.privacy)
             }
             
         }
@@ -98,9 +91,9 @@ struct SettingsView: View {
             case .acknowledgements:
                 Text("Acknowledgements View")
             case .terms:
-                Text("Terms of Service View")
+                TermsOfServiceView()
             case .privacy:
-                Text("Privacy Policy View")
+                PrivacyPolicyView()
             }
         }
         //MARK: Other
