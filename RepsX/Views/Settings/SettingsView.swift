@@ -1,6 +1,6 @@
 import SwiftUI
 import SwiftData
-
+import UIKit
 // Define a new destination type for Settings
 enum SettingsDestination: Hashable {
     case theme
@@ -40,6 +40,21 @@ struct SettingsView: View {
             
             Section("Feedback and Support") {
                 NavigationLink("Submit Feedback", value: SettingsDestination.feedback)
+                Button {
+                    if let url = URL(string: "itms-apps://itunes.apple.com") {
+                        UIApplication.shared.open(url)
+                    }
+                } label: {
+                    HStack{
+                        Text("Rate on the App Store")
+                            .foregroundStyle(.black)
+                        Spacer()
+                        Image(systemName:"chevron.right")
+                            .foregroundStyle(.gray).opacity(0.5)
+                            .font(.callout)
+                            .fontWeight(.semibold)
+                    }
+                }
                 NavigationLink("Help and Support") {
                     // to be implemented
                 }
@@ -98,5 +113,8 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView()
+    NavigationStack{
+        SettingsView()
+    }
+    
 }

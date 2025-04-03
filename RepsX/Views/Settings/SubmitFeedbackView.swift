@@ -70,6 +70,10 @@ struct SubmitFeedbackView: View {
         }
     }
     
+    //Focus states
+    @FocusState private var emailFocusState: Bool
+    @FocusState private var feedbackFocusState: Bool
+    
     //Other
     @State private var isSubmitting: Bool = false
     @State private var showAlert: Bool = false
@@ -82,7 +86,7 @@ struct SubmitFeedbackView: View {
             feedbackSection
             
             emailSection
-            
+            //TODO: send data via API to Airtable
             submitButton
         }
         .navigationTitle("Feedback")
@@ -146,6 +150,15 @@ extension SubmitFeedbackView {
             ZStack{
                 TextEditor(text: $commentary)
                     .frame(minHeight: 50)
+                    .submitLabel(.done)
+                    .onChange(of: commentary) { _ in
+                        if commentary.last?.isNewline == .some(true) {
+                            commentary.removeLast()
+                            feedbackFocusState = false
+                        }
+                    }
+                    .focused($feedbackFocusState)
+                
                 if commentary.isEmpty {
                     VStack{
                         HStack{
@@ -172,6 +185,15 @@ extension SubmitFeedbackView {
     var emailSection: some View {
         Section {
             TextField("Email Address (optional)", text: $email)
+                .onChange(of: email) { _ in
+                    if email.last?.isNewline == .some(true) {
+                        email.removeLast()
+                        emailFocusState = false
+                    }
+                }
+                .submitLabel(.done)
+                .keyboardType(.emailAddress)
+                .focused($emailFocusState)
         } header: {
             Text("Email Address")
         } footer: {
