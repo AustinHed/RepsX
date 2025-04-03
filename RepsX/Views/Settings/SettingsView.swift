@@ -39,9 +39,7 @@ struct SettingsView: View {
             }
             
             Section("Feedback and Support") {
-                NavigationLink("Submit Feedback") {
-                    // to be implemented
-                }
+                NavigationLink("Submit Feedback", value: SettingsDestination.feedback)
                 NavigationLink("Help and Support") {
                     // to be implemented
                 }
@@ -79,7 +77,7 @@ struct SettingsView: View {
                     EditCategoryView(category: category)
                 }
             case .feedback:
-                Text("Feedback View")
+                SubmitFeedbackView()
             case .help:
                 Text("Help and Support View")
             case .acknowledgements:
