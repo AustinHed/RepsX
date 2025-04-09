@@ -75,7 +75,8 @@ struct SettingsView: View {
             case .theme:
                 SelectThemeView()
             case .appIcon:
-                Text("App Icon View") // Replace with your actual App Icon view.
+//                Text("App Icon View") // Replace with your actual App Icon view.
+                SelectAppIconView()
             case .exercises:
                 ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises") { exercise in
                     EditExerciseTemplateView(exerciseTemplate: exercise)
