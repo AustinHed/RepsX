@@ -26,28 +26,51 @@ enum StatsDestination: Hashable {
 struct StatsHomeView: View {
     
     //MARK: Queries
-    // Fetch workouts from SwiftData for hte L14 days
+    // Fetch workouts from SwiftData for hte 30 days, to allow filtering 30 or 14 days
     @Query(filter: Workout.currentPredicate(),
            sort: \Workout.startTime) var workouts: [Workout]
-    //fetch all exercises for the L14D
+    //fetch all exercises for the L30D
     @Query(filter: Exercise.currentPredicate()
     ) var exercisesList: [Exercise]
-    
+    //filter into a usable array, based on the lookback date
+    @State var lookback: Int = 30
+    private var filteredWorkouts: [Workout] {
+        let calendar = Calendar.current
+        let thresholdDate = calendar.date(byAdding: .day, value: -lookback, to: Date())!
+        return workouts.filter{ $0.startTime > thresholdDate }
+    }
+    @State var showCalendar: Bool = false
     //environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.themeColor) var themeColor
-        
+    
     var body: some View {
 
         List {
-            //duration
-            Section("Highlights"){
-                rollingWorkoutDuration
-            }
             
-            //category
-            Section {
-                categoryDistributionChart
+            Section("30-Day Recap"){
+                if workouts.count < 7 {
+                    Text("Please log at least 7 workouts to see your 30-day recap")
+                } else {
+                    
+                    HStack{
+                        workoutCountAndMinutes
+                    }
+                    VStack{
+                        HStack{
+                            Text("Exercises by category")
+                                .font(.footnote)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        }
+                        HStack{
+                            pieChartView
+                            categoryTextList
+                        }
+                    }
+                    
+                }
+                
             }
             
             Section("Specific Stats") {
@@ -121,235 +144,148 @@ struct StatsHomeView: View {
     }
 }
 
-
-//MARK: Duration Bar Chart
+//MARK: Workouts logged & time
 extension StatsHomeView {
-    
-    //Daily stats
-    private var dailyStats: [(day: Date, totalTime: TimeInterval)] {
-        let calendar = Calendar.current
-        
-        // Group the workouts by the start of their day.
-        let grouped = Dictionary(grouping: workouts, by: { calendar.startOfDay(for: $0.startTime) })
-        
-        // Create an array for each day in the last X days—even if there is no workout for a day.
-        let stats = (0..<14).compactMap { offset -> (Date, TimeInterval) in
-            // Generate each day from today going back lookbackRange days.
-            let day = calendar.date(byAdding: .day, value: -offset, to: Date())!
-            let startOfDay = calendar.startOfDay(for: day)
-            // Sum the total workout length for this day (in seconds).
-            let totalTime = grouped[startOfDay]?.reduce(0, { $0 + $1.workoutLength }) ?? 0
-            return (startOfDay, totalTime)
-        }
-        // Sort the days in ascending order (oldest on the left, today on the right).
-        return stats.sorted(by: { $0.0 < $1.0 })
+    //count of workouts in last X days
+    private var workoutCount: Int {
+        filteredWorkouts.count
     }
     
-    //Average time calculation
-    private var averageWorkoutTime: TimeInterval {
-        guard !workouts.isEmpty else { return 0 }
-        let totalTime = workouts.reduce(0) { $0 + $1.workoutLength }
-        let avgSeconds = totalTime / TimeInterval(14)
-        return avgSeconds / 60
+    //sum of workout duration in last X days
+    private var totalWorkoutDuration: TimeInterval {
+        let duration = filteredWorkouts.reduce(0) {$0 + $1.workoutLength}
+        return duration / 60 //time intervals are in seconds
     }
     
-    // Average workout time (in minutes) for the previous period.
-    // The previous period is defined as the lookbackRange days immediately before the current period.
-    private var previousPeriodAverageWorkoutTime: TimeInterval {
-        let calendar = Calendar.current
-        
-        // Define the start of the previous period.
-        // For example, if lookbackRange is 7:
-        // - Current period: today through 6 days ago.
-        // - Previous period: 7 days ago through 13 days ago.
-        let previousStart = calendar.startOfDay(for: calendar.date(byAdding: .day, value: -(14 * 2 - 1), to: Date()) ?? Date())
-        let previousEnd = calendar.startOfDay(for: calendar.date(byAdding: .day, value: -14, to: Date()) ?? Date())
-        
-        // Filter workouts that occurred in the previous period.
-        let previousWorkouts = workouts.filter {
-            let day = calendar.startOfDay(for: $0.startTime)
-            return day >= previousStart && day <= previousEnd
-        }
-        guard !previousWorkouts.isEmpty else { return 0 }
-        
-        let totalTime = previousWorkouts.reduce(0) { $0 + $1.workoutLength }
-        let avgSeconds = totalTime / TimeInterval(14)
-        return avgSeconds / 60
+    private var workoutNumber: some View {
+            return Text("\(workoutCount)")
+                .font(.largeTitle)
+                .bold() +
+            Text(" workouts")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+    }
+    private var workoutMinutes: some View {
+        return Text("\(totalWorkoutDuration, specifier: "%.0f")")
+            .font(.largeTitle)
+            .bold() +
+        Text(" minutes")
+            .font(.footnote)
+            .foregroundStyle(.secondary)
     }
     
-    // Percentage difference between the current period's average and the previous period's average.
-    // Calculated as: ((current - previous) / previous) * 100
-    private var periodPercentageDifference: Double {
-        let currentAvg = averageWorkoutTime
-        let previousAvg = previousPeriodAverageWorkoutTime
-        guard previousAvg != 0 else { return 0 }
-        return ((currentAvg - previousAvg) / previousAvg) * 100
-    }
-    
-    //Header Text
-    private var workoutDurationHeader: Text {
-        if periodPercentageDifference != 0 {
-            return Text("Over the past ") +
-            Text("\(14) days, ")
-                .bold()
-                .foregroundColor(themeColor) +
-            Text("you averaged ") +
-            Text("\(Int(averageWorkoutTime)) minutes")
-                .bold()
-                .foregroundColor(themeColor) +
-            Text(" of exercise per day. That's a ") +
-            Text("\(periodPercentageDifference, specifier: "%.0f")%")
-                .bold()
-                .foregroundColor(themeColor) +
-            Text(" change vs the previous 14 day period")
-        } else {
-            return Text("Over the past ") +
-            Text("\(14) days, ")
-                .bold()
-                .foregroundColor(themeColor) +
-            Text("you averaged ") +
-            Text("\(Int(averageWorkoutTime)) minutes")
-                .bold()
-                .foregroundColor(themeColor) +
-            Text(" of exercise per day.")
+    private var workoutCountAndMinutes: some View {
+        HStack {
+            workoutNumber
+            workoutMinutes
         }
     }
-    
-    //Bar Chart
-    private var workoutDurationChart: some View {
-        Chart {
-            ForEach(dailyStats, id: \.day) { stat in
-                BarMark(
-                    x: .value("Date", stat.day, unit: .day),
-                    y: .value("Workout Time (mins)", stat.totalTime / 60)
-                )
-                //.clipShape(Capsule())
-                .clipShape(RoundedRectangle(cornerRadius: 4))
-                .foregroundStyle(themeColor)
-            }
-        }
-        .padding(.vertical)
-        .chartXAxis {
-            AxisMarks(values: .stride(by: .day, count: 2)) { value in
-                AxisValueLabel {
-                    if let dateValue = value.as(Date.self) {
-                        Text(dateValue, format: .dateTime.month(.twoDigits).day(.twoDigits))
-                            .font(.caption)
+
+}
+
+//MARK: Categories
+extension StatsHomeView {
+    private var overallCategoryDistribution: [(category: String, count: Int, percentage: Double)] {
+        let exercises = exercisesList
+        var frequency: [String: Int] = [:]
+        
+        for exercise in exercises {
+            //only include valid, non-hidden categories
+            if exercise.category?.isHidden != true {
+                if let categoryName = exercise.category?.name {
+                    if !categoryName.isEmpty {
+                        frequency[categoryName, default : 0] += 1
                     }
                 }
             }
         }
-        .chartYAxis(.hidden)
-    }
-    
-    //Header + Chart
-    var rollingWorkoutDuration: some View {
-        VStack {
-            workoutDurationHeader
-                .padding(.top)
-            workoutDurationChart
-        }
-    }
-}
-
-//MARK: Category Pie Chart
-extension StatsHomeView {
-    
-    //Daily stats, returned as a tuple (name, count, percentage)
-    private var overallCategoryDistribution: [(category: String, count: Int, percentage: Double)] {
-        
-        // Gather all exercises from the recent workouts.
-        let exercises = exercisesList
-        
-        // Build a frequency dictionary.
-        var frequency: [String: Int] = [:]
-        
-        for exercise in exercises {
-            //only look at non-hidden categories
-            if exercise.category?.isHidden != true {
-                if let categoryName = exercise.category?.name, !categoryName.isEmpty {
-                    frequency[categoryName, default: 0] += 1
-                }
-            }
-            
-        }
         
         let total = frequency.values.reduce(0, +)
-        return frequency.map { (category: $0.key,
-                                 count: $0.value,
-                                 percentage: total > 0 ? (Double($0.value) / Double(total) * 100) : 0) }
-    }
-    
-    //most common category count
-    private var mostCommonCount: Int {
-        overallCategoryDistribution.map { $0.count }.max() ?? 0
-    }
-    //most common category name
-    private var mostCommonCategoryName: String? {
-        overallCategoryDistribution.max { $0.count < $1.count }?.category
-    }
-    //most common category percentage
-    private var mostCommonCategoryPercentage: Double? {
-        overallCategoryDistribution.max { $0.count < $1.count }?.percentage
-    }
-    
-    //header text
-    private var headerText: Text {
-        let commonCategoryName = mostCommonCategoryName ?? "no category"
-        let commonCategoryPercentage = mostCommonCategoryPercentage.map { String(format: "%.0f", $0) } ?? "0"
         
-        return Text("\(commonCategoryName) ")
-            .bold()
-            .foregroundColor(themeColor)
-        + Text("was your favorite category, making up ")
-        + Text("\(commonCategoryPercentage)%")
-            .bold()
-            .foregroundColor(themeColor)
-        + Text(" exercises logged")
+        return frequency.map { (category: $0.key,
+                                count: $0.value,
+                                percentage: total > 0 ? (Double($0.value) / Double(total) * 100) : 0)
+        }
+        .sorted {$0.count > $1.count}
     }
     
-    //Pie Chart
-    private var chartView: some View {
-        Chart {
-            ForEach(overallCategoryDistribution, id: \.category) { entry in
-                SectorMark(
-                    angle: .value("Count", entry.count),
-                    innerRadius: .ratio(0.6),
-                    angularInset: 2
-                )
-                .cornerRadius(4)
-                .foregroundStyle(entry.count == mostCommonCount ? themeColor : themeColor.opacity(0.5))
+    private var categoryTextList: some View {
+        VStack(alignment:.leading) {
+            let totalEntries = overallCategoryDistribution.count
+            ForEach(Array(overallCategoryDistribution.enumerated()), id: \.element.category) { (index, entry) in
+                let fraction = totalEntries > 1 ? Double(index) / Double(totalEntries - 1) : 0.0
+                let opacity = 1.0 - fraction * 0.6
+                let blended = blendedColor(from:themeColor, to: .gray, fraction: fraction)
+                
+                HStack{
+                    Circle()
+                        .frame(width: 8, height: 8)
+                        .foregroundColor(blended)
+                    Text("\(entry.category)")
+                    Spacer()
+                    Text("\(entry.percentage, specifier: "%.0f")%")
+                }
+                .foregroundStyle(.secondary)
+                .font(.footnote)
             }
         }
-        .frame(height: 100)
-        .chartLegend(.visible)
+        .padding()
     }
     
-    //Header + Chart
-    var categoryDistributionChart: some View {
-        HStack {
-            headerText
-            chartView
+    private func blendedColor(from: Color, to: Color, fraction: Double) -> Color {
+        let uiFrom = UIColor(from)
+        let uiTo = UIColor(to)
+        
+        var fromRed: CGFloat = 0, fromGreen: CGFloat = 0, fromBlue: CGFloat = 0, fromAlpha: CGFloat = 0
+        var toRed: CGFloat = 0, toGreen: CGFloat = 0, toBlue: CGFloat = 0, toAlpha: CGFloat = 0
+        
+        uiFrom.getRed(&fromRed, green: &fromGreen, blue: &fromBlue, alpha: &fromAlpha)
+        uiTo.getRed(&toRed, green: &toGreen, blue: &toBlue, alpha: &toAlpha)
+        
+        let red = fromRed + CGFloat(fraction) * (toRed - fromRed)
+        let green = fromGreen + CGFloat(fraction) * (toGreen - fromGreen)
+        let blue = fromBlue + CGFloat(fraction) * (toBlue - fromBlue)
+        let alpha = fromAlpha + CGFloat(fraction) * (toAlpha - fromAlpha)
+        
+        return Color(red: Double(red), green: Double(green), blue: Double(blue), opacity: Double(alpha))
+    }
+    
+    private var pieChartView: some View {
+        Chart {
+            let totalEntries = overallCategoryDistribution.count
+            ForEach(Array(overallCategoryDistribution.enumerated()), id: \.element.category) { (index, entry) in
+                //determine the order, and the color based on the order
+                let fraction = totalEntries > 1 ? Double(index) / Double(totalEntries - 1) : 0.0
+                let opacity = 1.0 - fraction * 0.6
+                let blended = blendedColor(from:themeColor, to: .gray, fraction: fraction)
+                SectorMark(
+                    angle: .value("Count", entry.count),
+                    innerRadius: .ratio(0.6), // Use a ratio value to get a donut look
+                    angularInset: 2           // Adds separation between slices
+                )
+                .cornerRadius(4)
+                .foregroundStyle(blended.opacity(opacity))
+            }
         }
+        .frame(height: 125)
     }
 }
 
-//TODO: Move these to the respective models
+//MARK: Query predicates
 extension Workout {
     static func currentPredicate() -> Predicate<Workout> {
         let currentDate = Date.now
-        let fourteenDaysAgo = Calendar.current.date(byAdding: .day, value: -14, to: currentDate)!
+        let fourteenDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: currentDate)!
         
         return #Predicate<Workout> { workout in
             workout.startTime > fourteenDaysAgo
         }
     }
 }
-
 extension Exercise {
     static func currentPredicate() -> Predicate<Exercise> {
         let currentDate = Date.now
-        let fourteenDaysAgo = Calendar.current.date(byAdding: .day, value: -14, to: currentDate)!
+        let fourteenDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: currentDate)!
         
         return #Predicate<Exercise> { exercise in
             //if the exercise does not have a parent workout, just give it a date that will ensure it doesn't show up

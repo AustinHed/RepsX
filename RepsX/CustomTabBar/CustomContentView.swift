@@ -137,7 +137,7 @@ struct ContentView: View {
             //create default Categories and Exercise Templates
             initializeDefaultDataIfNeeded(context: modelContext)
             //create TEST exercise history
-            //initializeWorkoutsIfNeeded(context: modelContext)
+            initializeWorkoutsIfNeeded(context: modelContext)
             initializeDefaultThemes(in: modelContext)
         }
     }
