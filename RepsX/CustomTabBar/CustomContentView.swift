@@ -134,9 +134,10 @@ struct ContentView: View {
         //storing the color in the env
         .environment(\.themeColor, Color(hexString:selectedThemeString))
         .onAppear{
-            //load default workout tempaltes if needed
+            //create default Categories and Exercise Templates
             initializeDefaultDataIfNeeded(context: modelContext)
-            initializeWorkoutsIfNeeded(context: modelContext)
+            //create TEST exercise history
+            //initializeWorkoutsIfNeeded(context: modelContext)
             initializeDefaultThemes(in: modelContext)
         }
     }

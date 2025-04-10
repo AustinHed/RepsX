@@ -21,7 +21,6 @@ struct WorkoutHistoryView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.themeColor) var themeColor
     
-    
     //toggle to edit workouts, existing or new
     @State private var editNewWorkout: Bool = false
     @State private var editExistingWorkout: Bool = false
@@ -37,33 +36,31 @@ struct WorkoutHistoryView: View {
         WorkoutViewModel(modelContext: modelContext)
     }
     
-    
-    
-    //MARK: - tab
-    //binding vars
+    //Tab
     @Binding var selectedTab: ContentView.Tab
     @State var coordinator = WorkoutCoordinator.shared
     
-    // Group workouts by month and year (e.g., "February 2025")
+    
     //TODO: fix grouping workouts - breaks when updating intensity, not sure why
-    private var groupedWorkouts: [String: [Workout]] {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MMMM yyyy"
-        return Dictionary(grouping: workouts) { workout in
-            dateFormatter.string(from: workout.startTime)
-        }
-    }
+    // Group workouts by month and year (e.g., "February 2025")
+//    private var groupedWorkouts: [String: [Workout]] {
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateFormat = "MMMM yyyy"
+//        return Dictionary(grouping: workouts) { workout in
+//            dateFormatter.string(from: workout.startTime)
+//        }
+//    }
     // Sort the keys (months) in descending order (most recent first)
-    private var sortedGroupKeys: [String] {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
-        return groupedWorkouts.keys.sorted { key1, key2 in
-            guard let date1 = formatter.date(from: key1),
-                  let date2 = formatter.date(from: key2)
-            else { return false }
-            return date1 > date2
-        }
-    }
+//    private var sortedGroupKeys: [String] {
+//        let formatter = DateFormatter()
+//        formatter.dateFormat = "MMMM yyyy"
+//        return groupedWorkouts.keys.sorted { key1, key2 in
+//            guard let date1 = formatter.date(from: key1),
+//                  let date2 = formatter.date(from: key2)
+//            else { return false }
+//            return date1 > date2
+//        }
+//    }
     
     //MARK: Body
     var body: some View {
@@ -79,30 +76,33 @@ struct WorkoutHistoryView: View {
                             .cornerRadius(16)
                             .padding(.horizontal)
                             .padding(.top)
-                        
-                        ForEach(workouts) { workout in
-                            //logViewRow
-                            SwipeView{
-                                WorkoutHistoryRow(workout: workout)
-                                    .onTapGesture {
-                                        selectedWorkout = workout
-                                    }
-                            }
-                            //swipe actions
-                            trailingActions: { _ in
-                                SwipeAction(
-                                    systemImage: "trash",
-                                    backgroundColor: .red
-                                ){
-                                    workoutToDelete = workout
-                                }
-                                .foregroundStyle(.white)
-
-                            }
-                            .swipeMinimumDistance(25)
-                            .swipeActionCornerRadius(16)
-                            .padding(.horizontal, 16)
+                        if workouts.isEmpty {
+                            noWorkouts
                             
+                        } else {
+                            ForEach(workouts) { workout in
+                                //logViewRow
+                                SwipeView{
+                                    WorkoutHistoryRow(workout: workout)
+                                        .onTapGesture {
+                                            selectedWorkout = workout
+                                        }
+                                }
+                                //swipe actions
+                                trailingActions: { _ in
+                                    SwipeAction(
+                                        systemImage: "trash",
+                                        backgroundColor: .red
+                                    ){
+                                        workoutToDelete = workout
+                                    }
+                                    .foregroundStyle(.white)
+
+                                }
+                                .swipeMinimumDistance(25)
+                                .swipeActionCornerRadius(16)
+                                .padding(.horizontal, 16)
+                            }
                         }
                     }
                 }
@@ -155,6 +155,26 @@ struct WorkoutHistoryView: View {
     }
 }
 
+//MARK: No Workouts State
+extension WorkoutHistoryView {
+    private var noWorkouts: some View {
+        Button {
+            let createdWorkout = workoutViewModel.addWorkout(date: Date())
+            selectedWorkout = createdWorkout
+            editNewWorkout = true
+        } label: {
+            ZStack{
+                RoundedRectangle(cornerRadius: 16)
+                    .foregroundStyle(.white)
+                    .frame(height: 45)
+                    .padding(.horizontal)
+                
+                Text("Add your first workout")
+                    .foregroundStyle(themeColor)
+            }
+        }
+    }
+}
 //MARK: Toolbar contents
 extension WorkoutHistoryView {
     //add workout menu
@@ -268,103 +288,6 @@ extension WorkoutHistoryView {
     }
 }
 
-//MARK: Alert
-//TODO: Fix this so it can be used
-extension WorkoutHistoryView {
-    func deleteWorkoutAlert(
-        workoutToDelete: Binding<Workout?>,
-        workoutViewModel: WorkoutViewModel
-    ) -> some View {
-        self.alert("Delete Workout?",
-                   isPresented: Binding<Bool>(
-                    get: { workoutToDelete.wrappedValue != nil },
-                    set: { newValue in
-                        if !newValue {
-                            workoutToDelete.wrappedValue = nil
-                        }
-                    }),
-                   presenting: workoutToDelete.wrappedValue,
-                   actions: { workout in
-            Button("Delete", role: .destructive) {
-                withAnimation {
-                    workoutToDelete.wrappedValue = nil
-                    workoutViewModel.deleteWorkout(workout)
-                }
-            }
-            Button("Cancel", role: .cancel) {
-                workoutToDelete.wrappedValue = nil
-            }
-        },
-                   message: { workout in
-            Text("Are you sure you want to delete this workout?")
-        })
-    }
-}
-
-//MARK: Calendar section
-extension WorkoutHistoryView {
-    // Generate 14 dates starting from 13 days ago through today.
-    private var fourteenDays: [Date] {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-        // Create an array of 14 dates, where the first element is 13 days ago and the last is today.
-        return (0..<14).compactMap { offset in
-            calendar.date(byAdding: .day, value: -(13 - offset), to: today)
-        }
-    }
-    
-    // Split the dates into two rows.
-    private var firstRow: [Date] {
-        Array(fourteenDays.prefix(7))
-    }
-    
-    private var secondRow: [Date] {
-        Array(fourteenDays.suffix(7))
-    }
-    
-    // Formatter for the date in "dd/MM" format.
-    private func formattedDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd/MM"
-        return formatter.string(from: date)
-    }
-    
-    private func calendar(firstRow: [Date], secondRow:[Date]) -> some View {
-        VStack(spacing: 16) {
-            // First row of circles.
-            HStack(spacing: 16) {
-                ForEach(firstRow, id: \.self) { date in
-                    Circle()
-                        .fill(Color.blue.opacity(0.3))
-                        .frame(width: 35, height: 35)
-                        .overlay(
-                            Text(formattedDate(date))
-                                .font(.caption)
-                                .foregroundColor(.black)
-                        )
-                }
-            }
-            // Second row of circles.
-            HStack(spacing: 16) {
-                ForEach(secondRow, id: \.self) { date in
-                    Circle()
-                        .fill(Color.blue.opacity(0.3))
-                        .frame(width: 30, height: 30)
-                        .overlay(
-                            Text(formattedDate(date))
-                                .font(.caption)
-                                .foregroundColor(.black)
-                        )
-                }
-            }
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white)
-        )
-        
-    }
-    
-    
+#Preview {
+    WorkoutHistoryView(selectedTab: .constant(.history))
 }
