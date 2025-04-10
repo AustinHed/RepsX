@@ -50,6 +50,7 @@ struct StarRatingSelector: View {
 struct SubmitFeedbackView: View {
     //Environment
     @Environment(\.themeColor) var themeColor
+    @Environment(\.dismiss) var dismiss
     
     //Ratings
     @State private var overallRating: Int = 3
@@ -86,7 +87,7 @@ struct SubmitFeedbackView: View {
             feedbackSection
             
             emailSection
-            //TODO: send data via API to Airtable
+            
             submitButton
         }
         .navigationTitle("Feedback")
@@ -94,7 +95,9 @@ struct SubmitFeedbackView: View {
             Alert(
                 title: Text("Feedback Submitted"),
                 message: Text("Thank you for your feedback!"),
-                dismissButton: .default(Text("OK"))
+                dismissButton: .default(Text("OK")) {
+                    dismiss()
+                }
             )
         }
         .scrollContentBackground(.hidden)
@@ -206,32 +209,85 @@ extension SubmitFeedbackView {
 extension SubmitFeedbackView {
     var submitButton: some View {
         Section {
-            Button(action: submitFeedback) {
-                HStack {
-                    Spacer()
-                    if isSubmitting {
-                        ProgressView()
-                    } else {
-                        Text("Submit")
-                            .fontWeight(.semibold)
+            Button {
+                Task {
+                    do {
+                        try await submitFeedback(overallRatings: overallRating, easeRating: easeRating, featureRating: featuresRating, feedbackCategory: feedbackCategory.rawValue, commentary: commentary, email: email)
+                        isSubmitting = false
+                        showAlert = true
+                    } catch {
+                        print("error submitting feedback: \(error)")
                     }
+                }
+            } label: {
+                HStack{
+                    Spacer()
+                    Text("Submit")
                     Spacer()
                 }
             }
             .disabled(isSubmitting)
             .disabled(!emailIsValid)
         }
+        
+        
+    }
+    private var airtableApiKey: String {
+        get {
+            //1 - check if there is a plist file
+            guard let filePath = Bundle.main.path(forResource:"AirtableInfo", ofType: "plist") else {
+                fatalError("Coudln't find AirtableInfo.plist")
+            }
+            
+            //2 - fetch the API key
+            let plist = NSDictionary(contentsOfFile: filePath)
+            guard let value = plist?.object(forKey:"API_KEY") as? String else {
+                fatalError("Couldn't find 'API_KEY' in AirtableInfo.plist")
+            }
+            //3 - return the fetched key
+            return value
+        }
     }
     
-    //fake submitting API call
-    private func submitFeedback() {
-        //validate email
-        isSubmitting = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            isSubmitting = false
-            showAlert = true
-            // Here, you would trigger your actual API request.
+    private func submitFeedback(overallRatings: Int, easeRating: Int, featureRating: Int, feedbackCategory: String, commentary: String, email: String) async throws {
+        //validate the URL
+        guard let url = URL(string: "https://api.airtable.com/v0/app0eTpiGCGSqmXCz/tbliwhZWxzueaqUop") else {
+            throw URLError(.badURL)
         }
+        
+        //create the object to pass
+        let feedback = Feedback(
+            overallRating: overallRatings,
+            easeOfUseRating: easeRating,
+            featuresRating: featureRating,
+            feedbackCategory: feedbackCategory,
+            feedbackText: commentary,
+            emailAddress: email
+        )
+        
+        //wrap the created object in a "Record". Both are custom structs, specific to the Airtable call
+        let record = Record(fields: feedback)
+        let requestBody = APIRequest(records: [record])
+        
+        //create the URL request
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue(airtableApiKey, forHTTPHeaderField: "Authorization")
+        
+        //encode the request as JSON
+        request.httpBody = try JSONEncoder().encode(requestBody)
+        
+        //make the request
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        //check the response, and error if it failed
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200...299).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+        
+        print("API call response: \(data)")
     }
 }
 
