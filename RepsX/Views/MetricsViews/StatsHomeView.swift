@@ -27,52 +27,148 @@ struct StatsHomeView: View {
     
     //MARK: Queries
     // Fetch workouts from SwiftData for hte 30 days, to allow filtering 30 or 14 days
-    @Query(filter: Workout.currentPredicate(),
-           sort: \Workout.startTime) var workouts: [Workout]
-    //fetch all exercises for the L30D
-    @Query(filter: Exercise.currentPredicate()
-    ) var exercisesList: [Exercise]
-    //filter into a usable array, based on the lookback date
-    @State var lookback: Int = 30
-    private var filteredWorkouts: [Workout] {
-        let calendar = Calendar.current
-        let thresholdDate = calendar.date(byAdding: .day, value: -lookback, to: Date())!
-        return workouts.filter{ $0.startTime > thresholdDate }
-    }
+    @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     //environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.themeColor) var themeColor
     
     var body: some View {
-
         List {
             
-            Section("30-Day Recap"){
-                if workouts.count < 7 {
-                    Text("Please log at least 7 workouts to see your 30-day recap")
-                } else {
-                    
+            //consistency goals
+            Section(header:
+                        HStack{
+                Text("Consistency Goals")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                
+            ) {
+                VStack (alignment: .leading) {
+                    Text("270min Exercise")
+                        .font(.headline)
                     HStack{
-                        workoutCountAndMinutes
-                    }
-                    VStack{
-                        HStack{
-                            Text("Exercises by category")
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                        }
-                        HStack{
-                            pieChartView
-                            categoryTextList
-                        }
+                        Text("Weekly")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        
+                        Spacer()
+                        Text("90/270 minutes")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                     
+                    ProgressView(value: 90, total: 270)
+                        .progressViewStyle(LinearProgressViewStyle())
+                }
+                
+                VStack (alignment: .leading) {
+                    Text("25 Workouts")
+                        .font(.headline)
+                    HStack{
+                        Text("Monthly")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        
+                        Spacer()
+                        Text("15/25 workouts")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    ProgressView(value: 15, total: 25)
+                        .progressViewStyle(LinearProgressViewStyle())
+                }
+                
+                HStack{
+                    Text("Set a new goal")
+                    Spacer()
+                    Image(systemName: "plus.circle")
                 }
                 
             }
             
-            Section("Specific Stats") {
+            //strength goals
+            Section(header:
+                        HStack{
+                Text("Strength Goals")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                
+            ) {
+                
+                HStack (alignment:.top) {
+                    ZStack{
+                        // Full circle (background)
+                        Circle()
+                            .stroke(Color.gray.opacity(0.3), lineWidth: 5)
+                        
+                        // Progress circle (foreground)
+                        Circle()
+                            .trim(from: 0.0, to: 0.82)
+                            .stroke(
+                                Color.blue,
+                                style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                            )
+                            .rotationEffect(.degrees(-90))
+                            .animation(.easeInOut, value: 0.4)
+                        
+                    }
+                    .frame(height: 60)
+                    .overlay(
+                        Text("82%")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    )
+                    .padding(.trailing, 10)
+                    
+                    
+                    
+                    
+                    VStack (alignment:.leading){
+                        Text("Bench Press 225lbs")
+                            .font(.headline)
+                        Text("185/225")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        Text("Started 1/1/25")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    
+                    
+                }
+                
+                
+                
+                HStack{
+                    Text("Set a new goal")
+                    Spacer()
+                    Image(systemName: "plus.circle")
+                }
+                
+            }
+            
+            Section(header:
+                        HStack{
+                Text("Specific Stats")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                
+            ) {
                 NavigationLink(value: StatsDestination.exercise) {
                     Text("Exercise")
                 }
@@ -83,7 +179,17 @@ struct StatsHomeView: View {
                 
             }
             
-            Section("Overall Stats"){
+            Section(header:
+                        HStack{
+                Text("General Stats")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                
+            ){
                 //favorite exercises
                 //favorite categories
                 NavigationLink(value: StatsDestination.duration) {
@@ -143,133 +249,6 @@ struct StatsHomeView: View {
     }
 }
 
-//MARK: Workouts logged & time
-extension StatsHomeView {
-    //count of workouts in last X days
-    private var workoutCount: Int {
-        filteredWorkouts.count
-    }
-    
-    //sum of workout duration in last X days
-    private var totalWorkoutDuration: TimeInterval {
-        let duration = filteredWorkouts.reduce(0) {$0 + $1.workoutLength}
-        return duration / 60 //time intervals are in seconds
-    }
-    
-    private var workoutNumber: some View {
-            return Text("\(workoutCount)")
-                .font(.largeTitle)
-                .bold() +
-            Text(" workouts")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-    }
-    private var workoutMinutes: some View {
-        return Text("\(totalWorkoutDuration, specifier: "%.0f")")
-            .font(.largeTitle)
-            .bold() +
-        Text(" minutes")
-            .font(.footnote)
-            .foregroundStyle(.secondary)
-    }
-    
-    private var workoutCountAndMinutes: some View {
-        HStack {
-            workoutNumber
-            workoutMinutes
-        }
-    }
-
-}
-
-//MARK: Categories
-extension StatsHomeView {
-    private var overallCategoryDistribution: [(category: String, count: Int, percentage: Double)] {
-        let exercises = exercisesList
-        var frequency: [String: Int] = [:]
-        
-        for exercise in exercises {
-            //only include valid, non-hidden categories
-            if exercise.category?.isHidden != true {
-                if let categoryName = exercise.category?.name {
-                    if !categoryName.isEmpty {
-                        frequency[categoryName, default : 0] += 1
-                    }
-                }
-            }
-        }
-        
-        let total = frequency.values.reduce(0, +)
-        
-        return frequency.map { (category: $0.key,
-                                count: $0.value,
-                                percentage: total > 0 ? (Double($0.value) / Double(total) * 100) : 0)
-        }
-        .sorted {$0.count > $1.count}
-    }
-    
-    private var categoryTextList: some View {
-        VStack(alignment:.leading) {
-            let totalEntries = overallCategoryDistribution.count
-            ForEach(Array(overallCategoryDistribution.enumerated()), id: \.element.category) { (index, entry) in
-                let fraction = totalEntries > 1 ? Double(index) / Double(totalEntries - 1) : 0.0
-                let opacity = 1.0 - fraction * 0.6
-                let blended = blendedColor(from:themeColor, to: .gray, fraction: fraction)
-                
-                HStack{
-                    Circle()
-                        .frame(width: 8, height: 8)
-                        .foregroundColor(blended)
-                    Text("\(entry.category)")
-                    Spacer()
-                    Text("\(entry.percentage, specifier: "%.0f")%")
-                }
-                .foregroundStyle(.secondary)
-                .font(.footnote)
-            }
-        }
-        .padding()
-    }
-    
-    private func blendedColor(from: Color, to: Color, fraction: Double) -> Color {
-        let uiFrom = UIColor(from)
-        let uiTo = UIColor(to)
-        
-        var fromRed: CGFloat = 0, fromGreen: CGFloat = 0, fromBlue: CGFloat = 0, fromAlpha: CGFloat = 0
-        var toRed: CGFloat = 0, toGreen: CGFloat = 0, toBlue: CGFloat = 0, toAlpha: CGFloat = 0
-        
-        uiFrom.getRed(&fromRed, green: &fromGreen, blue: &fromBlue, alpha: &fromAlpha)
-        uiTo.getRed(&toRed, green: &toGreen, blue: &toBlue, alpha: &toAlpha)
-        
-        let red = fromRed + CGFloat(fraction) * (toRed - fromRed)
-        let green = fromGreen + CGFloat(fraction) * (toGreen - fromGreen)
-        let blue = fromBlue + CGFloat(fraction) * (toBlue - fromBlue)
-        let alpha = fromAlpha + CGFloat(fraction) * (toAlpha - fromAlpha)
-        
-        return Color(red: Double(red), green: Double(green), blue: Double(blue), opacity: Double(alpha))
-    }
-    
-    private var pieChartView: some View {
-        Chart {
-            let totalEntries = overallCategoryDistribution.count
-            ForEach(Array(overallCategoryDistribution.enumerated()), id: \.element.category) { (index, entry) in
-                //determine the order, and the color based on the order
-                let fraction = totalEntries > 1 ? Double(index) / Double(totalEntries - 1) : 0.0
-                let opacity = 1.0 - fraction * 0.6
-                let blended = blendedColor(from:themeColor, to: .gray, fraction: fraction)
-                SectorMark(
-                    angle: .value("Count", entry.count),
-                    innerRadius: .ratio(0.6), // Use a ratio value to get a donut look
-                    angularInset: 2           // Adds separation between slices
-                )
-                .cornerRadius(4)
-                .foregroundStyle(blended.opacity(opacity))
-            }
-        }
-        .frame(height: 125)
-    }
-}
-
 //MARK: Query predicates
 extension Workout {
     static func currentPredicate() -> Predicate<Workout> {
@@ -296,7 +275,11 @@ extension Exercise {
 }
 
 #Preview {
-    StatsHomeView()
+    NavigationStack{
+        StatsHomeView()
+            .navigationTitle("Stats")
+    }
+    
 }
 
 

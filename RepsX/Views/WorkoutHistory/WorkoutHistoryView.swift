@@ -61,14 +61,15 @@ struct WorkoutHistoryView: View {
                         
                         // Calendar at the top
                         calendarSection
-                        
-                        //30 day recap
-                        recapSection
                             
-                        if !workouts.isEmpty {
+                        if workouts.isEmpty {
                             noWorkouts
                             
                         } else {
+                            //30 day recap
+                            recapSection
+                            
+                            //workouts
                             Text("Workouts")
                                 .padding(.horizontal)
                                 .font(.headline)
@@ -263,7 +264,8 @@ extension WorkoutHistoryView {
                 .font(.footnote)
             }
         }
-        .padding()
+        .padding(.horizontal)
+        .padding(.bottom)
     }
     //result
     private var pieChartView: some View {
@@ -287,7 +289,8 @@ extension WorkoutHistoryView {
     }
     
     private var recapSection: some View {
-        VStack(alignment:.leading){
+        VStack(alignment:.leading, spacing: 5){
+            
             Text("30-Day Recap")
                 .padding(.horizontal)
                 .font(.headline)
@@ -298,7 +301,6 @@ extension WorkoutHistoryView {
                     .padding(.horizontal)
                     .padding(.top,10)
                 
-                Divider()
                 HStack{
                     pieChartView
                         .padding(.leading)
