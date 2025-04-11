@@ -39,7 +39,6 @@ struct StatsHomeView: View {
         let thresholdDate = calendar.date(byAdding: .day, value: -lookback, to: Date())!
         return workouts.filter{ $0.startTime > thresholdDate }
     }
-    @State var showCalendar: Bool = false
     //environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.themeColor) var themeColor

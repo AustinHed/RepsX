@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import SwipeActions
+import Charts
 
 
 struct WorkoutHistoryView: View {
@@ -16,7 +17,17 @@ struct WorkoutHistoryView: View {
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     @Query(filter: #Predicate{(routine:Routine) in
         return routine.favorite}, sort: \Routine.name) var favoriteRoutines: [Routine]
-    //TODO: pass this array when opening a workout, to be used to access Exercise History when viewing an exercise
+    @Query(filter: Exercise.currentPredicate()
+    ) var exercisesList: [Exercise]
+    
+    //for the 30-day recap
+    @State var lookback: Int = 30 //currently 30 days
+    private var filteredWorkouts: [Workout] {
+        let calendar = Calendar.current
+        let thresholdDate = calendar.date(byAdding: .day, value: -lookback, to: Date())!
+        return workouts.filter{ $0.startTime > thresholdDate }
+    }
+    
     //environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.themeColor) var themeColor
@@ -40,46 +51,28 @@ struct WorkoutHistoryView: View {
     @Binding var selectedTab: ContentView.Tab
     @State var coordinator = WorkoutCoordinator.shared
     
-    
-    //TODO: fix grouping workouts - breaks when updating intensity, not sure why
-    // Group workouts by month and year (e.g., "February 2025")
-//    private var groupedWorkouts: [String: [Workout]] {
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "MMMM yyyy"
-//        return Dictionary(grouping: workouts) { workout in
-//            dateFormatter.string(from: workout.startTime)
-//        }
-//    }
-    // Sort the keys (months) in descending order (most recent first)
-//    private var sortedGroupKeys: [String] {
-//        let formatter = DateFormatter()
-//        formatter.dateFormat = "MMMM yyyy"
-//        return groupedWorkouts.keys.sorted { key1, key2 in
-//            guard let date1 = formatter.date(from: key1),
-//                  let date2 = formatter.date(from: key2)
-//            else { return false }
-//            return date1 > date2
-//        }
-//    }
-    
     //MARK: Body
     var body: some View {
         NavigationStack {
             ZStack{
                 CustomBackground(themeColor: themeColor)
                 ScrollView{
-                    LazyVStack(spacing: 12) {
+                    LazyVStack(alignment: .leading, spacing: 12) {
                         
                         // Calendar at the top
-                        WorkoutHistoryCalendarView(workouts: workouts)
-                            .background(Color.white)
-                            .cornerRadius(16)
-                            .padding(.horizontal)
-                            .padding(.top)
-                        if workouts.isEmpty {
+                        calendarSection
+                        
+                        //30 day recap
+                        recapSection
+                            
+                        if !workouts.isEmpty {
                             noWorkouts
                             
                         } else {
+                            Text("Workouts")
+                                .padding(.horizontal)
+                                .font(.headline)
+                                .bold()
                             ForEach(workouts) { workout in
                                 //logViewRow
                                 SwipeView{
@@ -155,6 +148,175 @@ struct WorkoutHistoryView: View {
     }
 }
 
+//MARK: Calendar Section
+extension WorkoutHistoryView {
+    private var calendarSection: some View {
+        VStack (alignment:.leading){
+            Text("Calendar")
+                .padding(.horizontal)
+                .font(.headline)
+                .bold()
+            
+            WorkoutHistoryCalendarView(workouts: workouts)
+                .background(Color.white)
+                .cornerRadius(16)
+                .padding(.horizontal)
+        }
+        
+    }
+}
+
+//MARK: 30-Day Recap
+extension WorkoutHistoryView {
+    //color function
+    private func blendedColor(from: Color, to: Color, fraction: Double) -> Color {
+        let uiFrom = UIColor(from)
+        let uiTo = UIColor(to)
+        
+        var fromRed: CGFloat = 0, fromGreen: CGFloat = 0, fromBlue: CGFloat = 0, fromAlpha: CGFloat = 0
+        var toRed: CGFloat = 0, toGreen: CGFloat = 0, toBlue: CGFloat = 0, toAlpha: CGFloat = 0
+        
+        uiFrom.getRed(&fromRed, green: &fromGreen, blue: &fromBlue, alpha: &fromAlpha)
+        uiTo.getRed(&toRed, green: &toGreen, blue: &toBlue, alpha: &toAlpha)
+        
+        let red = fromRed + CGFloat(fraction) * (toRed - fromRed)
+        let green = fromGreen + CGFloat(fraction) * (toGreen - fromGreen)
+        let blue = fromBlue + CGFloat(fraction) * (toBlue - fromBlue)
+        let alpha = fromAlpha + CGFloat(fraction) * (toAlpha - fromAlpha)
+        
+        return Color(red: Double(red), green: Double(green), blue: Double(blue), opacity: Double(alpha))
+    }
+    
+    //minutes and count
+    private var workoutCount: Int {
+        filteredWorkouts.count
+    }
+    private var totalWorkoutDuration: TimeInterval {
+        let duration = filteredWorkouts.reduce(0) {$0 + $1.workoutLength}
+        return duration / 60 //time intervals are in seconds
+    }
+    private var workoutNumber: some View {
+            return Text("\(workoutCount)")
+                .font(.largeTitle)
+                .bold() +
+            Text(" workouts")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+    }
+    private var workoutMinutes: some View {
+        return Text("\(totalWorkoutDuration, specifier: "%.0f")")
+            .font(.largeTitle)
+            .bold() +
+        Text(" minutes")
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+    }
+    //result
+    private var workoutCountAndMinutes: some View {
+        HStack {
+            workoutNumber
+            workoutMinutes
+        }
+    }
+    
+    //categories
+    private var overallCategoryDistribution: [(category: String, count: Int, percentage: Double)] {
+        let exercises = exercisesList
+        var frequency: [String: Int] = [:]
+        
+        for exercise in exercises {
+            //only include valid, non-hidden categories
+            if exercise.category?.isHidden != true {
+                if let categoryName = exercise.category?.name {
+                    if !categoryName.isEmpty {
+                        frequency[categoryName, default : 0] += 1
+                    }
+                }
+            }
+        }
+        
+        let total = frequency.values.reduce(0, +)
+        
+        return frequency.map { (category: $0.key,
+                                count: $0.value,
+                                percentage: total > 0 ? (Double($0.value) / Double(total) * 100) : 0)
+        }
+        .sorted {$0.count > $1.count}
+    }
+    private var categoryTextList: some View {
+        VStack(alignment:.leading) {
+            let totalEntries = overallCategoryDistribution.count
+            ForEach(Array(overallCategoryDistribution.enumerated()), id: \.element.category) { (index, entry) in
+                let fraction = totalEntries > 1 ? Double(index) / Double(totalEntries - 1) : 0.0
+                let opacity = 1.0 - fraction * 0.6
+                let blended = blendedColor(from:themeColor, to: .gray, fraction: fraction)
+                
+                HStack{
+                    Circle()
+                        .frame(width: 8, height: 8)
+                        .foregroundColor(blended)
+                    Text("\(entry.category)")
+                    Spacer()
+                    Text("\(entry.percentage, specifier: "%.0f")%")
+                }
+                .foregroundStyle(.secondary)
+                .font(.footnote)
+            }
+        }
+        .padding()
+    }
+    //result
+    private var pieChartView: some View {
+        Chart {
+            let totalEntries = overallCategoryDistribution.count
+            ForEach(Array(overallCategoryDistribution.enumerated()), id: \.element.category) { (index, entry) in
+                //determine the order, and the color based on the order
+                let fraction = totalEntries > 1 ? Double(index) / Double(totalEntries - 1) : 0.0
+                let opacity = 1.0 - fraction * 0.6
+                let blended = blendedColor(from:themeColor, to: .gray, fraction: fraction)
+                SectorMark(
+                    angle: .value("Count", entry.count),
+                    innerRadius: .ratio(0.6), // Use a ratio value to get a donut look
+                    angularInset: 2           // Adds separation between slices
+                )
+                .cornerRadius(4)
+                .foregroundStyle(blended.opacity(opacity))
+            }
+        }
+        .frame(height: 125)
+    }
+    
+    private var recapSection: some View {
+        VStack(alignment:.leading){
+            Text("30-Day Recap")
+                .padding(.horizontal)
+                .font(.headline)
+                .bold()
+            
+            VStack (alignment:.leading){
+                workoutCountAndMinutes
+                    .padding(.horizontal)
+                    .padding(.top,10)
+                
+                Divider()
+                HStack{
+                    pieChartView
+                        .padding(.leading)
+                    categoryTextList
+                        .padding(.trailing)
+                        .padding(.bottom,10)
+                }
+            }
+            .background(Color.white)
+            .cornerRadius(16)
+            .padding(.horizontal)
+        }
+        
+        
+    }
+    
+}
+
 //MARK: No Workouts State
 extension WorkoutHistoryView {
     private var noWorkouts: some View {
@@ -169,7 +331,7 @@ extension WorkoutHistoryView {
                     .frame(height: 45)
                     .padding(.horizontal)
                 
-                Text("Add your first workout")
+                Text("Start your first workout")
                     .foregroundStyle(themeColor)
             }
         }
@@ -218,7 +380,6 @@ extension WorkoutHistoryView {
         }
     }
 }
-
 //MARK: Fullscreen Covers
 extension WorkoutHistoryView {
     //new workout editor
