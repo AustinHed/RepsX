@@ -20,6 +20,8 @@ enum StatsDestination: Hashable {
     case reps
     case intensity
     
+    case addConsistencyGoal
+    
 }
 
 // Example StatsView
@@ -84,12 +86,13 @@ struct StatsHomeView: View {
                         .progressViewStyle(LinearProgressViewStyle())
                 }
                 
-                HStack{
-                    Text("Set a new goal")
-                    Spacer()
-                    Image(systemName: "plus.circle")
+                NavigationLink(value: StatsDestination.addConsistencyGoal) {
+                    HStack{
+                        Text("Add new goal")
+                        Spacer()
+                        Image(systemName: "plus.circle")
+                    }
                 }
-                
             }
             
             //strength goals
@@ -143,13 +146,9 @@ struct StatsHomeView: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
-                    
-                    
-                    
+       
                 }
-                
-                
-                
+
                 HStack{
                     Text("Set a new goal")
                     Spacer()
@@ -233,6 +232,9 @@ struct StatsHomeView: View {
                 GeneralChartsView(filter: .reps, workouts: workouts)
             case .intensity:
                 GeneralChartsView(filter: .intensity, workouts: workouts)
+                
+            case .addConsistencyGoal:
+                NewConsistencyGoalView()
             }
         }
         .listSectionSpacing(12)

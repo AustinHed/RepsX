@@ -33,6 +33,7 @@ class ConsistencyGoal: Hashable, Equatable {
     var goalMeasurement: GoalMeasurement //what to measure. ex. 50 "minutes" of exercise per week
     var goalTarget: Double //the target. ex. "50" minutes of exercise per week
     var exerciseId: UUID? //if associated with a specific exercise, the UUID of that exercise
+    var startDate: Date
     var isCompleted: Bool
     
     //initialize the instance
@@ -42,6 +43,7 @@ class ConsistencyGoal: Hashable, Equatable {
          goalMeasurement: GoalMeasurement,
          goalTarget: Double,
          exerciseId: UUID? = nil,
+         startDate: Date,
          isCompleted: Bool
     ) {
         self.id = id
@@ -50,6 +52,7 @@ class ConsistencyGoal: Hashable, Equatable {
         self.goalMeasurement = goalMeasurement
         self.goalTarget = goalTarget
         self.exerciseId = exerciseId
+        self.startDate = startDate
         self.isCompleted = isCompleted
     }
 }

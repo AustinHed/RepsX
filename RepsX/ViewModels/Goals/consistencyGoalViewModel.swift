@@ -24,14 +24,15 @@ class ConsistencyGoalViewModel {
                      goalMeasurement: GoalMeasurement,
                      goalTarget: Double,
                      exerciseId: UUID? = nil,
-                     isCompleted: Bool = false
+                     startDate: Date
     )  {
         let newConsistencyGoal = ConsistencyGoal(name: name,
                                                  goalTimeframe: goalTimeframe,
                                                  goalMeasurement: goalMeasurement,
                                                  goalTarget: goalTarget,
                                                  exerciseId: exerciseId,
-                                                 isCompleted: isCompleted
+                                                 startDate: startDate,
+                                                 isCompleted: false
         )
         modelContext.insert(newConsistencyGoal)
         save()
