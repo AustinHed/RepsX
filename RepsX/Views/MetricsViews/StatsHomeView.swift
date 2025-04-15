@@ -10,7 +10,10 @@ import Charts
 import SwiftData
 
 enum StatsDestination: Hashable {
-
+    
+    case editConsistencyGoal(ConsistencyGoal)
+    case addConsistencyGoal
+    
     case exercise
     case category
     
@@ -19,9 +22,7 @@ enum StatsDestination: Hashable {
     case sets
     case reps
     case intensity
-    
-    case addConsistencyGoal
-    
+
 }
 
 struct StatsHomeView: View {
@@ -59,15 +60,18 @@ struct StatsHomeView: View {
             ) {
                 //existing goals
                 ForEach(consistencyGoals){goal in
-                    consistencyGoalRow(goal:goal, workouts: workouts)
+                    NavigationLink(value: StatsDestination.editConsistencyGoal(goal)){
+                        consistencyGoalRow(goal:goal, workouts: workouts)
+                    }
+                    
                 }
                 //add goals
                 NavigationLink(value: StatsDestination.addConsistencyGoal) {
                     HStack{
                         Text("Add new goal")
                         Spacer()
-                        Image(systemName: "plus.circle")
                     }
+                    .foregroundStyle(themeColor)
                 }
             }
             
@@ -211,6 +215,9 @@ struct StatsHomeView: View {
                 
             case .addConsistencyGoal:
                 NewConsistencyGoalView()
+                
+            case .editConsistencyGoal(let goal):
+                EditConsistencyGoalView(goal: goal, workouts: workouts)
             }
         }
         .listSectionSpacing(12)

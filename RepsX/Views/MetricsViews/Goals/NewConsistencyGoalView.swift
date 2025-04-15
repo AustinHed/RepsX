@@ -75,7 +75,7 @@ struct NewConsistencyGoalView: View {
             .tint(themeColor)
         }
         //MARK: Alert
-        //are you sure you want to dismiss alert
+        //are you sure you want to dismiss / not create goal
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
@@ -85,6 +85,7 @@ struct NewConsistencyGoalView: View {
             // Add extra space (e.g., 100 points)
             Color.clear.frame(height: 50)
         }
+        .tint(themeColor)
     }
 }
 //MARK: Name entry
