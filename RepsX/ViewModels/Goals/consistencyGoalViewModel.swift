@@ -48,7 +48,7 @@ class ConsistencyGoalViewModel {
     }
     
     //update
-    func updateGoal(_ goal: ConsistencyGoal, newTimeframe: GoalTimeframe? = nil, newMeasurement: GoalMeasurement? = nil, newTarget: Double? = nil, isCompleted: Bool? = nil) {
+    func updateGoal(_ goal: ConsistencyGoal, newTimeframe: GoalTimeframe? = nil, newMeasurement: GoalMeasurement? = nil, newName: String? = nil, newTarget: Double? = nil, isCompleted: Bool? = nil) {
         
         if let newTimeframe = newTimeframe {
             goal.goalTimeframe = newTimeframe
@@ -61,6 +61,9 @@ class ConsistencyGoalViewModel {
         }
         if let isCompleted = isCompleted {
             goal.isCompleted = isCompleted
+        }
+        if let newName = newName {
+            goal.name = newName
         }
         
         save()

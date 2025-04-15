@@ -22,9 +22,16 @@ struct EditConsistencyGoalView: View {
     let workouts: [Workout]
     
     @State var newName: String = ""
-    @State var newTarget: Double = 0
+    @State var newTarget: Double
     
     @State var showAlert: Bool = false
+    
+    //custom init to grab goal.goalTarget and use it as newTarget starting value
+    init(goal: ConsistencyGoal, workouts: [Workout]){
+        self.goal = goal
+        self.workouts = workouts
+        _newTarget = State(initialValue: goal.goalTarget)
+    }
     
     var body: some View {
         ScrollView{
@@ -104,6 +111,24 @@ struct EditConsistencyGoalView: View {
             // Add extra space (e.g., 100 points)
             Color.clear.frame(height: 50)
         }
+        .toolbar {
+            //only show a save button if the user actually made changes
+            if !newName.isEmpty || newTarget != goal.goalTarget {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        //save - actually update the GoalModel
+                        consistencyGoalViewModel.updateGoal(goal,
+                                                            newName: newName.isEmpty ? nil : newName,
+                                                            newTarget: newTarget)
+                        dismiss()
+                    } label: {
+                        Text("Save")
+                            .bold()
+                    }
+                }
+            }
+            
+        }
         .alert("Delete this Goal?", isPresented: $showAlert) {
                     Button("Cancel", role: .cancel) {
                         // Cancel action: simply dismiss the alert.
@@ -118,9 +143,6 @@ struct EditConsistencyGoalView: View {
                 } message: {
                     Text("Are you sure you want to delete this goal? This cannot be undone.")
                 }
-        //TODO: add "back" and "save" buttons to toolbar
-        
-        
         /*
          show past days/weeks/months, based on the Start Date
          */
