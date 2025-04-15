@@ -28,7 +28,9 @@ struct RepsXApp: App {
             CategoryModel.self,
             Routine.self,
             ExerciseInRoutine.self,
-            UserTheme.self]
+            UserTheme.self,
+            ConsistencyGoal.self
+        ]
         )
         
     }

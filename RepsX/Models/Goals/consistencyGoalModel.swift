@@ -11,9 +11,9 @@ import SwiftUI
 
 //weekly or monthly goals
 enum GoalTimeframe: String, CaseIterable, Codable {
-    case daily = "daily"
-    case weekly = "weekly"
-    case monthly = "monthly"
+    case daily = "Daily"
+    case weekly = "Weekly"
+    case monthly = "Monthly"
 }
 
 //whats tracked - minutes worked out, workouts logged, or reps for an exercise performed

@@ -23,7 +23,7 @@ struct NewConsistencyGoalView: View {
     
     //the new goal properties
     @State var name: String = ""
-    @State var measurement: GoalMeasurement = .minutes
+    @State var measurement: GoalMeasurement = .reps
     @State var timeframe: GoalTimeframe = .weekly
     @State var target: Double = 0.0
     @State var relatedExerciseId: UUID? = nil
@@ -150,11 +150,14 @@ extension NewConsistencyGoalView {
                         Button {
                             showExercisePicker.toggle()
                         } label: {
-                            Text(relatedExerciseName != nil ? relatedExerciseName! :"No Exercise Name")
-                                .padding(.trailing, 5)
+                            Text(relatedExerciseName != nil ? relatedExerciseName! :"Select Exercise")
+                                .padding(.trailing, 25)
                         }
 
                     }
+                    .padding(.top,8)
+                    .padding(.bottom, 8)
+                    
                     Divider().padding(.leading)
                 }
                 
@@ -198,15 +201,19 @@ extension NewConsistencyGoalView {
                         Text("every day")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
+                            .padding(.trailing, 15)
                     case .weekly:
                         Text("every week")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
+                            .padding(.trailing, 15)
                     case .monthly:
                         Text("every month")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
+                            .padding(.trailing, 15)
                     }
+                        
                     
                     Spacer()
                 }

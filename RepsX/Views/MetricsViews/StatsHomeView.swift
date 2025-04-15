@@ -24,15 +24,22 @@ enum StatsDestination: Hashable {
     
 }
 
-// Example StatsView
 struct StatsHomeView: View {
     
     //MARK: Queries
-    // Fetch workouts from SwiftData for hte 30 days, to allow filtering 30 or 14 days
+    //all workouts completed
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
+    //consistency goals
+    @Query(sort: \ConsistencyGoal.name, order: .reverse) var consistencyGoals: [ConsistencyGoal]
+    
     //environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.themeColor) var themeColor
+    
+    //View Models
+    private var consistencyGoalViewModel: ConsistencyGoalViewModel {
+        ConsistencyGoalViewModel(modelContext: modelContext)
+    }
     
     var body: some View {
         List {
@@ -50,42 +57,11 @@ struct StatsHomeView: View {
                 .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
                 
             ) {
-                VStack (alignment: .leading) {
-                    Text("270min Exercise")
-                        .font(.headline)
-                    HStack{
-                        Text("Weekly")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        
-                        Spacer()
-                        Text("90/270 minutes")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    
-                    ProgressView(value: 90, total: 270)
-                        .progressViewStyle(LinearProgressViewStyle())
+                //existing goals
+                ForEach(consistencyGoals){goal in
+                    consistencyGoalRow(goal:goal, workouts: workouts)
                 }
-                
-                VStack (alignment: .leading) {
-                    Text("25 Workouts")
-                        .font(.headline)
-                    HStack{
-                        Text("Monthly")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        
-                        Spacer()
-                        Text("15/25 workouts")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    
-                    ProgressView(value: 15, total: 25)
-                        .progressViewStyle(LinearProgressViewStyle())
-                }
-                
+                //add goals
                 NavigationLink(value: StatsDestination.addConsistencyGoal) {
                     HStack{
                         Text("Add new goal")
@@ -137,7 +113,7 @@ struct StatsHomeView: View {
                     
                     
                     VStack (alignment:.leading){
-                        Text("Bench Press 225lbs")
+                        Text("Placeholder for Strength Goal")
                             .font(.headline)
                         Text("185/225")
                             .font(.caption)
@@ -156,7 +132,7 @@ struct StatsHomeView: View {
                 }
                 
             }
-            
+            //specific stats
             Section(header:
                         HStack{
                 Text("Specific Stats")
@@ -177,7 +153,7 @@ struct StatsHomeView: View {
                 }
                 
             }
-            
+            //general stats
             Section(header:
                         HStack{
                 Text("General Stats")
@@ -248,6 +224,31 @@ struct StatsHomeView: View {
             CustomBackground(themeColor: themeColor)
         )
         .tint(themeColor)
+    }
+}
+
+//MARK: Consistency Goal Rows
+extension StatsHomeView {
+    func consistencyGoalRow(goal: ConsistencyGoal, workouts: [Workout]) -> some View {
+        let currentProgress = consistencyGoalViewModel.progress(for: goal, from: workouts)
+        
+        return VStack (alignment: .leading) {
+            Text(goal.name)
+                .font(.headline)
+            HStack{
+                Text(goal.goalTimeframe.rawValue)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+                Spacer()
+                Text("\(Int(currentProgress))/\(Int(goal.goalTarget)) \(goal.goalMeasurement.rawValue)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            
+            ProgressView(value: currentProgress, total: goal.goalTarget)
+                .progressViewStyle(LinearProgressViewStyle())
+        }
     }
 }
 
