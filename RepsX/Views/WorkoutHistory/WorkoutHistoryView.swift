@@ -265,7 +265,7 @@ extension WorkoutHistoryView {
             }
         }
         .padding(.horizontal)
-        .padding(.bottom)
+        //.padding(.bottom)
     }
     //result
     private var pieChartView: some View {
@@ -289,7 +289,7 @@ extension WorkoutHistoryView {
     }
     
     private var recapSection: some View {
-        VStack(alignment:.leading, spacing: 5){
+        VStack(alignment:.leading){
             
             Text("30-Day Recap")
                 .padding(.horizontal)
@@ -301,13 +301,14 @@ extension WorkoutHistoryView {
                     .padding(.horizontal)
                     .padding(.top,10)
                 
-                HStack{
+                HStack (alignment:.center){
                     pieChartView
                         .padding(.leading)
                     categoryTextList
                         .padding(.trailing)
-                        .padding(.bottom,10)
+                        
                 }
+                .padding(.bottom,20)
             }
             .background(Color.white)
             .cornerRadius(16)

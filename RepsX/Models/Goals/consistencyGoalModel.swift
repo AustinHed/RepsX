@@ -16,6 +16,41 @@ enum GoalTimeframe: String, CaseIterable, Codable {
     case monthly = "Monthly"
 }
 
+//calculating different timeframes / periods for a goal
+extension GoalTimeframe {
+    /// Returns the date at which the current period began,
+    /// e.g. midnight for .daily, the most recent Sunday for .weekly,
+    /// or the first of the month for .monthly.
+    func startOfPeriod(containing date: Date, calendar: Calendar = .current) -> Date {
+      var cal = calendar
+      cal.firstWeekday = 1  // Sunday = 1
+      
+      switch self {
+      case .daily:
+        return cal.startOfDay(for: date)
+        
+      case .weekly:
+        // extract yearForWeekOfYear & weekOfYear, then rebuild
+        let comps = cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
+        return cal.date(from: comps)!
+        
+      case .monthly:
+        // extract year & month, then rebuild
+        let comps = cal.dateComponents([.year, .month], from: date)
+        return cal.date(from: comps)!
+      }
+    }
+    
+    /// The calendar component you add/subtract to move one period.
+    var movingComponent: Calendar.Component {
+      switch self {
+      case .daily:   return .day
+      case .weekly:  return .weekOfYear
+      case .monthly: return .month
+      }
+    }
+}
+
 //whats tracked - minutes worked out, workouts logged, or reps for an exercise performed
 enum GoalMeasurement: String, CaseIterable, Codable {
     case minutes = "minutes"

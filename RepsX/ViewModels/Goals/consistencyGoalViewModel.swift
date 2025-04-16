@@ -69,64 +69,116 @@ class ConsistencyGoalViewModel {
         save()
     }
     
-    //calculate progress
-    func progress(for goal: ConsistencyGoal, from workouts: [Workout]) -> Double {
-        //determine the period start, based on the goal.goalTimeframe
+    //current period
+    func currentPeriod(for goal: ConsistencyGoal) -> Period {
+        let now = Date()
         let calendar = Calendar.current
-        let periodStart: Date
         
-        //defining when to measure goal progress (ex. today, last week, last month)
-        switch goal.goalTimeframe {
-        case .daily:
-            periodStart = calendar.startOfDay(for: Date())
-        case .weekly:
-            //first, ensure that Sunday is considered the first day of a calendar week
-            var calendarWithSundayFirst = calendar
-            calendarWithSundayFirst.firstWeekday = 1
+        let start = goal.goalTimeframe.startOfPeriod(containing: now, calendar: calendar)
+        let end = calendar.date(byAdding: goal.goalTimeframe.movingComponent,
+                                value: 1,
+                                to: start)!
+        
+        return Period(start: start, end: end)
+    }
+    //previous periods
+    func previousPeriods(for goal: ConsistencyGoal) -> [Period] {
+        let calendar = Calendar.current
+        let now = Date()
+        // 1) figure out when *this* period began
+        let currentStart = goal.goalTimeframe.startOfPeriod(containing: now, calendar: calendar)
+        
+        var periods: [Period] = []
+        // 2) step backwards one period at a time
+        var periodStart = calendar.date(
+            byAdding: goal.goalTimeframe.movingComponent,
+            value: -1,
+            to: currentStart
+        )!
+        
+        while periodStart >= goal.startDate {
+            // end = start of *next* period
+            let periodEnd = calendar.date(
+                byAdding: goal.goalTimeframe.movingComponent,
+                value: 1,
+                to: periodStart
+            )!
             
-            //calculate the start of the week
-            let components = calendarWithSundayFirst.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date())
-            periodStart = calendarWithSundayFirst.date(from:components) ?? Date()
-        case .monthly:
-            //first, create the calendar components
-            let components = calendar.dateComponents([.year, .month], from: Date())
-            periodStart = calendar.date(from: components) ?? Date()
+            periods.append(Period(start: periodStart, end: periodEnd))
+            
+            // step to the *previous* period
+            periodStart = calendar.date(
+                byAdding: goal.goalTimeframe.movingComponent,
+                value: -1,
+                to: periodStart
+            )!
         }
         
-        //define the workouts to leverage
-        let workoutsInPeriod = workouts.filter {workout in
-            //assumption is there are no workouts in the future
-            workout.startTime >= periodStart
+        // Returns an array from newest → oldest
+        return periods
+    }
+    //calculate progress
+    func progress(in period: Period,
+                  for goal: ConsistencyGoal,
+                  from workouts: [Workout]) -> Double
+    {
+        // 1) Filter workouts to only those in the period:
+        let workoutsInPeriod = workouts.filter { w in
+            w.startTime >= period.start && w.startTime < period.end
         }
-        
-        //calculate progress, depending on how progress is measured (ex. minutes, workouts, reps)
+
+        // 2) Switch on the measurement type:
         switch goal.goalMeasurement {
         case .minutes:
-            //sum all workout lengths in the period
-            let totalMinutes = workoutsInPeriod.reduce(0) { sum, workout in
-                sum + (workout.workoutLength/60)
+            // Sum all workoutLength (in seconds) → convert to minutes
+            let totalSeconds = workoutsInPeriod.reduce(0) { sum, w in
+                sum + w.workoutLength
             }
-            return totalMinutes
-        
+            return totalSeconds / 60.0
+
         case .workouts:
-            //count number of workouts
+            // Just count them
             return Double(workoutsInPeriod.count)
-        
+
         case .reps:
-            //number of reps for a specified exercise
-            if goal.exerciseId != nil {
-                let filteredExercises = workouts.flatMap {$0.exercises}
-                    .filter {$0.templateId == goal.exerciseId}
-                let allSets = filteredExercises.flatMap {$0.sets}
-                
-                let totalReps = allSets.reduce(0) {sum, set in
-                    sum + (set.reps)
-                }
-                return Double(totalReps)
-            } else {
+            // If the goal has an exerciseId, only count that exercise’s reps:
+            guard let exerciseId = goal.exerciseId else {
                 return 0
             }
+
+            // Flatten all exercises in period, filter by templateId:
+            let filteredExercises = workoutsInPeriod
+                .flatMap { $0.exercises }
+                .filter { $0.templateId == exerciseId }
+
+            // Then flatten to sets and sum reps:
+            let totalReps = filteredExercises
+                .flatMap { $0.sets }
+                .reduce(0) { sum, set in sum + (set.reps) }
+
+            return Double(totalReps)
         }
+    }
+    //streak
+    func currentStreak(for goal: ConsistencyGoal, from workouts: [Workout]) -> Int {
+      // 1. Build the list of periods, newest→oldest
+      let allPeriods = [ currentPeriod(for: goal) ]
+                     + previousPeriods(for: goal)
+      
+      // 2. Walk through them, stopping at the first miss
+      var streak = 0
+      for period in allPeriods {
+        let progress = progress(in: period,
+                                for: goal,
+                                from: workouts)
+        if progress >= goal.goalTarget {
+          streak += 1
+        } else {
+          break
+        }
+      }
+      
+      return streak
     }
     
     //save

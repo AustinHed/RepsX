@@ -48,7 +48,7 @@ struct StatsHomeView: View {
             //consistency goals
             Section(header:
                         HStack{
-                Text("Consistency Goals")
+                Text("Recurring Goals")
                     .font(.headline)
                     .bold()
                     .foregroundStyle(.black)
@@ -59,6 +59,7 @@ struct StatsHomeView: View {
                 
             ) {
                 //existing goals
+                //TODO: bug when deleting an exercise from a workout. FIX
                 ForEach(consistencyGoals){goal in
                     NavigationLink(value: StatsDestination.editConsistencyGoal(goal)){
                         consistencyGoalRow(goal:goal, workouts: workouts)
@@ -78,7 +79,7 @@ struct StatsHomeView: View {
             //strength goals
             Section(header:
                         HStack{
-                Text("Strength Goals")
+                Text("Target Goals")
                     .font(.headline)
                     .bold()
                     .foregroundStyle(.black)
@@ -231,13 +232,16 @@ struct StatsHomeView: View {
             CustomBackground(themeColor: themeColor)
         )
         .tint(themeColor)
+        .contentMargins(.horizontal,16)
+        
     }
 }
 
 //MARK: Consistency Goal Rows
 extension StatsHomeView {
     func consistencyGoalRow(goal: ConsistencyGoal, workouts: [Workout]) -> some View {
-        let currentProgress = consistencyGoalViewModel.progress(for: goal, from: workouts)
+        let currentPeriod = consistencyGoalViewModel.currentPeriod(for: goal)
+        let currentProgress = consistencyGoalViewModel.progress(in: currentPeriod, for: goal, from: workouts)
         
         return VStack (alignment: .leading) {
             Text(goal.name)

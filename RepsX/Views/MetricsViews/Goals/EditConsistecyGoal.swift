@@ -36,72 +36,48 @@ struct EditConsistencyGoalView: View {
     var body: some View {
         ScrollView{
             LazyVStack (alignment:.leading, spacing: 12){
-                //edit name
+                
                 Text("Details")
                     .font(.headline)
                     .bold()
                     .foregroundStyle(.black)
                     .padding(.leading,3)
+                //edit name
                 editName
                 
-                //edit target value
+                //edit target
                 editTarget
                 
-                //History for a given goal
-                HStack{
-                    Text("History")
-                        .font(.headline)
-                        .bold()
-                        .foregroundStyle(.black)
-                    Spacer()
-                    Text("X week streak")
-                        .font(.headline)
-                        .bold()
-                        .foregroundStyle(.black)
-                }
+                //history
+                historyHeader
                 .padding(.leading,3)
                 .padding(.trailing,3)
                 ZStack{
                     RoundedRectangle(cornerRadius: 12)
                         .foregroundStyle(Color.white)
+                    let allPeriods = [consistencyGoalViewModel.currentPeriod(for: goal)] + consistencyGoalViewModel.previousPeriods(for: goal)
                     VStack{
-                        progressForPeriod(goal: goal, workouts: workouts)
-                            .padding(.horizontal)
-                            .padding(.vertical,10)
-                        Divider()
-                            .padding(.leading)
-                        
-                        progressForPeriod(goal: goal, workouts: workouts)
-                            .padding(.horizontal)
-                            .padding(.vertical,10)
-                        Divider()
-                            .padding(.leading)
-                        
-                        progressForPeriod(goal: goal, workouts: workouts)
-                            .padding(.horizontal)
-                            .padding(.vertical,10)
-                            .padding(.bottom,10)
+                        ForEach(allPeriods, id: \.start) { period in
+                            progressRow(goal: goal, workouts: workouts, period: period)
+                            //divider
+                            Divider()
+                                .padding(.leading,15)
+                        }
                     }
-                    
-                    
                     
                 }
                 
-                //Delete goal
+                
                 Text("Delete")
                     .font(.headline)
                     .bold()
                     .foregroundStyle(.black)
                     .padding(.leading,3)
+                //Delete goal
                 delete
-                
-                
-                
-                
-                
             }
         }
-        .padding(.horizontal)
+        .padding(.horizontal, 16)
         .navigationTitle("Edit Goal")
         .scrollContentBackground(.hidden)
         .background(
@@ -143,9 +119,6 @@ struct EditConsistencyGoalView: View {
                 } message: {
                     Text("Are you sure you want to delete this goal? This cannot be undone.")
                 }
-        /*
-         show past days/weeks/months, based on the Start Date
-         */
     }
 }
 //MARK: Edit name
@@ -168,57 +141,39 @@ extension EditConsistencyGoalView {
         }
     }
 }
+
 //MARK: Edit target
 extension EditConsistencyGoalView {
+    var periodName: String {
+        switch goal.goalTimeframe {
+        case .daily:
+            return "day"
+        case .weekly:
+            return "week"
+        case .monthly:
+            return "month"
+        }
+    }
     var editTarget: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
                 .foregroundStyle(Color.white)
             
             HStack{
-                //TODO: dont default to showing 0, show the existing target value
                 TextField("\(goal.goalTarget)", value: $newTarget, format: .number)
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
                     .frame(maxWidth: 40)
-                    .border(.red)
                 switch goal.goalMeasurement {
                 case .minutes:
-                    switch goal.goalTimeframe {
-                    case .daily:
-                        Text("mins every day")
-                            .foregroundStyle(.secondary)
-                    case .weekly:
-                        Text("mins every week")
-                            .foregroundStyle(.secondary)
-                    case .monthly:
-                        Text("mins every month")
-                            .foregroundStyle(.secondary)
-                    }
+                    Text("mins every \(periodName)")
+                        .foregroundStyle(.secondary)
                 case .workouts:
-                    switch goal.goalTimeframe {
-                    case .daily:
-                        Text("workouts every day")
-                            .foregroundStyle(.secondary)
-                    case .weekly:
-                        Text("workouts every week")
-                            .foregroundStyle(.secondary)
-                    case .monthly:
-                        Text("workouts every month")
-                            .foregroundStyle(.secondary)
-                    }
+                    Text("workouts every \(periodName)")
+                        .foregroundStyle(.secondary)
                 case .reps:
-                    switch goal.goalTimeframe {
-                    case .daily:
-                        Text("reps every day")
-                            .foregroundStyle(.secondary)
-                    case .weekly:
-                        Text("reps every week")
-                            .foregroundStyle(.secondary)
-                    case .monthly:
-                        Text("reps every month")
-                            .foregroundStyle(.secondary)
-                    }
+                    Text("reps every \(periodName)")
+                        .foregroundStyle(.secondary)
                 }
                 Spacer()
                     
@@ -228,22 +183,69 @@ extension EditConsistencyGoalView {
     }
 }
 
-//MARK: goal period
+//MARK: goal history
 extension EditConsistencyGoalView {
-    //TODO: This should be a reusable component to show a given periods progress/status
-    func progressForPeriod(goal: ConsistencyGoal, workouts: [Workout]) -> some View {
-        return VStack(alignment:.leading) {
-            Text("The given time period")
+    var historyHeader: some View {
+        HStack{
+            Text("History")
                 .font(.headline)
-            Text("XX out of YY")
-            ProgressView(value: 1, total: 10)
-                .progressViewStyle(LinearProgressViewStyle())
-            
+                .bold()
+                .foregroundStyle(.black)
+            Spacer()
+            Text("\(consistencyGoalViewModel.currentStreak(for: goal, from: workouts)) \(periodName) streak")
+                .font(.headline)
+                .bold()
+                .foregroundStyle(.black)
+        }
+        
+    }
+    //period header text
+    func periodLabel(for period: Period) -> String {
+        let calendar = Calendar.current
+        switch goal.goalTimeframe {
+        case .daily:
+            return period.start.formatted(.dateTime.month(.abbreviated).day().year())
+        case .weekly:
+            // e.g., "Apr 11 - Apr 18, 2025"
+            let startStr = period.start.formatted(.dateTime.month(.abbreviated).day())
+            // Subtract one day from 'end' since it's the start of the next period
+            let inclusiveEnd = calendar.date(
+                byAdding: .day,
+                value: -1,
+                to: period.end
+            ) ?? period.end
+            let endStr = inclusiveEnd.formatted(.dateTime.month(.abbreviated).day().year())
+            return "\(startStr) - \(endStr)"
+        case .monthly:
+            // e.g., "Apr, 2025"
+            let formatter = DateFormatter()
+            formatter.dateFormat = "MMM, yyyy"
+            return formatter.string(from: period.start)
         }
     }
+    func progressRow(goal: ConsistencyGoal,
+                           workouts: [Workout],
+                           period: Period
+    ) -> some View {
+        let target = goal.goalTarget
+        let progress = consistencyGoalViewModel.progress(in: period, for: goal, from: workouts)
+        return VStack(alignment:.leading) {
+            //header
+            Text(periodLabel(for: period))
+                .font(.headline)
+                .padding(.horizontal)
+            //x out of y
+            Text("\(progress, specifier: "%.0f") out of \(target, specifier: "%.0f")")
+                .padding(.horizontal)
+            //progress bar
+            ProgressView(value: progress, total: target)
+                .progressViewStyle(LinearProgressViewStyle())
+                .padding(.horizontal)
+        }
+        .padding(.vertical,10)
+    }
+    
 }
-//MARK: goal history
-//todo
 
 //MARK: delete
 extension EditConsistencyGoalView {
@@ -265,9 +267,6 @@ extension EditConsistencyGoalView {
     }
 }
 
-
-
-
 #Preview {
     let testGoal: ConsistencyGoal = ConsistencyGoal(name: "20 Workouts per Month", goalTimeframe: .weekly, goalMeasurement: .minutes, goalTarget: 20.0, startDate: Date(), isCompleted: false)
     let workouts: [Workout] = []
@@ -276,4 +275,10 @@ extension EditConsistencyGoalView {
     }
     
     
+}
+
+//used to determine goal periods
+struct Period {
+  let start: Date
+  let end: Date
 }
