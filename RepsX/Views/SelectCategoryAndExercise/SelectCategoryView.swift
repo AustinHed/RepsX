@@ -51,7 +51,17 @@ struct SelectCategoryView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Default Categories") {
+                Section(header:
+                            HStack{
+                    Text("Default Categories")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.black)
+                        .textCase(nil)
+                    Spacer()
+                }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                ) {
                     ForEach(standardCategories) { category in
                         NavigationLink(destination: SelectExerciseView(
                             category: category,
@@ -64,7 +74,17 @@ struct SelectCategoryView: View {
                 }
                 
                 if !customCategories.isEmpty {
-                    Section("Custom Categories") {
+                    Section(header:
+                                HStack{
+                        Text("Custom Categories")
+                            .font(.headline)
+                            .bold()
+                            .foregroundStyle(.black)
+                            .textCase(nil)
+                        Spacer()
+                    }
+                        .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                    ) {
                         ForEach(customCategories) { category in
                             NavigationLink(destination: SelectExerciseView(
                                 category: category,

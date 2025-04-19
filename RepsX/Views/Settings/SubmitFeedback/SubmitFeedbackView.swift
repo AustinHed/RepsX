@@ -119,7 +119,17 @@ extension SubmitFeedbackView {
 //MARK: Ratings Section
 extension SubmitFeedbackView {
     var ratingsSection: some View {
-        Section(header: Text("Rate Your Experience")) {
+        Section(header:
+                    HStack{
+            Text("Rating")
+                .font(.headline)
+                .bold()
+                .foregroundStyle(.black)
+                .textCase(nil)
+            Spacer()
+        }
+            .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+        ) {
             HStack{
                 Text("Overall")
                 Spacer()
@@ -176,7 +186,16 @@ extension SubmitFeedbackView {
                 }
             }
         } header: {
-            Text("Feedback")
+            HStack{
+                Text("Feedback")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            
         } footer: {
             Text("Please do not provide personal information such as your name, address, or credit card details.")
         }
@@ -198,7 +217,15 @@ extension SubmitFeedbackView {
                 .keyboardType(.emailAddress)
                 .focused($emailFocusState)
         } header: {
-            Text("Email Address")
+            HStack{
+                Text("Custom Categories")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
         } footer: {
             Text("By including your email address, you agree that we may contact you regarding your feedback.")
         }

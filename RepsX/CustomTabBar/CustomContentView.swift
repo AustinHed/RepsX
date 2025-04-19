@@ -77,6 +77,7 @@ struct ContentView: View {
                         .globalKeyboardDoneButton()
                 }
                 .tag(Tab.history)
+                .tint(Color(hexString: selectedThemeString))
                 
                 //Routines
                 NavigationStack(path: $routinesPath){
@@ -84,6 +85,7 @@ struct ContentView: View {
                         .globalKeyboardDoneButton()
                 }
                 .tag(Tab.routines)
+                .tint(Color(hexString: selectedThemeString))
                 
                 //Stats
                 NavigationStack(path: $statsPath){
@@ -91,6 +93,7 @@ struct ContentView: View {
                         .globalKeyboardDoneButton()
                 }
                 .tag(Tab.stats)
+                .tint(Color(hexString: selectedThemeString))
                 
                 //Settings
                 NavigationStack(path: $settingsPath){
@@ -98,6 +101,7 @@ struct ContentView: View {
                         .globalKeyboardDoneButton()
                 }
                 .tag(Tab.settings)
+                .tint(Color(hexString: selectedThemeString))
                 
             }
             
@@ -136,9 +140,10 @@ struct ContentView: View {
         .onAppear{
             //create default Categories and Exercise Templates
             initializeDefaultDataIfNeeded(context: modelContext)
-            //create TEST exercise history
-            initializeWorkoutsIfNeeded(context: modelContext)
             initializeDefaultThemes(in: modelContext)
+            //create TEST exercise history
+            //initializeWorkoutsIfNeeded(context: modelContext)
+            
         }
     }
 }

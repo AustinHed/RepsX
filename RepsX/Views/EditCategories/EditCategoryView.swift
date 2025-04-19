@@ -38,7 +38,17 @@ struct EditCategoryView: View {
         
         List{
             //update name
-            Section("Name"){
+            Section(header:
+                        HStack{
+                Text("Name")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            ){
                 if category.standard {
                     Text(category.name)
                 } else {

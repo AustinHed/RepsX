@@ -86,7 +86,7 @@ struct WavyBackground: View {
 //}
 
 //note: adjust between CustomBackground and CustomBackground2 to use static or animated
-struct CustomBackground: View {
+struct CustomBackground3: View {
     var themeColor: Color
 
     // Use @State to allow the parameters to change and animate
@@ -150,6 +150,29 @@ struct CustomBackground: View {
             secondPoint2y = CGFloat.random(in: 0.2...0.3)
             
             
+        }
+    }
+}
+
+struct CustomBackground: View {
+    var themeColor: Color
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                themeColor.opacity(0.3),
+                                themeColor.opacity(0.05)
+                            ]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .edgesIgnoringSafeArea(.all)
+            }
         }
     }
 }

@@ -32,7 +32,7 @@ struct SelectAppIconView: View {
     
     var body: some View {
         ScrollView{
-            VStack (alignment: .leading){
+            HStack (alignment: .center){
                 Image("dumbellsAnime")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -66,17 +66,6 @@ struct SelectAppIconView: View {
                             .onTapGesture{
                                 changeAppIcon(to: option.iconName)
                             }
-//                        placeholders
-                        RoundedRectangle(cornerRadius: 8)
-                            .frame(width: 60, height: 60)
-                            .foregroundStyle(.gray)
-                            .padding(15)
-                        
-                        RoundedRectangle(cornerRadius: 8)
-                            .frame(width: 60, height: 60)
-                            .foregroundStyle(.gray)
-                            .padding(15)
-                        
                         Spacer()
                     }
                     

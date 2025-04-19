@@ -90,14 +90,34 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
     
     var body: some View {
         List {
-            Section("Standard Exercises") {
+            Section(header:
+                        HStack{
+                Text("Standard Exercises")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            ) {
                 ForEach(filteredStandardExercises) { exercise in
                     NavigationLink(exercise.name, value: exercise)
                 }
             }
             
             if !filteredCustomExercises.isEmpty {
-                Section("Custom Exercises") {
+                Section(header:
+                            HStack{
+                    Text("Custom Exercises")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.black)
+                        .textCase(nil)
+                    Spacer()
+                }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                ) {
                     ForEach(filteredCustomExercises) { exercise in
                         NavigationLink(exercise.name, value: exercise)
                     }

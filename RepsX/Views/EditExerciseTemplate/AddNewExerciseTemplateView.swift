@@ -152,7 +152,17 @@ extension AddNewExerciseTemplateView {
     private var categoryPickerSheet: some View {
         NavigationStack {
             List {
-                Section("Standard Categories"){
+                Section(header:
+                            HStack{
+                    Text("Standard Categories")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.black)
+                        .textCase(nil)
+                    Spacer()
+                }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                ){
                     ForEach(standardCategories) { cat in
                         Button {
                             selectedCategory = cat
@@ -165,7 +175,17 @@ extension AddNewExerciseTemplateView {
                 }
                 
                 if !customCategories.isEmpty {
-                    Section("Custom Categories"){
+                    Section(header:
+                                HStack{
+                        Text("Custom Categories")
+                            .font(.headline)
+                            .bold()
+                            .foregroundStyle(.black)
+                            .textCase(nil)
+                        Spacer()
+                    }
+                        .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                    ){
                         ForEach(customCategories) { cat in
                             Button {
                                 selectedCategory = cat

@@ -151,7 +151,17 @@ extension EditRoutine {
         routine: Routine,
         routineViewModel: RoutineViewModel
     ) -> some View {
-        Section ("Name") {
+        Section (header:
+                    HStack{
+            Text("Name")
+                .font(.headline)
+                .bold()
+                .foregroundStyle(.black)
+                .textCase(nil)
+            Spacer()
+        }
+            .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+        ) {
             // Edit Name
             TextField("Name this Routine", text: Binding(
                 get: { routine.name },
@@ -169,7 +179,17 @@ extension EditRoutine {
 //MARK: Exercise Rows
 extension EditRoutine {
     func exercisesSection(for routine: Routine) -> some View {
-        Section ("Exercises"){
+        Section (header:
+                    HStack{
+            Text("Exercises")
+                .font(.headline)
+                .bold()
+                .foregroundStyle(.black)
+                .textCase(nil)
+            Spacer()
+        }
+            .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+        ){
             ForEach(routine.exercises, id: \.self) { exercise in
                 NavigationLink(value: exercise) {
                     VStack(alignment:.leading){

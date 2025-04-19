@@ -26,19 +26,49 @@ struct SettingsView: View {
     var body: some View {
         List {
             //Personalization
-            Section("Personalization") {
+            Section(header:
+                        HStack{
+                Text("Personalization")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            ) {
                 NavigationLink("Themes", value: SettingsDestination.theme)
                 NavigationLink("App Icon", value: SettingsDestination.appIcon)
             }
             
             
             //Exercise and Categories
-            Section("Exercises and Categories") {
+            Section(header:
+                        HStack{
+                Text("Exercises & Categories")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            ) {
                 NavigationLink("Edit Exercises", value: SettingsDestination.exercises)
                 NavigationLink("Edit Categories", value: SettingsDestination.categories)
             }
             
-            Section("Feedback and Support") {
+            Section(header:
+                        HStack{
+                Text("Feedback & Support")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            ) {
                 NavigationLink("Submit Feedback", value: SettingsDestination.feedback)
                 Button {
                     if let url = URL(string: "itms-apps://itunes.apple.com") {
@@ -60,7 +90,17 @@ struct SettingsView: View {
                 }
             }
             
-            Section("Legal") {
+            Section(header:
+                        HStack{
+                Text("Legal")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            ) {
                 NavigationLink("Terms of Service", value: SettingsDestination.terms)
                 NavigationLink("Privacy Policy", value: SettingsDestination.privacy)
             }

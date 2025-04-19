@@ -65,7 +65,17 @@ struct ListOfCategoriesView<Destination: View>: View {
     var body: some View {
         List {
             //default
-            Section ("Standard Categories"){
+            Section (header:
+                        HStack{
+                Text("Standard Categories")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            ){
                 ForEach(standardCategories) { category in
                     NavigationLink(category.name, value: category)
                 }
@@ -73,7 +83,17 @@ struct ListOfCategoriesView<Destination: View>: View {
             
             //custom
             if !customCategories.isEmpty {
-                Section("Custom Categories"){
+                Section(header:
+                            HStack{
+                    Text("Custom Categories")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.black)
+                        .textCase(nil)
+                    Spacer()
+                }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                ){
                     ForEach(customCategories) { category in
                         NavigationLink(category.name, value: category)
                     }
