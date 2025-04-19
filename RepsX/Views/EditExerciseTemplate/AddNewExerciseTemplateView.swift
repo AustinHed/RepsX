@@ -152,7 +152,17 @@ extension AddNewExerciseTemplateView {
     private var categoryPickerSheet: some View {
         NavigationStack {
             List {
-                Section("Standard Categories"){
+                Section(header:
+                            HStack{
+                    Text("Standard Categories")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.black)
+                        .textCase(nil)
+                    Spacer()
+                }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                ){
                     ForEach(standardCategories) { cat in
                         Button {
                             selectedCategory = cat
@@ -165,7 +175,17 @@ extension AddNewExerciseTemplateView {
                 }
                 
                 if !customCategories.isEmpty {
-                    Section("Custom Categories"){
+                    Section(header:
+                                HStack{
+                        Text("Custom Categories")
+                            .font(.headline)
+                            .bold()
+                            .foregroundStyle(.black)
+                            .textCase(nil)
+                        Spacer()
+                    }
+                        .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                    ){
                         ForEach(customCategories) { cat in
                             Button {
                                 selectedCategory = cat
@@ -227,18 +247,12 @@ extension AddNewExerciseTemplateView {
             return Text("Weight, Reps")
                 .font(.caption)
                 .foregroundColor(.secondary)
-        case .tension:
-            return Text("Weight, Time")
-                .font(.caption)
-                .foregroundColor(.secondary)
+
         case .endurance:
             return Text("Distance, Time")
                 .font(.caption)
                 .foregroundColor(.secondary)
-        case .other:
-            return Text("Other")
-                .font(.caption)
-                .foregroundColor(.secondary)
+
         }
     }
     
@@ -256,16 +270,6 @@ extension AddNewExerciseTemplateView {
                     Text("For exercises measured in Weight and Reps \nex. Bench Press, Squats, Deadlift, etc.")
                 }
                 
-                //tension
-                Section {
-                    Button("Tension") {
-                        selectedModality = .tension
-                        isModalityPickerPresented = false
-                    }
-                    .foregroundStyle(.black)
-                } footer: {
-                    Text("For exercises measured in Weight and Time \nex. Wallsits, Weighted Plank, etc.")
-                }
                 
                 //endurance
                 Section {
@@ -276,17 +280,6 @@ extension AddNewExerciseTemplateView {
                     .foregroundStyle(.black)
                 } footer: {
                     Text("For exercises measured in Distance and Time \nex. Running, Rowing, Cycling, etc.")
-                }
-                
-                //other
-                Section {
-                    Button("Other") {
-                        selectedModality = .other
-                        isModalityPickerPresented = false
-                    }
-                    .foregroundStyle(.black)
-                } footer: {
-                    Text("For exercises not measured as the above \nex. Yoga, Pilates, etc. ")
                 }
             }
             .navigationTitle("Select Modality")

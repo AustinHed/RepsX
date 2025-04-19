@@ -99,7 +99,6 @@ struct EditWorkoutView: View {
         .navigationTitle(workoutViewModel.toolbarDate(workout.startTime))
         //MARK: Toolbar
         .toolbar {
-            
             //Timer
             ToolbarItem(placement: .topBarTrailing) {
                 Button {

@@ -25,7 +25,17 @@ struct AddNewCategoryView: View {
     var body: some View {
         NavigationStack{
             List{
-                Section("Name"){
+                Section(header:
+                            HStack{
+                    Text("Name")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.black)
+                        .textCase(nil)
+                    Spacer()
+                }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                ){
                     TextField("Category Name", text: $newName)
                 }
             }

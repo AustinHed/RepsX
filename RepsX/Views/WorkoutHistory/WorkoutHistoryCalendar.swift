@@ -79,7 +79,12 @@ struct WorkoutHistoryCalendarView: View {
         let calendar = Calendar.current
         let totalSeconds = workouts.filter { calendar.isDate($0.startTime, inSameDayAs: date) }
                                    .reduce(0.0) { $0 + $1.workoutLength }
-        return Int(totalSeconds / 60)
+        //ensures that text doesn't overflow
+        if totalSeconds / 60 > 999 {
+            return 999
+        } else {
+            return Int(totalSeconds / 60)
+        }
     }
     
     // Common header text: week range when contracted, or month/year when expanded.
@@ -196,7 +201,7 @@ struct WorkoutHistoryCalendarView: View {
                                     .lineLimit(1)
                                     .fixedSize(horizontal: true, vertical: false)
                                     .frame(maxWidth: .infinity)
-                                    .padding(.top,8)
+                                    .padding(.top,4)
                                    
                                     //.background(backgroundColor)
                                     .cornerRadius(30) //was 8

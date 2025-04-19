@@ -54,9 +54,6 @@ struct SelectThemeView: View {
                                 .frame(width: 20, height: 20)
                                 .foregroundStyle(Color(hexString: userTheme.primaryHex))
                                 .padding(.trailing, 5)
-                            Circle()
-                                .frame(width: 20, height: 20)
-                                .foregroundStyle(Color(hexString: userTheme.secondaryHex))
                         }
                     }
                 }

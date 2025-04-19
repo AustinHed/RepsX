@@ -41,18 +41,6 @@ struct ChooseNewModalityView: View {
                 }  footer: {
                     Text("For exercises measured in Weight and Reps \nex. Bench Press, Squats, Deadlift, etc.")
                 }
-                //Tension
-                Section {
-                    Button {
-                        exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newModality: .tension)
-                        dismiss()
-                    } label: {
-                        modalityLabel(for: .tension)
-                    }
-                    
-                } footer: {
-                    Text("For exercises measured in Weight and Time \nex. Wallsits, Weighted Plank, etc.")
-                }
                 
                 //Endurance
                 Section {
@@ -64,18 +52,6 @@ struct ChooseNewModalityView: View {
                     }
                 } footer: {
                     Text("For exercises measured in Distance and Time \nex. Running, Rowing, Cycling, etc.")
-                }
-                
-                //Other
-                Section {
-                    Button {
-                        exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newModality: .other)
-                        dismiss()
-                    } label: {
-                        modalityLabel(for: .other)
-                    }
-                }  footer: {
-                    Text("For exercises not measured as the above \nex. Yoga, Pilates, etc. ")
                 }
                   
             }

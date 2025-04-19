@@ -1,6 +1,6 @@
 import SwiftUI
 import SwiftData
-
+import UIKit
 // Define a new destination type for Settings
 enum SettingsDestination: Hashable {
     case theme
@@ -26,37 +26,83 @@ struct SettingsView: View {
     var body: some View {
         List {
             //Personalization
-            Section("Personalization") {
+            Section(header:
+                        HStack{
+                Text("Personalization")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            ) {
                 NavigationLink("Themes", value: SettingsDestination.theme)
                 NavigationLink("App Icon", value: SettingsDestination.appIcon)
             }
             
             
             //Exercise and Categories
-            Section("Exercises and Categories") {
+            Section(header:
+                        HStack{
+                Text("Exercises & Categories")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            ) {
                 NavigationLink("Edit Exercises", value: SettingsDestination.exercises)
                 NavigationLink("Edit Categories", value: SettingsDestination.categories)
             }
             
-            Section("Feedback and Support") {
-                NavigationLink("Submit Feedback") {
-                    // to be implemented
-                }
-                NavigationLink("Help and Support") {
-                    // to be implemented
+            Section(header:
+                        HStack{
+                Text("Feedback & Support")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            ) {
+                NavigationLink("Submit Feedback", value: SettingsDestination.feedback)
+                Button {
+                    if let url = URL(string: "itms-apps://itunes.apple.com") {
+                        UIApplication.shared.open(url)
+                    }
+                } label: {
+                    HStack{
+                        Text("Rate on the App Store")
+                            .foregroundStyle(.black)
+                        Spacer()
+                        Image(systemName:"chevron.right")
+                            .foregroundStyle(.gray).opacity(0.5)
+                            .font(.callout)
+                            .fontWeight(.semibold)
+                    }
                 }
                 NavigationLink("Acknowledgements") {
                     // to be implemented
                 }
             }
             
-            Section("Legal") {
-                NavigationLink("Terms of Service") {
-                    // to be implemented
-                }
-                NavigationLink("Privacy Policy") {
-                    // to be implemented
-                }
+            Section(header:
+                        HStack{
+                Text("Legal")
+                    .font(.headline)
+                    .bold()
+                    .foregroundStyle(.black)
+                    .textCase(nil)
+                Spacer()
+            }
+                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+            ) {
+                NavigationLink("Terms of Service", value: SettingsDestination.terms)
+                NavigationLink("Privacy Policy", value: SettingsDestination.privacy)
             }
             
         }
@@ -69,7 +115,7 @@ struct SettingsView: View {
             case .theme:
                 SelectThemeView()
             case .appIcon:
-                Text("App Icon View") // Replace with your actual App Icon view.
+                SelectAppIconView()
             case .exercises:
                 ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises") { exercise in
                     EditExerciseTemplateView(exerciseTemplate: exercise)
@@ -79,15 +125,15 @@ struct SettingsView: View {
                     EditCategoryView(category: category)
                 }
             case .feedback:
-                Text("Feedback View")
+                SubmitFeedbackView()
             case .help:
                 Text("Help and Support View")
             case .acknowledgements:
                 Text("Acknowledgements View")
             case .terms:
-                Text("Terms of Service View")
+                TermsOfServiceView()
             case .privacy:
-                Text("Privacy Policy View")
+                PrivacyPolicyView()
             }
         }
         //MARK: Other
@@ -96,9 +142,13 @@ struct SettingsView: View {
             initializeDefaultThemes(in: modelContext)
         }
         .tint(themeColor)
+        .contentMargins(.horizontal,16)
     }
 }
 
 #Preview {
-    SettingsView()
+    NavigationStack{
+        SettingsView()
+    }
+    
 }

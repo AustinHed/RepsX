@@ -51,7 +51,17 @@ struct SelectExerciseView: View {
         List{
             
             if !filteredStandardExercises.isEmpty{
-                Section("Default Exercises") {
+                Section(header:
+                            HStack{
+                    Text("Default Exercises")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.black)
+                        .textCase(nil)
+                    Spacer()
+                }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                ) {
                     ForEach(filteredStandardExercises) { exercise in
                         Button {
                             onExerciseSelected(exercise)
@@ -68,7 +78,17 @@ struct SelectExerciseView: View {
             }
             
             if !filteredCustomExercises.isEmpty{
-                Section("Custom Exercises") {
+                Section(header:
+                            HStack{
+                    Text("Custom Exercises")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.black)
+                        .textCase(nil)
+                    Spacer()
+                }
+                    .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+                ) {
                     ForEach(filteredCustomExercises) { exercise in
                         Button {
                             onExerciseSelected(exercise)

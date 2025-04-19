@@ -62,7 +62,8 @@ struct GeneralChartsView: View {
                         .fill(Color.white)
                 )
                 .padding(.horizontal, 18)
-                .padding(.top, 10)
+                .padding(.top, 12)
+                .padding(.bottom,2)
             
             //content
             if chartData.isEmpty {

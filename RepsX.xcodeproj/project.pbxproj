@@ -8,10 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		3B62BA192D7A5B0900984AE1 /* SwipeActions in Frameworks */ = {isa = PBXBuildFile; productRef = 3B62BA182D7A5B0900984AE1 /* SwipeActions */; };
+		3BD7F8FD2DA86F8A00ABD281 /* AirtableInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3BD7F8FC2DA86F8A00ABD281 /* AirtableInfo.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3B62B3082D63BD4B00984AE1 /* RepsX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepsX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BD7F8FC2DA86F8A00ABD281 /* AirtableInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AirtableInfo.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -37,6 +39,7 @@
 		3B62B2FF2D63BD4B00984AE1 = {
 			isa = PBXGroup;
 			children = (
+				3BD7F8FC2DA86F8A00ABD281 /* AirtableInfo.plist */,
 				3B62B30A2D63BD4B00984AE1 /* RepsX */,
 				3B62B3092D63BD4B00984AE1 /* Products */,
 			);
@@ -118,6 +121,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3BD7F8FD2DA86F8A00ABD281 /* AirtableInfo.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,8 +260,10 @@
 		3B62B3192D63BD4C00984AE1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "iconDumbellsAmerica iconDumbellsBlack iconDumbellsRainbow";
+				ASSETCATALOG_COMPILER_APPICON_NAME = iconDumbellsAnime;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RepsX/Preview Content\"";
@@ -290,8 +296,10 @@
 		3B62B31A2D63BD4C00984AE1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES = "iconDumbellsAmerica iconDumbellsBlack iconDumbellsRainbow";
+				ASSETCATALOG_COMPILER_APPICON_NAME = iconDumbellsAnime;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"RepsX/Preview Content\"";

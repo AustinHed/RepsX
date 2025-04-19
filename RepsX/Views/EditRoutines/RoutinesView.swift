@@ -75,20 +75,7 @@ struct RoutinesView: View {
                 }
                 
                 //Add button
-                Button {
-                    newRoutine = routineViewModel.addRoutine(name: "New Routine")
-                    isLinkActive = true
-                } label: {
-                    VStack{
-                        Spacer()
-                        Image(systemName:"plus.circle")
-                            .font(.system(size: 60))
-                            .foregroundStyle(themeColor)
-                            .frame(maxWidth: .infinity)
-                        Spacer()
-                    }
-                    .frame(minHeight: 140)
-                }
+                addButton
             }
             
             .padding(.horizontal, 15)
@@ -172,5 +159,29 @@ extension RoutinesView {
         }
         .tint(.red)
     }
+}
+
+//MARK: Add Button
+extension RoutinesView {
+    private var addButton: some View {
+        Button {
+            newRoutine = routineViewModel.addRoutine(name: "New Routine")
+            isLinkActive = true
+        } label: {
+            VStack{
+                Spacer()
+                Image(systemName:"plus.circle.fill")
+                    .font(.system(size: 60))
+                    .foregroundStyle(themeColor)
+                    .frame(maxWidth: .infinity)
+                Spacer()
+            }
+            .frame(minHeight: 140)
+        }
+    }
+}
+
+#Preview{
+    RoutinesView(selectedTab: .constant(.routines))
 }
 
