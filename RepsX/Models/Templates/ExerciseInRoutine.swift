@@ -30,7 +30,7 @@ class ExerciseInRoutine: Identifiable {
     }
     
     var exerciseModality: ExerciseModality {
-        exerciseTemplate?.modality ?? .other
+        exerciseTemplate?.modality ?? .repetition
     }
     
     // Relationship to the routine it belongs in.

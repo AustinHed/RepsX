@@ -48,9 +48,6 @@ struct ExerciseSectionView: View {
                 if set.exercise?.modality == .repetition {
                     setWeightField(for: set)
                     setRepsField(for: set)
-                } else if set.exercise?.modality == .tension {
-                    setWeightField(for: set)
-                    setTimeField(for: set)
                 } else if set.exercise?.modality == .endurance {
                     setDistanceField(for: set)
                     setTimeField(for: set)

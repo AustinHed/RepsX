@@ -12,7 +12,8 @@ import SwiftData
 enum StatsDestination: Hashable {
     
     case editConsistencyGoal(ConsistencyGoal)
-    case addConsistencyGoal
+    case editTargetGoal(ExerciseTemplate)
+    case addGoal
     
     case exercise
     case category
@@ -50,7 +51,7 @@ struct StatsHomeView: View {
     var body: some View {
         List {
             
-            //consistency goals
+            //goals
             Section(header:
                         HStack{
                 Text("Goals")
@@ -65,18 +66,21 @@ struct StatsHomeView: View {
             ) {
                 //existing goals
                 //TODO: bug when deleting an exercise from a workout. FIX
-                //recurring goals
                 ForEach(consistencyGoals){goal in
                     NavigationLink(value: StatsDestination.editConsistencyGoal(goal)){
                         recurringGoalRow(goal:goal, workouts: workouts)
                     }
                 }
-                //target goals
+                //TODO: nav link to the specific exercise
                 ForEach(targetGoals){goal in
-                    targetGoalRow(goal: goal, workouts: workouts, progress: targetGoalViewModel.progress(for: goal, from: workouts))
+                    targetGoalRow(
+                      goal: goal,
+                      workouts: workouts,
+                      progress: targetGoalViewModel.progress(for: goal, from: workouts)
+                    )
                 }
                 //add goals
-                NavigationLink(value: StatsDestination.addConsistencyGoal) {
+                NavigationLink(value: StatsDestination.addGoal) {
                     HStack{
                         Text("Add new goal")
                         Spacer()
@@ -84,7 +88,6 @@ struct StatsHomeView: View {
                     .foregroundStyle(themeColor)
                 }
             }
-
             //specific stats
             Section(header:
                         HStack{
@@ -162,11 +165,14 @@ struct StatsHomeView: View {
             case .intensity:
                 GeneralChartsView(filter: .intensity, workouts: workouts)
                 
-            case .addConsistencyGoal:
+            case .addGoal:
                 NewGoalView()
                 
             case .editConsistencyGoal(let goal):
                 EditConsistencyGoalView(goal: goal, workouts: workouts)
+                
+            case .editTargetGoal(let exercise):
+                ExerciseAndCategoryChartsView(filter: .exercise(exercise), workouts: workouts)
             }
         }
         .listSectionSpacing(12)
@@ -207,6 +213,14 @@ extension StatsHomeView {
             
             ProgressView(value: currentProgress, total: goal.goalTarget)
                 .progressViewStyle(LinearProgressViewStyle())
+        }
+    }
+    
+    var recurringGoals: some View {
+        ForEach(consistencyGoals){goal in
+            NavigationLink(value: StatsDestination.editConsistencyGoal(goal)){
+                recurringGoalRow(goal:goal, workouts: workouts)
+            }
         }
     }
 }
@@ -268,5 +282,7 @@ extension Exercise {
     }
     
 }
+
+
 
 

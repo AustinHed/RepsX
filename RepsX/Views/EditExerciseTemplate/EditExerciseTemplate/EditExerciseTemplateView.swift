@@ -117,16 +117,8 @@ extension EditExerciseTemplateView {
             return Text("Weight, Reps")
                 .font(.caption)
                 .foregroundColor(.secondary)
-        case .tension:
-            return Text("Weight, Time")
-                .font(.caption)
-                .foregroundColor(.secondary)
         case .endurance:
             return Text("Distance, Time")
-                .font(.caption)
-                .foregroundColor(.secondary)
-        case .other:
-            return Text("Other")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
