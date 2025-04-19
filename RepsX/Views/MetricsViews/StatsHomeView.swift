@@ -12,7 +12,7 @@ import SwiftData
 enum StatsDestination: Hashable {
     
     case editConsistencyGoal(ConsistencyGoal)
-    case editTargetGoal(ExerciseTemplate)
+    case editTargetGoal(TargetGoal, ExerciseTemplate)
     case addGoal
     
     case exercise
@@ -34,6 +34,8 @@ struct StatsHomeView: View {
     //goals
     @Query(sort: \ConsistencyGoal.name, order: .reverse) var consistencyGoals: [ConsistencyGoal]
     @Query(sort: \TargetGoal.name, order: .reverse) var targetGoals: [TargetGoal]
+    //exerciseTemplates
+    @Query(sort: \ExerciseTemplate.name) var exerciseTemplates: [ExerciseTemplate]
     
     //environment
     @Environment(\.modelContext) private var modelContext
@@ -73,11 +75,15 @@ struct StatsHomeView: View {
                 }
                 //TODO: nav link to the specific exercise
                 ForEach(targetGoals){goal in
-                    targetGoalRow(
-                      goal: goal,
-                      workouts: workouts,
-                      progress: targetGoalViewModel.progress(for: goal, from: workouts)
-                    )
+                    let exerciseTemplate = getExerciseTemplate(for: goal.exerciseId, from: exerciseTemplates)
+                    NavigationLink(value: StatsDestination.editTargetGoal(goal, exerciseTemplate)){
+                        targetGoalRow(
+                          goal: goal,
+                          workouts: workouts,
+                          progress: targetGoalViewModel.progress(for: goal, from: workouts)
+                        )
+                    }
+                    
                 }
                 //add goals
                 NavigationLink(value: StatsDestination.addGoal) {
@@ -121,8 +127,6 @@ struct StatsHomeView: View {
                 .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
                 
             ){
-                //favorite exercises
-                //favorite categories
                 NavigationLink(value: StatsDestination.duration) {
                     Text("Workout Duration")
                 }
@@ -165,14 +169,14 @@ struct StatsHomeView: View {
             case .intensity:
                 GeneralChartsView(filter: .intensity, workouts: workouts)
                 
+            //goals
             case .addGoal:
                 NewGoalView()
-                
             case .editConsistencyGoal(let goal):
-                EditConsistencyGoalView(goal: goal, workouts: workouts)
+                EditRecurringGoal(goal: goal, workouts: workouts)
+            case .editTargetGoal(let goal, let template):
+                EditTargetGoalView(goal: goal, workouts: workouts, exerciseTemplate: template, filter: .exercise(template))
                 
-            case .editTargetGoal(let exercise):
-                ExerciseAndCategoryChartsView(filter: .exercise(exercise), workouts: workouts)
             }
         }
         .listSectionSpacing(12)
@@ -243,6 +247,16 @@ extension StatsHomeView {
             ProgressView(value: targetGoalViewModel.progress(for: goal, from: workouts), total: 1)
                 .progressViewStyle(LinearProgressViewStyle())
         }
+    }
+    
+    func getExerciseTemplate(
+        for exerciseId: UUID,
+        from exercises: [ExerciseTemplate]
+    ) -> ExerciseTemplate {
+        guard let template = exercises.first(where: { $0.id == exerciseId }) else {
+            fatalError("ExerciseTemplate with ID \(exerciseId) not found")
+        }
+        return template
     }
     
 }
