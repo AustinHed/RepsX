@@ -29,7 +29,8 @@ struct RepsXApp: App {
             Routine.self,
             ExerciseInRoutine.self,
             UserTheme.self,
-            ConsistencyGoal.self
+            ConsistencyGoal.self,
+            TargetGoal.self
         ]
         )
         

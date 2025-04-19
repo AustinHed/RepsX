@@ -9,32 +9,46 @@ import SwiftUI
 import SwiftData
 import Foundation
 
-struct NewConsistencyGoalView: View {
+enum GoalType: String, CaseIterable, Codable {
+    case recurring = "Recurring"
+    case target = "Target"
+}
+
+struct NewGoalView: View {
     
     //environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.themeColor) var themeColor
     @Environment(\.dismiss) var dismiss
     
-    //view model
+    //view models
     private var consistencyGoalViewModel: ConsistencyGoalViewModel {
         ConsistencyGoalViewModel(modelContext: modelContext)
     }
+    private var targetGoalViewModel: TargetGoalViewModel{
+        TargetGoalViewModel(modelContext: modelContext)
+    }
     
     //the new goal properties
+    @State var type: GoalType = .target
     @State var name: String = ""
-    @State var measurement: GoalMeasurement = .reps
-    @State var timeframe: GoalTimeframe = .weekly
-    @State var target: Double = 0.0
     @State var relatedExerciseId: UUID? = nil
     @State var relatedExerciseName: String? = nil
     @State var startDate: Date = Date()
     
-    //Show time picker
-    @State var showDatePicker: Bool = false
-    //Show exercise picke
-    @State var showExercisePicker: Bool = false
+    //recurring goal properties
+    @State var measurement: GoalMeasurement = .reps
+    @State var timeframe: GoalTimeframe = .weekly
+    @State var target: Double = 0.0
     
+    //target goal properties
+    @State var targetType: TargetGoalType = .strength
+    @State var primaryValue: Double = 0
+    @State var secondaryValue: Double = 0
+    
+    //toggles
+    @State var showDatePicker: Bool = false
+    @State var showExercisePicker: Bool = false
     
     var body: some View {
         ScrollView{
@@ -42,8 +56,16 @@ struct NewConsistencyGoalView: View {
                 //Name entry
                 nameEntry
                 
+                //goalType
+                goalType
+                
                 //Details
-                detailsSection
+                switch type {
+                case .recurring:
+                    recurringDetails
+                case .target:
+                    targetDetails
+                }
                 
                 //Start date
                 startDateSection
@@ -74,8 +96,6 @@ struct NewConsistencyGoalView: View {
             }
             .tint(themeColor)
         }
-        //MARK: Alert
-        //are you sure you want to dismiss / not create goal
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
@@ -88,8 +108,30 @@ struct NewConsistencyGoalView: View {
         .tint(themeColor)
     }
 }
+
+//MARK: Goal Type
+extension NewGoalView {
+    var goalType: some View {
+        ZStack{
+            RoundedRectangle(cornerRadius: 12)
+                .foregroundStyle(.white)
+            //choose type
+            HStack(alignment:.center){
+                Text("Type")
+                    .font(.headline)
+                    .bold()
+                    .padding(.leading)
+                    .frame(width: 100, alignment:.leading)
+                Spacer()
+                CustomGoalPicker<GoalType>(selection: $type)
+                    .padding(.horizontal)
+            }
+            .padding(.vertical, 6)
+        }
+    }
+}
 //MARK: Name entry
-extension NewConsistencyGoalView {
+extension NewGoalView {
     var nameEntry: some View{
         ZStack{
             RoundedRectangle(cornerRadius: 12)
@@ -102,8 +144,8 @@ extension NewConsistencyGoalView {
 }
 
 //MARK: Details
-extension NewConsistencyGoalView {
-    var detailsSection: some View {
+extension NewGoalView {
+    var recurringDetails: some View {
         ZStack{
             RoundedRectangle(cornerRadius: 12)
                 .foregroundStyle(.white)
@@ -131,8 +173,7 @@ extension NewConsistencyGoalView {
                         .padding(.leading)
                         .frame(width: 100, alignment:.leading)
                         
-                    
-                    
+
                     CustomGoalPicker<GoalTimeframe>(selection: $timeframe)
                         .padding(.horizontal)
                 }
@@ -176,7 +217,7 @@ extension NewConsistencyGoalView {
                         .multilineTextAlignment(.trailing)
                         
                         
-                        
+                    //TODO: clean up, is spaced weird
                     //measure
                     switch measurement {
                     case .minutes:
@@ -227,8 +268,127 @@ extension NewConsistencyGoalView {
     }
 }
 
+//MARK: Target Goal Properties
+extension NewGoalView {
+    var targetDetails: some View {
+        ZStack{
+            RoundedRectangle(cornerRadius: 12)
+                .foregroundStyle(.white)
+            VStack(alignment:.leading){
+                
+                //Measure
+                HStack(alignment:.center){
+                    Text("Measure")
+                        .font(.headline)
+                        .bold()
+                        .padding(.leading)
+                        .frame(width: 100, alignment:.leading)
+                    
+                    CustomGoalPicker<TargetGoalType>(selection: $targetType)
+                        .padding(.horizontal)
+                    
+                }
+                .padding(.top,10)
+                Divider().padding(.leading)
+                
+                //Select Exercise
+                HStack(alignment: .center){
+                    Text("Exercise")
+                        .font(.headline)
+                        .bold()
+                        .padding(.leading)
+                        .frame(width: 100, alignment:.leading)
+                    Spacer()
+                    //pick the exercise
+                    Button {
+                        showExercisePicker.toggle()
+                    } label: {
+                        Text(relatedExerciseName != nil ? relatedExerciseName! :"Select Exercise")
+                            .padding(.trailing, 25)
+                    }
+
+                }
+                .padding(.top,8)
+                .padding(.bottom, 8)
+                Divider().padding(.leading)
+                
+                //Primary value
+                HStack (alignment:.bottom){
+                    Text(targetType == .strength ? "Weight" : "Distance")
+                        .font(.headline)
+                        .bold()
+                        .padding(.leading)
+                        .frame(width: 100, alignment:.leading)
+                    
+                    //text field
+                    TextField("enter target", value: $primaryValue, format: .number)
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        
+                        
+                    //TODO: clean up, is spaced weird
+                    //measure
+                    switch targetType {
+                    case .strength:
+                        Text("lbs")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .padding(.trailing,30)
+                            
+                    case .pace:
+                        Text("miles")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .padding(.trailing,30)
+                    }
+                        
+                    
+                }
+                .padding(.bottom,10)
+                .padding(.top,5)
+                Divider().padding(.leading)
+                
+                //Secondary value
+                HStack (alignment:.bottom){
+                    Text(targetType == .strength ? "Reps" : "Minutes")
+                        .font(.headline)
+                        .bold()
+                        .padding(.leading)
+                        .frame(width: 100, alignment:.leading)
+                    
+                    //text field
+                    TextField("enter target", value: $secondaryValue, format: .number)
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.trailing)
+                        
+                        
+                    //TODO: clean up, is spaced weird
+                    //measure
+                    switch targetType {
+                    case .strength:
+                        Text("reps")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .padding(.trailing,30)
+                            
+                    case .pace:
+                        Text("minutes")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .padding(.trailing,30)
+                    }
+                        
+                    
+                }
+                .padding(.bottom)
+                .padding(.top,5)
+            }
+        }
+    }
+}
+
 //MARK: Start Date
-extension NewConsistencyGoalView {
+extension NewGoalView {
     var startDateSection: some View {
         ZStack{
             RoundedRectangle(cornerRadius: 12)
@@ -287,27 +447,46 @@ struct GoalTimePickerSheet: View {
 }
 
 //MARK: Create button
-extension NewConsistencyGoalView {
+extension NewGoalView {
     var createGoalButton: some View {
         ZStack{
             RoundedRectangle(cornerRadius: 12)
                 .foregroundStyle(.white)
             
             Button {
+                //TODO: different action based on goalType
                 //action
-                consistencyGoalViewModel.addGoal(name: name,
-                                                 goalTimeframe: timeframe,
-                                                 goalMeasurement: measurement,
-                                                 goalTarget: target,
-                                                 exerciseId: measurement == .reps ? relatedExerciseId : nil,
-                                                 startDate: startDate
-                )
-                print("created new goal")
-                dismiss()
+                switch type {
+                case .recurring:
+                    consistencyGoalViewModel.addGoal(name: name,
+                                                     goalTimeframe: timeframe,
+                                                     goalMeasurement: measurement,
+                                                     goalTarget: target,
+                                                     exerciseId: measurement == .reps ? relatedExerciseId : nil,
+                                                     startDate: startDate
+                    )
+                    print("created new recurring goal")
+                    dismiss()
+                case .target:
+                    targetGoalViewModel.addGoal(name: name, exerciseId: relatedExerciseId!, type: targetType, targetPrimaryValue: primaryValue, targetSecondaryValue: secondaryValue, startDate: startDate
+                    )
+                    print("created new target goal")
+                    dismiss()
+                }
+                
             } label: {
                 Text("Create Goal")
-                    .padding(10)
-            }.disabled(name.isEmpty || target == 0)
+                    .padding(14)
+            }.disabled(isDisabled)
+        }
+    }
+    
+    private var isDisabled: Bool {
+        switch type {
+        case .recurring:
+            return name.isEmpty || target == 0
+        case .target:
+            return name.isEmpty || primaryValue == 0 || secondaryValue == 0 || relatedExerciseId == nil
         }
     }
 }
@@ -315,7 +494,7 @@ extension NewConsistencyGoalView {
 #Preview {
     
     NavigationStack{
-        NewConsistencyGoalView()
+        NewGoalView()
             .navigationTitle(Text("New Goal"))
     }
     

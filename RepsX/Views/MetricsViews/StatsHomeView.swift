@@ -30,8 +30,9 @@ struct StatsHomeView: View {
     //MARK: Queries
     //all workouts completed
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
-    //consistency goals
+    //goals
     @Query(sort: \ConsistencyGoal.name, order: .reverse) var consistencyGoals: [ConsistencyGoal]
+    @Query(sort: \TargetGoal.name, order: .reverse) var targetGoals: [TargetGoal]
     
     //environment
     @Environment(\.modelContext) private var modelContext
@@ -42,13 +43,17 @@ struct StatsHomeView: View {
         ConsistencyGoalViewModel(modelContext: modelContext)
     }
     
+    private var targetGoalViewModel: TargetGoalViewModel {
+        TargetGoalViewModel(modelContext: modelContext)
+    }
+    
     var body: some View {
         List {
             
             //consistency goals
             Section(header:
                         HStack{
-                Text("Recurring Goals")
+                Text("Goals")
                     .font(.headline)
                     .bold()
                     .foregroundStyle(.black)
@@ -60,11 +65,15 @@ struct StatsHomeView: View {
             ) {
                 //existing goals
                 //TODO: bug when deleting an exercise from a workout. FIX
+                //recurring goals
                 ForEach(consistencyGoals){goal in
                     NavigationLink(value: StatsDestination.editConsistencyGoal(goal)){
-                        consistencyGoalRow(goal:goal, workouts: workouts)
+                        recurringGoalRow(goal:goal, workouts: workouts)
                     }
-                    
+                }
+                //target goals
+                ForEach(targetGoals){goal in
+                    targetGoalRow(goal: goal, workouts: workouts, progress: targetGoalViewModel.progress(for: goal, from: workouts))
                 }
                 //add goals
                 NavigationLink(value: StatsDestination.addConsistencyGoal) {
@@ -75,68 +84,7 @@ struct StatsHomeView: View {
                     .foregroundStyle(themeColor)
                 }
             }
-            
-            //strength goals
-            Section(header:
-                        HStack{
-                Text("Target Goals")
-                    .font(.headline)
-                    .bold()
-                    .foregroundStyle(.black)
-                    .textCase(nil)
-            }
-                .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
-                
-            ) {
-                
-                HStack (alignment:.top) {
-                    ZStack{
-                        // Full circle (background)
-                        Circle()
-                            .stroke(Color.gray.opacity(0.3), lineWidth: 5)
-                        
-                        // Progress circle (foreground)
-                        Circle()
-                            .trim(from: 0.0, to: 0.82)
-                            .stroke(
-                                Color.blue,
-                                style: StrokeStyle(lineWidth: 5, lineCap: .round)
-                            )
-                            .rotationEffect(.degrees(-90))
-                            .animation(.easeInOut, value: 0.4)
-                        
-                    }
-                    .frame(height: 60)
-                    .overlay(
-                        Text("82%")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    )
-                    .padding(.trailing, 10)
-                    
-                    
-                    
-                    
-                    VStack (alignment:.leading){
-                        Text("Placeholder for Strength Goal")
-                            .font(.headline)
-                        Text("185/225")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        Text("Started 1/1/25")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-       
-                }
 
-                HStack{
-                    Text("Set a new goal")
-                    Spacer()
-                    Image(systemName: "plus.circle")
-                }
-                
-            }
             //specific stats
             Section(header:
                         HStack{
@@ -215,7 +163,7 @@ struct StatsHomeView: View {
                 GeneralChartsView(filter: .intensity, workouts: workouts)
                 
             case .addConsistencyGoal:
-                NewConsistencyGoalView()
+                NewGoalView()
                 
             case .editConsistencyGoal(let goal):
                 EditConsistencyGoalView(goal: goal, workouts: workouts)
@@ -237,9 +185,9 @@ struct StatsHomeView: View {
     }
 }
 
-//MARK: Consistency Goal Rows
+//MARK: Recurring Goal Rows
 extension StatsHomeView {
-    func consistencyGoalRow(goal: ConsistencyGoal, workouts: [Workout]) -> some View {
+    func recurringGoalRow(goal: ConsistencyGoal, workouts: [Workout]) -> some View {
         let currentPeriod = consistencyGoalViewModel.currentPeriod(for: goal)
         let currentProgress = consistencyGoalViewModel.progress(in: currentPeriod, for: goal, from: workouts)
         
@@ -261,6 +209,28 @@ extension StatsHomeView {
                 .progressViewStyle(LinearProgressViewStyle())
         }
     }
+}
+
+//MARK: Target Goal Rows
+extension StatsHomeView {
+    func targetGoalRow(goal: TargetGoal, workouts: [Workout], progress: Double) -> some View {
+        return VStack(alignment:.leading){
+            Text(goal.name)
+                .font(.headline)
+            HStack{
+                Text("Started on \(goal.startDate, format: .dateTime.month(.wide).day().year())")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text(targetGoalViewModel.progressDescription(for: goal, from: workouts))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            ProgressView(value: targetGoalViewModel.progress(for: goal, from: workouts), total: 1)
+                .progressViewStyle(LinearProgressViewStyle())
+        }
+    }
+    
 }
 
 //MARK: Query predicates
@@ -289,6 +259,9 @@ extension Exercise {
 }
 
 #Preview {
+    
+    let testTargetGoal = TargetGoal(name: "test target", exerciseId: UUID(), type: .strength, targetPrimaryValue: 225, targetSecondaryValue: 5)
+    
     NavigationStack{
         StatsHomeView()
             .navigationTitle("Stats")

@@ -53,9 +53,9 @@ extension GoalTimeframe {
 
 //whats tracked - minutes worked out, workouts logged, or reps for an exercise performed
 enum GoalMeasurement: String, CaseIterable, Codable {
-    case minutes = "minutes"
-    case workouts = "workouts"
-    case reps = "reps"
+    case minutes = "Minutes"
+    case workouts = "Workouts"
+    case reps = "Reps"
 }
 
 @Model
