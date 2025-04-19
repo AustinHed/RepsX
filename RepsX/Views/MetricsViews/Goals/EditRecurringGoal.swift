@@ -7,8 +7,11 @@
 
 import SwiftUI
 import Foundation
+import SwiftData
 
 struct EditRecurringGoal: View {
+    
+    @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     
     @Environment(\.themeColor) var themeColor
     @Environment(\.dismiss) var dismiss
@@ -19,7 +22,7 @@ struct EditRecurringGoal: View {
     }
     
     let goal:ConsistencyGoal
-    let workouts: [Workout]
+    //let workouts: [Workout]
     
     @State var newName: String = ""
     @State var newTarget: Double
@@ -29,7 +32,7 @@ struct EditRecurringGoal: View {
     //custom init to grab goal.goalTarget and use it as newTarget starting value
     init(goal: ConsistencyGoal, workouts: [Workout]){
         self.goal = goal
-        self.workouts = workouts
+        //self.workouts = workouts
         _newTarget = State(initialValue: goal.goalTarget)
     }
     

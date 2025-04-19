@@ -55,3 +55,17 @@ class Exercise {
         self.templateId = templateId
     }
 }
+
+extension Exercise {
+    static func currentPredicate() -> Predicate<Exercise> {
+        let currentDate = Date.now
+        let fourteenDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: currentDate)!
+        
+        return #Predicate<Exercise> { exercise in
+            //if the exercise does not have a parent workout, just give it a date that will ensure it doesn't show up
+            exercise.workout?.startTime ?? fourteenDaysAgo > fourteenDaysAgo &&
+            //exercise must have a category associated
+                exercise.category != nil
+        }
+    }
+}

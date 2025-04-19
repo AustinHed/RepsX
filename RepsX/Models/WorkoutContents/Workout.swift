@@ -65,3 +65,14 @@ class Workout {
     static let sampleWorkout = [Workout(id: UUID(), startTime: Date())
     ]
 }
+
+extension Workout {
+    static func currentPredicate() -> Predicate<Workout> {
+        let currentDate = Date.now
+        let fourteenDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: currentDate)!
+        
+        return #Predicate<Workout> { workout in
+            workout.startTime > fourteenDaysAgo
+        }
+    }
+}

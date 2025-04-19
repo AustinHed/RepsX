@@ -70,19 +70,15 @@ struct StatsHomeView: View {
                 //TODO: bug when deleting an exercise from a workout. FIX
                 ForEach(consistencyGoals){goal in
                     NavigationLink(value: StatsDestination.editConsistencyGoal(goal)){
-                        recurringGoalRow(goal:goal, workouts: workouts)
+                        //recurringGoalRow(goal:goal, workouts: workouts)
+                        RecurringGoalRowView(goal: goal)
                     }
                 }
-                //TODO: nav link to the specific exercise
                 ForEach(targetGoals){goal in
                     let exerciseTemplate = getExerciseTemplate(for: goal.exerciseId, from: exerciseTemplates)
-                    NavigationLink(value: StatsDestination.editTargetGoal(goal, exerciseTemplate)){
-                        targetGoalRow(
-                          goal: goal,
-                          workouts: workouts,
-                          progress: targetGoalViewModel.progress(for: goal, from: workouts)
-                        )
-                    }
+                    NavigationLink(value: StatsDestination.editTargetGoal(goal, exerciseTemplate) ) {
+                            TargetGoalRowView(goal: goal)
+                        }
                     
                 }
                 //add goals
@@ -195,59 +191,8 @@ struct StatsHomeView: View {
     }
 }
 
-//MARK: Recurring Goal Rows
+//MARK: functions
 extension StatsHomeView {
-    func recurringGoalRow(goal: ConsistencyGoal, workouts: [Workout]) -> some View {
-        let currentPeriod = consistencyGoalViewModel.currentPeriod(for: goal)
-        let currentProgress = consistencyGoalViewModel.progress(in: currentPeriod, for: goal, from: workouts)
-        
-        return VStack (alignment: .leading) {
-            Text(goal.name)
-                .font(.headline)
-            HStack{
-                Text(goal.goalTimeframe.rawValue)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                
-                Spacer()
-                Text("\(Int(currentProgress))/\(Int(goal.goalTarget)) \(goal.goalMeasurement.rawValue)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            
-            ProgressView(value: currentProgress, total: goal.goalTarget)
-                .progressViewStyle(LinearProgressViewStyle())
-        }
-    }
-    
-    var recurringGoals: some View {
-        ForEach(consistencyGoals){goal in
-            NavigationLink(value: StatsDestination.editConsistencyGoal(goal)){
-                recurringGoalRow(goal:goal, workouts: workouts)
-            }
-        }
-    }
-}
-
-//MARK: Target Goal Rows
-extension StatsHomeView {
-    func targetGoalRow(goal: TargetGoal, workouts: [Workout], progress: Double) -> some View {
-        return VStack(alignment:.leading){
-            Text(goal.name)
-                .font(.headline)
-            HStack{
-                Text("Started on \(goal.startDate, format: .dateTime.month(.wide).day().year())")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Text(targetGoalViewModel.progressDescription(for: goal, from: workouts))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-            ProgressView(value: targetGoalViewModel.progress(for: goal, from: workouts), total: 1)
-                .progressViewStyle(LinearProgressViewStyle())
-        }
-    }
     
     func getExerciseTemplate(
         for exerciseId: UUID,
@@ -261,30 +206,6 @@ extension StatsHomeView {
     
 }
 
-//MARK: Query predicates
-extension Workout {
-    static func currentPredicate() -> Predicate<Workout> {
-        let currentDate = Date.now
-        let fourteenDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: currentDate)!
-        
-        return #Predicate<Workout> { workout in
-            workout.startTime > fourteenDaysAgo
-        }
-    }
-}
-extension Exercise {
-    static func currentPredicate() -> Predicate<Exercise> {
-        let currentDate = Date.now
-        let fourteenDaysAgo = Calendar.current.date(byAdding: .day, value: -30, to: currentDate)!
-        
-        return #Predicate<Exercise> { exercise in
-            //if the exercise does not have a parent workout, just give it a date that will ensure it doesn't show up
-            exercise.workout?.startTime ?? fourteenDaysAgo > fourteenDaysAgo &&
-            //exercise must have a category associated
-                exercise.category != nil
-        }
-    }
-}
 
 #Preview {
     
@@ -296,6 +217,8 @@ extension Exercise {
     }
     
 }
+
+
 
 
 
