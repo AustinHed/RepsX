@@ -21,10 +21,10 @@ struct WorkoutHistoryView: View {
     ) var exercisesList: [Exercise]
     
     //for the 30-day recap
-    @State var lookback: Int = 30 //currently 30 days
+    @State var lookback: RecapOptions = .Thirty
     private var filteredWorkouts: [Workout] {
         let calendar = Calendar.current
-        let thresholdDate = calendar.date(byAdding: .day, value: -lookback, to: Date())!
+        let thresholdDate = calendar.date(byAdding: .day, value: -lookback.rawValue, to: Date())!
         return workouts.filter{ $0.startTime > thresholdDate }
     }
     
@@ -56,7 +56,7 @@ struct WorkoutHistoryView: View {
         NavigationStack {
             ZStack{
                 CustomBackground(themeColor: themeColor)
-                ScrollView{
+                ScrollView{ //was 12
                     LazyVStack(alignment: .leading, spacing: 12) {
                         
                         // Calendar at the top
@@ -167,7 +167,7 @@ extension WorkoutHistoryView {
     }
 }
 
-//MARK: 30-Day Recap
+//MARK: X-Day Recap
 extension WorkoutHistoryView {
     //color function
     private func blendedColor(from: Color, to: Color, fraction: Double) -> Color {
@@ -188,7 +188,7 @@ extension WorkoutHistoryView {
         return Color(red: Double(red), green: Double(green), blue: Double(blue), opacity: Double(alpha))
     }
     
-    //minutes and count
+    //Header
     private var workoutCount: Int {
         filteredWorkouts.count
     }
@@ -212,7 +212,6 @@ extension WorkoutHistoryView {
             .font(.footnote)
             .foregroundStyle(.secondary)
     }
-    //result
     private var workoutCountAndMinutes: some View {
         HStack {
             workoutNumber
@@ -220,29 +219,39 @@ extension WorkoutHistoryView {
         }
     }
     
-    //categories
+    //Categories and Chart
     private var overallCategoryDistribution: [(category: String, count: Int, percentage: Double)] {
-        let exercises = exercisesList
+        // Count frequency per category
+        let exercises = filteredWorkouts.flatMap { $0.exercises }
         var frequency: [String: Int] = [:]
-        
         for exercise in exercises {
-            //only include valid, non-hidden categories
-            if exercise.category?.isHidden != true {
-                if let categoryName = exercise.category?.name {
-                    if !categoryName.isEmpty {
-                        frequency[categoryName, default : 0] += 1
-                    }
-                }
+            if exercise.category?.isHidden != true,
+               let categoryName = exercise.category?.name,
+               !categoryName.isEmpty {
+                frequency[categoryName, default: 0] += 1
             }
         }
-        
-        let total = frequency.values.reduce(0, +)
-        
-        return frequency.map { (category: $0.key,
-                                count: $0.value,
-                                percentage: total > 0 ? (Double($0.value) / Double(total) * 100) : 0)
+        // Total exercises
+        let totalCount = frequency.values.reduce(0, +)
+        // Build sorted list of (name, count, percentage)
+        let rawList = frequency.map { (category: $0.key,
+                                       count: $0.value,
+                                       percentage: totalCount > 0 ? (Double($0.value) / Double(totalCount) * 100) : 0)
         }
-        .sorted {$0.count > $1.count}
+        .sorted { $0.count > $1.count }
+
+        // If more than 6 categories, group the rest into "Other"
+        if rawList.count > 6 {
+            let topSix = rawList.prefix(6)
+            let others = rawList.dropFirst(6)
+            let otherCount = others.reduce(0) { $0 + $1.count }
+            let otherPercentage = totalCount > 0 ? (Double(otherCount) / Double(totalCount) * 100) : 0
+            var result = Array(topSix)
+            result.append((category: "Other", count: otherCount, percentage: otherPercentage))
+            return result
+        } else {
+            return rawList
+        }
     }
     private var categoryTextList: some View {
         VStack(alignment:.leading) {
@@ -267,7 +276,6 @@ extension WorkoutHistoryView {
         .padding(.horizontal)
         //.padding(.bottom)
     }
-    //result
     private var pieChartView: some View {
         Chart {
             let totalEntries = overallCategoryDistribution.count
@@ -288,31 +296,61 @@ extension WorkoutHistoryView {
         .frame(height: 125)
     }
     
+    //Result
     private var recapSection: some View {
-        VStack(alignment:.leading){
-            
-            Text("30-Day Recap")
-                .padding(.horizontal)
-                .font(.headline)
-                .bold()
-            
-            VStack (alignment:.leading){
-                workoutCountAndMinutes
-                    .padding(.horizontal)
-                    .padding(.top,10)
-                
-                HStack (alignment:.center){
-                    pieChartView
-                        .padding(.leading)
-                    categoryTextList
-                        .padding(.trailing)
-                        
+        VStack(alignment: .leading) {
+            // Timeframe selector
+            HStack {
+                Text("\(lookback)-Day Recap")
+                    .font(.headline)
+                    .bold()
+                    //.border(.orange)
+                Spacer()
+                EnumPicker<RecapOptions>(selection: $lookback) { option in
+                    "\(option.rawValue)d"
                 }
-                .padding(.bottom,20)
+                //.border(.red)
             }
-            .background(Color.white)
-            .cornerRadius(16)
             .padding(.horizontal)
+            //Content
+            //if workouts, else without workouts
+            if workoutCount > 0 {
+                VStack(alignment: .leading) {
+                    workoutCountAndMinutes
+                        .padding(.horizontal)
+                        .padding(.top,10)
+                    
+                    HStack (alignment:.center){
+                        pieChartView
+                            .padding(.leading)
+                        categoryTextList
+                            .padding(.trailing)
+                            
+                    }
+                    .padding(.bottom,20)
+                }
+                .background(Color.white)
+                .cornerRadius(16)
+                .padding(.horizontal)
+            } else {
+                HStack{
+                    Text("No Data")
+                        .font(.largeTitle)
+                        .bold() +
+                    Text(" for the selected period")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                }
+                .padding(.top, 10)
+                .padding(.bottom, 10)
+                .padding(.horizontal)
+                .background(Color.white)
+                .cornerRadius(16)
+                .padding(.horizontal)
+                
+            }
+            
         }
         
         
@@ -455,3 +493,5 @@ extension WorkoutHistoryView {
 #Preview {
     WorkoutHistoryView(selectedTab: .constant(.history))
 }
+
+

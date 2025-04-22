@@ -8,12 +8,7 @@
 import SwiftData
 import Foundation
 
-enum TargetGoalType: String, CaseIterable, Codable {
-    case strength = "Strength"
-    ///this should always be measured as X weight for Y reps
-    case pace = "Pace"
-    ///this should always be measured as X miles in Y minutes
-}
+
 
 @Model
 class TargetGoal: Identifiable {
