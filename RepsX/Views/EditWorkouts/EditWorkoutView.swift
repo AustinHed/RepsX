@@ -15,7 +15,7 @@ struct EditWorkoutView: View {
     @Environment(\.themeColor) var themeColor
     
     //the initialized workout
-    @State var workout: Workout
+    var workout: Workout
     
     @State var exerciseToReplace: Exercise?
     
