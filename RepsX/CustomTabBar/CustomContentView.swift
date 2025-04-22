@@ -142,7 +142,7 @@ struct ContentView: View {
             initializeDefaultDataIfNeeded(context: modelContext)
             initializeDefaultThemes(in: modelContext)
             //create TEST exercise history
-            initializeWorkoutsIfNeeded(context: modelContext)
+            //initializeWorkoutsIfNeeded(context: modelContext)
             
         }
     }
