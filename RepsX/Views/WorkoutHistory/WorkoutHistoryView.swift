@@ -17,8 +17,7 @@ struct WorkoutHistoryView: View {
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     @Query(filter: #Predicate{(routine:Routine) in
         return routine.favorite}, sort: \Routine.name) var favoriteRoutines: [Routine]
-    @Query(filter: Exercise.currentPredicate()
-    ) var exercisesList: [Exercise]
+    @Query var exercisesList: [Exercise]
     
     //for the 30-day recap
     @State var lookback: RecapOptions = .Thirty
