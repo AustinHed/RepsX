@@ -130,7 +130,8 @@ extension WorkoutViewModel {
                                    workout: workout,
                                    order: order,
                                    modality: exercise.modality,
-                                   templateId: exercise.id
+                                   templateId: exercise.id,
+                                   workoutStartTime: workout.startTime
         )
         workout.exercises.append(newExercise)
         modelContext.insert(newExercise)
@@ -144,7 +145,7 @@ extension WorkoutViewModel {
             //get that index
             let exerciseOrder = exerciseToRemove.order
             //create a new exercise using the exercise template
-            let newExercise = Exercise(name: exerciseToAdd.name, category: exerciseToAdd.category, workout: workout, templateId: exerciseToAdd.id)
+            let newExercise = Exercise(name: exerciseToAdd.name, category: exerciseToAdd.category, workout: workout, templateId: exerciseToAdd.id, workoutStartTime: workout.startTime)
             newExercise.order = exerciseOrder
             //swap that exercise into the array
             workout.exercises[index] = newExercise

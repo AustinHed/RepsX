@@ -34,6 +34,8 @@ class Exercise {
     
     ///Read as: An exercise instance belongs to a single workout instance. This is mandatory
     @Relationship(deleteRule: .cascade, inverse: \Workout.exercises) var workout: Workout?
+    var workoutStartTime: Date
+    
     
     //initialize the instance
     init(id: UUID = UUID(),
@@ -43,7 +45,8 @@ class Exercise {
          order: Int = 0,
          intensity: Int? = nil,
          modality: ExerciseModality = .repetition, //TODO: not all exercises are reps - should be allowed others
-         templateId: UUID
+         templateId: UUID,
+         workoutStartTime: Date
         ) {
         self.id = id //unique ID
         self.name = name //ex bench
@@ -53,6 +56,7 @@ class Exercise {
         self.intensity = intensity //nil, 1-3
         self.modality = modality
         self.templateId = templateId
+        self.workoutStartTime = workoutStartTime
     }
 }
 
