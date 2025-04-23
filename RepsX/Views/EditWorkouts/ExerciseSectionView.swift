@@ -13,7 +13,7 @@ struct ExerciseSectionView: View {
     @Environment(\.themeColor) var themeColor
     
     //initialized Exercise
-    @State var exercise: Exercise
+    var exercise: Exercise
     
     //most recent exercise
     ///the previous sets from when a user performed this exercise. Used to show past weight lifted

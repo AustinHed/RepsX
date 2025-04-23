@@ -108,6 +108,18 @@ struct NewGoalView: View {
         .tint(themeColor)
     }
 }
+//MARK: Name entry
+extension NewGoalView {
+    var nameEntry: some View{
+        ZStack{
+            RoundedRectangle(cornerRadius: 12)
+                .foregroundStyle(.white)
+            //textEntry
+            TextField("Name", text: $name)
+                .padding()
+        }
+    }
+}
 
 //MARK: Goal Type
 extension NewGoalView {
@@ -123,22 +135,11 @@ extension NewGoalView {
                     .padding(.leading)
                     .frame(width: 100, alignment:.leading)
                 Spacer()
-                CustomGoalPicker<GoalType>(selection: $type)
-                    .padding(.horizontal)
+                EnumPicker<GoalType>(selection: $type) { option in
+                    "\(option.rawValue)"
+                }.padding(.horizontal)
             }
             .padding(.vertical, 6)
-        }
-    }
-}
-//MARK: Name entry
-extension NewGoalView {
-    var nameEntry: some View{
-        ZStack{
-            RoundedRectangle(cornerRadius: 12)
-                .foregroundStyle(.white)
-            //textEntry
-            TextField("Name", text: $name)
-                .padding()
         }
     }
 }
@@ -157,9 +158,10 @@ extension NewGoalView {
                         .bold()
                         .padding(.leading)
                         .frame(width: 100, alignment:.leading)
-                        
-                    CustomGoalPicker<GoalMeasurement>(selection: $measurement)
-                        .padding(.horizontal)
+
+                    EnumPicker<GoalMeasurement>(selection: $measurement){option in
+                        "\(option.rawValue)"
+                    }.padding(.horizontal)
                 }
                 .padding(.top,10)
                 Divider().padding(.leading)
@@ -172,10 +174,10 @@ extension NewGoalView {
                         .bold()
                         .padding(.leading)
                         .frame(width: 100, alignment:.leading)
-                        
-
-                    CustomGoalPicker<GoalTimeframe>(selection: $timeframe)
-                        .padding(.horizontal)
+                    
+                    EnumPicker<GoalTimeframe>(selection: $timeframe){option in
+                        "\(option.rawValue)"
+                    }.padding(.horizontal)
                 }
                 Divider().padding(.leading)
                 
@@ -284,8 +286,9 @@ extension NewGoalView {
                         .padding(.leading)
                         .frame(width: 100, alignment:.leading)
                     
-                    CustomGoalPicker<TargetGoalType>(selection: $targetType)
-                        .padding(.horizontal)
+                    EnumPicker<TargetGoalType>(selection: $targetType){option in
+                        "\(option.rawValue)"
+                    }.padding(.horizontal)
                     
                 }
                 .padding(.top,10)

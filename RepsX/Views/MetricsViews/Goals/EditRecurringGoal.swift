@@ -7,8 +7,11 @@
 
 import SwiftUI
 import Foundation
+import SwiftData
 
-struct EditConsistencyGoalView: View {
+struct EditRecurringGoal: View {
+    
+    @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     
     @Environment(\.themeColor) var themeColor
     @Environment(\.dismiss) var dismiss
@@ -19,7 +22,7 @@ struct EditConsistencyGoalView: View {
     }
     
     let goal:ConsistencyGoal
-    let workouts: [Workout]
+    //let workouts: [Workout]
     
     @State var newName: String = ""
     @State var newTarget: Double
@@ -29,7 +32,7 @@ struct EditConsistencyGoalView: View {
     //custom init to grab goal.goalTarget and use it as newTarget starting value
     init(goal: ConsistencyGoal, workouts: [Workout]){
         self.goal = goal
-        self.workouts = workouts
+        //self.workouts = workouts
         _newTarget = State(initialValue: goal.goalTarget)
     }
     
@@ -122,7 +125,7 @@ struct EditConsistencyGoalView: View {
     }
 }
 //MARK: Edit name
-extension EditConsistencyGoalView {
+extension EditRecurringGoal {
     var editName: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 12)
@@ -143,7 +146,7 @@ extension EditConsistencyGoalView {
 }
 
 //MARK: Edit target
-extension EditConsistencyGoalView {
+extension EditRecurringGoal {
     var periodName: String {
         switch goal.goalTimeframe {
         case .daily:
@@ -184,7 +187,7 @@ extension EditConsistencyGoalView {
 }
 
 //MARK: goal history
-extension EditConsistencyGoalView {
+extension EditRecurringGoal {
     var historyHeader: some View {
         HStack{
             Text("History")
@@ -236,6 +239,8 @@ extension EditConsistencyGoalView {
                 .padding(.horizontal)
             //x out of y
             Text("\(progress, specifier: "%.0f") out of \(target, specifier: "%.0f")")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
                 .padding(.horizontal)
             //progress bar
             ProgressView(value: progress, total: target)
@@ -248,7 +253,7 @@ extension EditConsistencyGoalView {
 }
 
 //MARK: delete
-extension EditConsistencyGoalView {
+extension EditRecurringGoal {
     var delete: some View {
         return ZStack{
             RoundedRectangle(cornerRadius: 12)
@@ -271,7 +276,7 @@ extension EditConsistencyGoalView {
     let testGoal: ConsistencyGoal = ConsistencyGoal(name: "20 Workouts per Month", goalTimeframe: .weekly, goalMeasurement: .minutes, goalTarget: 20.0, startDate: Date(), isCompleted: false)
     let workouts: [Workout] = []
     NavigationStack{
-        EditConsistencyGoalView(goal: testGoal, workouts: workouts)
+        EditRecurringGoal(goal: testGoal, workouts: workouts)
     }
     
     

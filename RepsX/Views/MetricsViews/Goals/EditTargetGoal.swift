@@ -2,105 +2,112 @@ import SwiftUI
 import Charts
 import SwiftData
 
-struct ExerciseAndCategoryChartsView: View {
-    
-    // Used to show either Exercise or Category data based on the filter provided.
-    // Also updates the navigation title.
-    let filter: ChartFilter
+struct EditTargetGoalView: View {
     
     // Passed in list of all workouts
     let workouts: [Workout]
+    let goal: TargetGoal
     
-    // Store the selected lookback option.
-    @State private var selectedLookback: LookbackOption = .thirty
+    //goal properties
+    @State var newName: String = ""
+    @State var newPrimaryTarget: Double
+    @State var newSecondaryTarget: Double
+    @State var showAlert: Bool = false
+    
+    //init to use custom target values initially
+    init(goal: TargetGoal, workouts: [Workout], exerciseTemplate: ExerciseTemplate, filter: ChartFilter) {
+        self.goal = goal
+        self.workouts = workouts
+        self.exerciseTemplate = exerciseTemplate
+        self.filter = filter
+        _newPrimaryTarget = State(initialValue: goal.targetPrimaryValue)
+        _newSecondaryTarget = State(initialValue: goal.targetSecondaryValue)
+    }
+    
+    
     
     @Environment(\.themeColor) var themeColor
-    
-    // Compute the lookback period. If "All Time" is selected, return nil.
-    private var lookbackPeriod: Date? {
-        if selectedLookback == .all {
-            return nil
-        } else {
-            let calendar = Calendar.current
-            // For example, if 7 days is selected, we want workouts from today through 6 days ago.
-            return calendar.startOfDay(for: calendar.date(byAdding: .day, value: -(selectedLookback.rawValue - 1), to: Date()) ?? Date())
-        }
-    }
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var modelContext
     
     //the exerciseTemplateId for use in the button
-    private var exerciseTemplate: ExerciseTemplate? {
-        if case .exercise(let template) = filter {
-            return template
-        }
-        return nil
+    private var exerciseTemplate: ExerciseTemplate
+    let filter: ChartFilter //always pass an exercise
+    let selectedLookback: LookbackOption = .all //always show full history of an exercise
+    
+    //Charts
+    @State private var selectedWeightDataPoint: ChartDataPoint? = nil
+    @State private var selectedSetsDataPoint: ChartDataPoint? = nil
+    @State private var selectedVolumeDataPoint: ChartDataPoint? = nil
+    let markerSize: CGFloat = 8
+    //viewModel
+    private var targetGoalViewModel:TargetGoalViewModel {
+        TargetGoalViewModel(modelContext: modelContext)
     }
     
-    //selected data points for the chart
-    //weight
-    @State private var selectedWeightDataPoint: ChartDataPoint? = nil
-    //sets
-    @State private var selectedSetsDataPoint: ChartDataPoint? = nil
-    //volume
-    @State private var selectedVolumeDataPoint: ChartDataPoint? = nil
     
-    //Dot and bar size
-    let markerSize: CGFloat = 8
-    
-    //for the custom picker animation
-    @Namespace private var pickerAnimation
-    
+
     var body: some View {
             ScrollView{
-                
-                //datepicker
-                customPicker()
-                    .frame(height: 35)
-                    .background(
-                        Capsule()
-                            .fill(Color.white)
-                    )
-                    .padding(.horizontal, 18)
-                    .padding(.top, 10)
-                    .padding(.bottom,2)
-                
-                //Content
-                if medianChartData.isEmpty {
-                    Text("Not enough for the selected time period. Please log additional workouts and check back later.")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal)
-                        .padding(.vertical, 10)
-                        .background(Color.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .padding(.horizontal)
-                        .navigationTitle(filter.navigationTitle)
-                } else {
-                    LazyVStack(spacing:12) {
-                        //metrics
-                        StatsSummaryView(dataPoints: medianChartData, minDataPoints:minChartData, maxDataPoints:maxChartData, filter: filter, lookback: selectedLookback)
+                LazyVStack(alignment:.leading, spacing: 12){
+                    //details section
+                    Text("Details")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.black)
+                        .padding(.leading,3)
+                        .padding(.horizontal, 16)
+                    editName
+                        .padding(.horizontal, 16)
+                    editPrimaryTarget
+                        .padding(.horizontal, 16)
+                    editSecondaryTarget
+                        .padding(.horizontal, 16)
+                    
+                    
+                    //Content
+                    Text("History")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.black)
+                        .padding(.leading,3)
+                        .padding(.horizontal, 16)
+                    if medianChartData.isEmpty {
+                        Text("Not enough for the exercise. Please log additional workouts and check back later.")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+                            .padding(.vertical, 10)
+                            .background(Color.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .padding(.horizontal, 16)
+                    } else {
+                            
+                            //charts
+                            ExpandableChartView(title: "Weight", chartType: filter) {
+                                medianWeightChart
+                            }
+                            
+                            ExpandableChartView(title:"Sets", chartType: filter) {
+                                setCountChart
+                            }
+                            
+                            Spacer()
                         
-                        //charts
-                        ExpandableChartView(title: "Weight", chartType: filter) {
-                            medianWeightChart
-                        }
-                        
-                        ExpandableChartView(title:"Sets", chartType: filter) {
-                            setCountChart
-                        }
-                        
-                        ExpandableChartView(title:"Volume", chartType: filter) {
-                            volumeCountChart
-                        }
-                        
-                        //button
-                        if let template = exerciseTemplate {
-                            exerciseHistoryNavigationLink(workouts: workouts, exerciseTemplate: template)
-                        }
-                        
-                        Spacer()
                     }
-                    .navigationTitle(filter.navigationTitle)
+                    
+                    //delete
+                    Text("Delete")
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.black)
+                        .padding(.leading,3)
+                        .padding(.horizontal, 16)
+                    delete
+                        .padding(.horizontal, 16)
                 }
+                
             }
+            .navigationTitle("Edit Goal")
             .safeAreaInset(edge: .bottom) {
                 // Add extra space (e.g., 100 points)
                 Color.clear.frame(height: 50)
@@ -110,11 +117,48 @@ struct ExerciseAndCategoryChartsView: View {
             .background(
                 CustomBackground(themeColor: themeColor)
             )
+            //MARK: Toolbar
+            .toolbar {
+                //only show if there are changes
+                if !newName.isEmpty || newPrimaryTarget != goal.targetPrimaryValue || newSecondaryTarget != goal.targetSecondaryValue {
+                    ToolbarItem(placement:.topBarTrailing) {
+                        Button {
+                            //action
+                            targetGoalViewModel.updateGoal(goal,
+                                                           newName: newName,
+                                                           newPrimaryValue: newPrimaryTarget,
+                                                           newSecondaryValue: newSecondaryTarget
+                            )
+                            dismiss()
+                        } label: {
+                            Text("Save").bold()
+                        }
+
+                    }
+                }
+            }
+            //MARK: Alert
+            .alert("Delete this goal?", isPresented: $showAlert) {
+                Button("Cancel", role: .cancel) {
+                    // Cancel action: simply dismiss the alert.
+                    showAlert = false
+                }
+                Button("Delete", role: .destructive) {
+                    // Confirm delete action: handle the deletion here.
+                    targetGoalViewModel.deleteGoal(goal)
+                    showAlert = false
+                    dismiss()
+                }
+            } message: {
+                Text("Are you sure you want to delete this goal? This cannot be undone.")
+            }
+
+        
     }
 }
 
 //MARK: X Axis Labels
-extension ExerciseAndCategoryChartsView {
+extension EditTargetGoalView {
     // Calculate the stride based on the range of dates in chartData.
     private var xAxisStride: Int {
         guard let firstDate = setChartData.first?.date,
@@ -127,17 +171,13 @@ extension ExerciseAndCategoryChartsView {
 }
 
 //MARK: data aggregator function
-extension ExerciseAndCategoryChartsView {
+extension EditTargetGoalView {
     // A helper function to aggregate data by day.
     private func aggregateData(using aggregator: ([Workout]) -> Double?) -> [ChartDataPoint] {
         let calendar = Calendar.current
         let endDate = calendar.startOfDay(for: Date())
         let startDate: Date = {
-            if selectedLookback == .all {
-                return workouts.map { calendar.startOfDay(for: $0.startTime) }.min() ?? endDate
-            } else {
-                return lookbackPeriod ?? endDate
-            }
+            return workouts.map { calendar.startOfDay(for: $0.startTime) }.min() ?? endDate
         }()
         
         // Filter workouts within the full date range.
@@ -167,7 +207,7 @@ extension ExerciseAndCategoryChartsView {
 }
 
 //MARK: Median Weight over time
-extension ExerciseAndCategoryChartsView {
+extension EditTargetGoalView {
 
     //median data
     private var medianChartData: [ChartDataPoint] {
@@ -354,7 +394,7 @@ extension ExerciseAndCategoryChartsView {
 }
 
 //MARK: Sets over time
-extension ExerciseAndCategoryChartsView {
+extension EditTargetGoalView {
     
     // Computed property that aggregates chart data across the full selected date range.
     private var setChartData: [ChartDataPoint] {
@@ -430,7 +470,7 @@ extension ExerciseAndCategoryChartsView {
 }
 
 //MARK: Volume over time
-extension ExerciseAndCategoryChartsView {
+extension EditTargetGoalView {
     
     // Computed property for the total volume of weight lifted per day.
     private var volumeChartData: [ChartDataPoint] {
@@ -515,67 +555,122 @@ extension ExerciseAndCategoryChartsView {
     }
 }
 
-//MARK: Workout History Button
-extension ExerciseAndCategoryChartsView {
-    func exerciseHistoryNavigationLink(workouts: [Workout], exerciseTemplate: ExerciseTemplate) -> some View {
-        NavigationLink {
-            ExerciseHistoryView(workouts: workouts, exerciseTemplate: exerciseTemplate)
-        } label: {
-            HStack {
-                Text("Exercise History")
+//MARK: Delete Button
+extension EditTargetGoalView {
+    var delete: some View {
+        return ZStack {
+            RoundedRectangle(cornerRadius: 12)
+                .foregroundStyle(Color.white)
+            
+            Button {
+                showAlert.toggle()
+            } label: {
                 Spacer()
-                Image(systemName: "chevron.right")
+                Text("Delete Goal")
+                    .padding(15)
+                Spacer()
             }
-            .padding(.horizontal)
-            .padding(.vertical, 10)
-            .background(Color.white)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .padding(.horizontal)
+
         }
     }
 }
 
-//MARK: Custom Picker
-extension ExerciseAndCategoryChartsView {
-    func customPicker() -> some View {
-        HStack(spacing: 0) {
-            ForEach(LookbackOption.allCases, id: \.self) { option in
-                Button {
-                    // Animate the change of the selected lookback option.
-                    withAnimation(.bouncy) {
-                        selectedLookback = option
-                    }
-                } label: {
-                    customPickerItem(title: option.description, isActive: (option == selectedLookback))
+//MARK: Edit Name
+extension EditTargetGoalView {
+    var editName: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 12)
+                .foregroundStyle(Color.white)
+            
+            ZStack (alignment:.leading){
+                if newName.isEmpty {
+                    Text(goal.name)
+                        .foregroundStyle(.black)
+                        .padding(.leading, 16)
                 }
+                TextField("", text: $newName)
+                    .padding()
             }
+            
         }
-        .padding(.horizontal, 3)
-    }
-
-    func customPickerItem(title: String, isActive: Bool) -> some View {
-        Text(title)
-            .font(.subheadline)
-            .foregroundStyle(.black)
-            .frame(height: 30)
-            .frame(maxWidth: .infinity)
-            .background(
-                ZStack {
-                    // Only add the background for the active option.
-                    if isActive {
-                        RoundedRectangle(cornerRadius: 30)
-                            .fill(themeColor.opacity(0.3))
-                            // Use matchedGeometryEffect with a shared id.
-                            .matchedGeometryEffect(id: "pickerBackground", in: pickerAnimation)
-                    }
-                }
-            )
-            .cornerRadius(30)
     }
 }
 
-//MARK: Goals Section
-extension ExerciseAndCategoryChartsView {
+//MARK: Edit Primary Target
+extension EditTargetGoalView {
+    var primaryDescriptor: String {
+        switch goal.type {
+        case .strength:
+            return "Lbs"
+        case .pace:
+            return "Miles"
+        }
+    }
+    
+    var editPrimaryTarget: some View {
+        ZStack{
+            RoundedRectangle(cornerRadius: 12)
+                .foregroundStyle(Color.white)
+            
+            
+            HStack{
+                TextField("\(goal.targetPrimaryValue)", value: $newPrimaryTarget, format: .number)
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: 40)
+                Text(primaryDescriptor)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                    
+            }
+            .padding()
+            
+        }
+    }
+    
+    
+}
+//MARK: Edit Secondary Target
+extension EditTargetGoalView {
+    var secondaryDescriptor: String {
+        switch goal.type {
+        case .strength:
+            return "Reps"
+        case .pace:
+            return "Minutes"
+        }
+    }
+    
+    var editSecondaryTarget: some View {
+        ZStack{
+            RoundedRectangle(cornerRadius: 12)
+                .foregroundStyle(Color.white)
+            
+            
+            HStack{
+                TextField("\(goal.targetSecondaryValue)", value: $newSecondaryTarget, format: .number)
+                    .keyboardType(.decimalPad)
+                    .multilineTextAlignment(.trailing)
+                    .frame(maxWidth: 40)
+                Text(secondaryDescriptor)
+                    .foregroundStyle(.secondary)
+                Spacer()
+                    
+            }
+            .padding()
+            
+        }
+    }
+}
+
+#Preview {
+    let testCategory: CategoryModel = CategoryModel(name: "Chest")
+    let testExercise: ExerciseTemplate = ExerciseTemplate(name: "Bench Press", category: testCategory, modality: .repetition, hidden: false, standard: true)
+    let testGoal: TargetGoal = TargetGoal(name: "225 on Bench", exerciseId: testExercise.id, type: .strength, targetPrimaryValue: 225, targetSecondaryValue: 5)
+    
+    NavigationStack{
+        EditTargetGoalView(goal: testGoal, workouts: [], exerciseTemplate: testExercise, filter: .exercise(testExercise))
+    }
     
 }
 
