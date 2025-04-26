@@ -103,7 +103,7 @@ struct NewGoalView: View {
         )
         .safeAreaInset(edge: .bottom) {
             // Add extra space (e.g., 100 points)
-            Color.clear.frame(height: 50)
+            Color.clear.frame(height: 100)
         }
         .tint(themeColor)
     }

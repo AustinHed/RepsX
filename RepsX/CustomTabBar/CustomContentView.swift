@@ -159,6 +159,9 @@ extension ContentView {
             if isActive{
                 Text(title)
                     .foregroundStyle(.black)
+                    .lineLimit(1)                   // <-- never wrap
+                    .truncationMode(.tail)          // <-- “…” at end
+                    .layoutPriority(1)              // <-- ensure it gets priority to shrink
             }
             Spacer()
         }
@@ -197,5 +200,9 @@ extension ContentView {
         }
         .padding(6)
     }
+}
+
+#Preview {
+    ContentView()
 }
 

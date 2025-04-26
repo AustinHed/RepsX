@@ -73,6 +73,10 @@ struct SelectThemeView: View {
             .background(
                 CustomBackground(themeColor: userThemeViewModel.primaryColor)
             )
+            .safeAreaInset(edge: .bottom) {
+                // Add extra space (e.g., 100 points)
+                Color.clear.frame(height: 100)
+            }
             
         .tint(userThemeViewModel.primaryColor)
     }

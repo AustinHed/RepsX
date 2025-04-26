@@ -109,6 +109,7 @@ struct SettingsView: View {
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(CustomBackground(themeColor: themeColor))
+        
         //MARK: Navigation Destinations
         .navigationDestination(for: SettingsDestination.self) { destination in
             switch destination {
@@ -143,6 +144,10 @@ struct SettingsView: View {
         }
         .tint(themeColor)
         .contentMargins(.horizontal,16)
+        .safeAreaInset(edge: .bottom) {
+            // Add extra space (e.g., 100 points)
+            Color.clear.frame(height: 100)
+        }
     }
 }
 
