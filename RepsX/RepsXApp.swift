@@ -15,10 +15,14 @@ struct RepsXApp: App {
     var body: some Scene {
         
         WindowGroup {
-            ContentView()
-                .globalKeyboardDoneButton()
-                .environment(ThemeManager(modelContext: modelContext))
-                
+            HostingControllerAdaptor(
+                rootView:
+                    ContentView()
+                // You can remove this now—inputAccessoryView covers it globally:
+                //.globalKeyboardDoneButton()
+                    .environment(ThemeManager(modelContext: modelContext))
+            )
+            
         }
         .modelContainer(for: [
             Workout.self,
