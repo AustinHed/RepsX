@@ -19,7 +19,7 @@ struct WorkoutHistoryRow: View {
             contentStack
         }
         .background(Color.white)
-        .cornerRadius(16)
+        .cornerRadius(10)
     }
 }
 

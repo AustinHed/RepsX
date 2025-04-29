@@ -66,7 +66,7 @@ struct RoutineItem: View {
         .padding(15)
         .frame(width: .infinity, height: 140)
         .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 

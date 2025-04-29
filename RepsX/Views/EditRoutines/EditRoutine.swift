@@ -28,10 +28,13 @@ struct EditRoutine: View {
     private var routineViewModel: RoutineViewModel {
         RoutineViewModel(modelContext: modelContext)
     }
-    
+    private var exerciseInRoutineViewModel: ExerciseInRoutineViewModel {
+        ExerciseInRoutineViewModel(modelContext: modelContext)
+    }
     
     //Add Exercise
     @State private var isSelectingExercise: Bool = false
+    @State private var isReordering: Bool = false
     
     var body: some View {
         List {
@@ -49,7 +52,6 @@ struct EditRoutine: View {
                 .foregroundStyle(themeColor)
                 
             }
-            
             //name
             nameSection(routine: routine, routineViewModel: routineViewModel)
             
@@ -84,7 +86,7 @@ struct EditRoutine: View {
                     
                     //reorder exercises
                     Button {
-                        //reorder
+                        isReordering.toggle()
                     } label: {
                         HStack{
                             Text("Reorder")
@@ -130,19 +132,29 @@ struct EditRoutine: View {
                 )
             }
         }
+        .sheet(isPresented: $isReordering) {
+           ReorderExercisesInRoutineView(
+                routine: routine,
+                exerciseInRoutineViewModel:exerciseInRoutineViewModel
+            )
+        }
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
             CustomBackground(themeColor: themeColor)
         )
-        
         .tint(themeColor)
+        .safeAreaInset(edge: .bottom) {
+            // Add extra space (e.g., 100 points)
+            Color.clear.frame(height: 100)
+        }
     }
 }
 
-//MARK: edit button
+//MARK: Reorder
 extension EditRoutine {
-    //TODO: Edit routines
+    //TODO: Reorder
+    
 }
 
 //MARK: Name
@@ -190,7 +202,7 @@ extension EditRoutine {
         }
             .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
         ){
-            ForEach(routine.exercises, id: \.self) { exercise in
+            ForEach(routine.exercises.sorted {$0.order < $1.order}, id: \.self) { exercise in
                 NavigationLink(value: exercise) {
                     VStack(alignment:.leading){
                         Text(exercise.exerciseName)

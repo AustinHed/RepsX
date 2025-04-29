@@ -93,7 +93,7 @@ struct WorkoutHistoryView: View {
 
                                 }
                                 .swipeMinimumDistance(25)
-                                .swipeActionCornerRadius(16)
+                                .swipeActionCornerRadius(10)
                                 .padding(.horizontal, 16)
                             }
                         }
@@ -159,7 +159,7 @@ extension WorkoutHistoryView {
             
             WorkoutHistoryCalendarView(workouts: workouts)
                 .background(Color.white)
-                .cornerRadius(16)
+                .cornerRadius(10)
                 .padding(.horizontal)
         }
         
@@ -329,7 +329,7 @@ extension WorkoutHistoryView {
                     .padding(.bottom,20)
                 }
                 .background(Color.white)
-                .cornerRadius(16)
+                .cornerRadius(10)
                 .padding(.horizontal)
             } else {
                 HStack{
@@ -345,7 +345,7 @@ extension WorkoutHistoryView {
                 .padding(.bottom, 10)
                 .padding(.horizontal)
                 .background(Color.white)
-                .cornerRadius(16)
+                .cornerRadius(10)
                 .padding(.horizontal)
                 
             }
@@ -366,7 +366,7 @@ extension WorkoutHistoryView {
             editNewWorkout = true
         } label: {
             ZStack{
-                RoundedRectangle(cornerRadius: 16)
+                RoundedRectangle(cornerRadius: 10)
                     .foregroundStyle(.white)
                     .frame(height: 45)
                     .padding(.horizontal)

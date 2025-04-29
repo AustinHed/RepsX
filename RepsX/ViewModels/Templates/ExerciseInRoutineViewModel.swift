@@ -19,7 +19,8 @@ class ExerciseInRoutineViewModel {
     
     //MARK: Create new
     func addExerciseInRoutine(routine: Routine, exercise: ExerciseTemplate, setCount: Int = 3) {
-        let newExerciseInRoutine = ExerciseInRoutine(exerciseTemplate: exercise, setCount: setCount)
+        let order = routine.exercises.count
+        let newExerciseInRoutine = ExerciseInRoutine(order: order, exerciseTemplate: exercise, setCount: setCount)
         modelContext.insert(newExerciseInRoutine)
         save()
     }
@@ -31,7 +32,7 @@ class ExerciseInRoutineViewModel {
     }
     
     //MARK: Update
-    func updateExerciseInRoutine(_ exerciseInRoutine: ExerciseInRoutine, newSetCount: Int? = nil, newExerciseTemplate: ExerciseTemplate? = nil) {
+    func updateExerciseInRoutine(_ exerciseInRoutine: ExerciseInRoutine, newSetCount: Int? = nil, newExerciseTemplate: ExerciseTemplate? = nil, newOrder: Int? = nil) {
         if let newSetCount = newSetCount {
             exerciseInRoutine.setCount = newSetCount
         }
@@ -39,6 +40,10 @@ class ExerciseInRoutineViewModel {
         //replace the exercise template
         if let newExerciseTemplate = newExerciseTemplate {
             exerciseInRoutine.exerciseTemplate = newExerciseTemplate
+        }
+        //reorder
+        if let newOrder = newOrder {
+            exerciseInRoutine.order = newOrder
         }
         
         save()

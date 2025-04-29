@@ -9,10 +9,14 @@ import SwiftUI
 import SwiftData
 import Foundation
 
+//this is an instance of an Exercise template stored in a routine
+
 @Model
 class ExerciseInRoutine: Identifiable {
     // Standard UUID.
     var id: UUID
+    
+    var order: Int
     
     // The relationship to the ExerciseTemplate.
     var exerciseTemplate: ExerciseTemplate?
@@ -38,9 +42,11 @@ class ExerciseInRoutine: Identifiable {
     var routine: Routine?
     
     init(id: UUID = UUID(),
+         order: Int = 0,
          exerciseTemplate: ExerciseTemplate?,
          setCount: Int
     ) {
+        self.order = order
         self.id = id
         self.exerciseTemplate = exerciseTemplate
         self.setCount = setCount
