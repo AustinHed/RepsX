@@ -12,8 +12,12 @@ struct RoutineItem: View {
     
     let routine: Routine
     
-    //theme color
-    //@Environment(\.themeColor) var themeColor
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     //the maximum number of items to show
     let maxDisplayCount = 3
@@ -85,7 +89,7 @@ struct RoutineItem: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
-            CustomBackground(themeColor: Color.blue)
+            CustomBackground(primaryColor: Color.blue)
                 .edgesIgnoringSafeArea(.all)
         )
         

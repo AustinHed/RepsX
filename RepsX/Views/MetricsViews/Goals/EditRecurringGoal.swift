@@ -13,12 +13,18 @@ struct EditRecurringGoal: View {
     
     @Query(sort: \Workout.startTime, order: .reverse) var workouts: [Workout]
     
-    @Environment(\.themeColor) var themeColor
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     
     private var consistencyGoalViewModel: ConsistencyGoalViewModel {
         ConsistencyGoalViewModel(modelContext: modelContext)
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     let goal:ConsistencyGoal
@@ -84,7 +90,7 @@ struct EditRecurringGoal: View {
         .navigationTitle("Edit Goal")
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
         .safeAreaInset(edge: .bottom) {
             // Add extra space (e.g., 100 points)

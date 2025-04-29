@@ -21,7 +21,6 @@ struct AddNewExerciseTemplateView: View {
     
     //environment
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.themeColor) var themeColor
     @Environment(\.dismiss) private var dismiss
     
     // View Models (if needed)
@@ -30,6 +29,13 @@ struct AddNewExerciseTemplateView: View {
     }
     private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     // State for the template
@@ -63,7 +69,7 @@ struct AddNewExerciseTemplateView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
                 }
                 
                 //done button
@@ -79,7 +85,7 @@ struct AddNewExerciseTemplateView: View {
                         }
                     }
                     .disabled(templateName.isEmpty || selectedCategory == nil)
-                    .foregroundStyle((templateName.isEmpty || selectedCategory == nil) ? Color.gray : themeColor)
+                    .foregroundStyle((templateName.isEmpty || selectedCategory == nil) ? Color.gray : primaryColor)
                 }
             }
             //MARK: On Appear
@@ -88,7 +94,7 @@ struct AddNewExerciseTemplateView: View {
                 if selectedCategory == nil {
                     selectedCategory = category
                 }
-                print("\(themeColor)")
+                print("\(primaryColor)")
             }
             //MARK: Sheets
             //category picker
@@ -102,9 +108,9 @@ struct AddNewExerciseTemplateView: View {
             //MARK: Background
             .scrollContentBackground(.hidden)
             .background(
-                CustomBackground(themeColor: themeColor)
+                CustomBackground(primaryColor: primaryColor)
             )
-            .tint(themeColor)
+            .tint(primaryColor)
         }
 
     }
@@ -210,7 +216,7 @@ extension AddNewExerciseTemplateView {
             //MARK: Background
             .scrollContentBackground(.hidden)
             .background(
-                CustomBackground(themeColor: themeColor)
+                CustomBackground(primaryColor: primaryColor)
             )
         }
         .environment(\.modelContext, modelContext)
@@ -294,7 +300,7 @@ extension AddNewExerciseTemplateView {
             //MARK: Background
             .scrollContentBackground(.hidden)
             .background(
-                CustomBackground(themeColor: themeColor)
+                CustomBackground(primaryColor: primaryColor)
             )
         }
     }

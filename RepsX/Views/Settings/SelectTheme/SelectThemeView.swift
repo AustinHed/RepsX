@@ -77,7 +77,7 @@ struct SelectThemeView: View {
             //Background
             .scrollContentBackground(.hidden)
             .background(
-                CustomBackground(themeColor: userThemeViewModel.primaryColor)
+                CustomBackground(primaryColor: userThemeViewModel.primaryColor)
             )
             .safeAreaInset(edge: .bottom) {
                 // Add extra space (e.g., 100 points)

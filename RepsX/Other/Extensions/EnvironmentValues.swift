@@ -7,14 +7,17 @@
 
 import SwiftUI
 
-private struct ThemeColorKey: EnvironmentKey {
-    static let defaultValue: Color = .blue  // A sensible default
+//MARK: Newer
+struct ThemeModelKey: EnvironmentKey {
+    static let defaultValue = UserTheme(
+        name: "Default",
+        lightModeHex: "#FF5733",
+        darkModeHex: "#C0392B"
+    )
 }
-
-//allows storage of a color in the environment
 extension EnvironmentValues {
-    var themeColor: Color {
-        get { self[ThemeColorKey.self] }
-        set { self[ThemeColorKey.self] = newValue }
+    var themeModel: UserTheme {
+        get { self[ThemeModelKey.self] }
+        set { self[ThemeModelKey.self] = newValue }
     }
 }

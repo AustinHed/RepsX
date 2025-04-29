@@ -26,11 +26,17 @@ struct ChooseNewCategoryView: View {
     //environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.themeColor) var themeColor
     
     //view model
     private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     var exerciseTemplate:ExerciseTemplate
@@ -66,7 +72,7 @@ struct ChooseNewCategoryView: View {
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
     }
     
@@ -80,7 +86,7 @@ struct ChooseNewCategoryView: View {
                     .foregroundStyle(.black)
                 Spacer()
                 Image(systemName: "checkmark")
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
             }
         } else {
             Text(category.name)

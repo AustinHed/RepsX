@@ -21,7 +21,12 @@ struct SelectAppIconView: View {
     
     //Current app icon
     @AppStorage("activeAppIcon") var activeAppIcon: String = "iconDumbellsAnime"
-    @Environment(\.themeColor) var themeColor
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     //initialize the icons
     let appIconOptions: [AppIcon] = [
@@ -74,7 +79,7 @@ struct SelectAppIconView: View {
             
         }
         .frame(width: 400)
-        .background(CustomBackground(themeColor: themeColor))
+        .background(CustomBackground(primaryColor: primaryColor))
         .navigationTitle("App Icons")
     }
     

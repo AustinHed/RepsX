@@ -22,7 +22,13 @@ struct GeneralHistoryView: View {
         return formatter
     }()
     
-    @Environment(\.themeColor) var themeColor
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
+    
     var body: some View {
         // List format below the chart.
         // You can use List or a ScrollView with LazyVStack for custom styling.
@@ -33,7 +39,7 @@ struct GeneralHistoryView: View {
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
     }
 }

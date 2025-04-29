@@ -18,7 +18,6 @@ struct NewGoalView: View {
     
     //environment
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.themeColor) var themeColor
     @Environment(\.dismiss) var dismiss
     
     //view models
@@ -27,6 +26,13 @@ struct NewGoalView: View {
     }
     private var targetGoalViewModel: TargetGoalViewModel{
         TargetGoalViewModel(modelContext: modelContext)
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     //the new goal properties
@@ -94,18 +100,18 @@ struct NewGoalView: View {
                     }
                 )
             }
-            .tint(themeColor)
+            .tint(primaryColor)
         }
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
         .safeAreaInset(edge: .bottom) {
             // Add extra space (e.g., 100 points)
             Color.clear.frame(height: 100)
         }
-        .tint(themeColor)
+        .tint(primaryColor)
     }
 }
 //MARK: Name entry
@@ -416,9 +422,15 @@ extension NewGoalView {
 //MARK: Time picker sheet
 struct GoalTimePickerSheet: View {
     @Environment(\.presentationMode) var presentationMode
-    @Environment(\.themeColor) var themeColor: Color
     @Environment(\.dismiss) var dismiss
     @Binding var startDate: Date
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     var body: some View {
         NavigationStack{
@@ -435,13 +447,13 @@ struct GoalTimePickerSheet: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
                         dismiss()
                     }
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
                 }
             }
         }

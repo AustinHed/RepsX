@@ -10,13 +10,19 @@ import SwiftUI
 struct ReorderExercisesInRoutineView: View {
     //dismiss
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.themeColor) var themeColor
     
     //routine to edit
     var routine: Routine
     
     //vm
     let exerciseInRoutineViewModel: ExerciseInRoutineViewModel
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     @State private var orderedExercises: [ExerciseInRoutine] = []
     
@@ -38,7 +44,7 @@ struct ReorderExercisesInRoutineView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
                 }
                 // Done button on the right
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -46,13 +52,13 @@ struct ReorderExercisesInRoutineView: View {
                         updateExerciseOrder()
                         dismiss()
                     }
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
                 }
             }
             //MARK: Background
             .scrollContentBackground(.hidden)
             .background(
-                CustomBackground(themeColor: themeColor)
+                CustomBackground(primaryColor: primaryColor)
             )
             
         }

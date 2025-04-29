@@ -21,7 +21,12 @@ enum SettingsDestination: Hashable {
 struct SettingsView: View {
     
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.themeColor) var themeColor
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     var body: some View {
         List {
@@ -108,7 +113,7 @@ struct SettingsView: View {
         }
         //MARK: Background
         .scrollContentBackground(.hidden)
-        .background(CustomBackground(themeColor: themeColor))
+        .background(CustomBackground(primaryColor: primaryColor))
         
         //MARK: Navigation Destinations
         .navigationDestination(for: SettingsDestination.self) { destination in
@@ -142,7 +147,7 @@ struct SettingsView: View {
         .onAppear {
             initializeDefaultThemes(in: modelContext)
         }
-        .tint(themeColor)
+        .tint(primaryColor)
         //.contentMargins(.horizontal,16)
         .safeAreaInset(edge: .bottom) {
             // Add extra space (e.g., 100 points)

@@ -15,11 +15,17 @@ struct ChooseNewModalityView: View {
     
     //environment
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.themeColor) var themeColor
     @Environment(\.dismiss) private var dismiss
     
     private var exerciseTemplateViewModel:ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
         
     
@@ -69,7 +75,7 @@ struct ChooseNewModalityView: View {
             //MARK: Background
             .scrollContentBackground(.hidden)
             .background(
-                CustomBackground(themeColor: themeColor)
+                CustomBackground(primaryColor: primaryColor)
             )
         
     }
@@ -83,7 +89,7 @@ struct ChooseNewModalityView: View {
                     .foregroundStyle(.black)
                 Spacer()
                 Image(systemName: "checkmark")
-                    .foregroundColor(themeColor)
+                    .foregroundColor(primaryColor)
             }
         } else {
             Text(modality.rawValue.capitalizingFirstLetter())

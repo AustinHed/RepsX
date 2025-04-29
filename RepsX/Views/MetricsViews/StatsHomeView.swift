@@ -39,7 +39,6 @@ struct StatsHomeView: View {
     
     //environment
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.themeColor) var themeColor
     
     //View Models
     private var consistencyGoalViewModel: ConsistencyGoalViewModel {
@@ -48,6 +47,13 @@ struct StatsHomeView: View {
     
     private var targetGoalViewModel: TargetGoalViewModel {
         TargetGoalViewModel(modelContext: modelContext)
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     var body: some View {
@@ -87,7 +93,7 @@ struct StatsHomeView: View {
                         Text("Add new goal")
                         Spacer()
                     }
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
                 }
             }
             //specific stats
@@ -183,10 +189,9 @@ struct StatsHomeView: View {
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
-        .tint(themeColor)
-        //.contentMargins(.horizontal,16)
+        .tint(primaryColor)
         
     }
 }

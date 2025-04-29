@@ -29,7 +29,12 @@ struct WorkoutHistoryView: View {
     
     //environment
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.themeColor) var themeColor
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     //toggle to edit workouts, existing or new
     @State private var editNewWorkout: Bool = false
@@ -54,7 +59,7 @@ struct WorkoutHistoryView: View {
     var body: some View {
         NavigationStack {
             ZStack{
-                CustomBackground(themeColor: themeColor)
+                CustomBackground(primaryColor: primaryColor)
                 ScrollView{ //was 12
                     LazyVStack(alignment: .leading, spacing: 12) {
                         
@@ -258,7 +263,7 @@ extension WorkoutHistoryView {
             ForEach(Array(overallCategoryDistribution.enumerated()), id: \.element.category) { (index, entry) in
                 let fraction = totalEntries > 1 ? Double(index) / Double(totalEntries - 1) : 0.0
                 let opacity = 1.0 - fraction * 0.6
-                let blended = blendedColor(from:themeColor, to: .gray, fraction: fraction)
+                let blended = blendedColor(from:primaryColor, to: .gray, fraction: fraction)
                 
                 HStack{
                     Circle()
@@ -282,7 +287,7 @@ extension WorkoutHistoryView {
                 //determine the order, and the color based on the order
                 let fraction = totalEntries > 1 ? Double(index) / Double(totalEntries - 1) : 0.0
                 let opacity = 1.0 - fraction * 0.6
-                let blended = blendedColor(from:themeColor, to: .gray, fraction: fraction)
+                let blended = blendedColor(from:primaryColor, to: .gray, fraction: fraction)
                 SectorMark(
                     angle: .value("Count", entry.count),
                     innerRadius: .ratio(0.6), // Use a ratio value to get a donut look
@@ -372,7 +377,7 @@ extension WorkoutHistoryView {
                     .padding(.horizontal)
                 
                 Text("Start your first workout")
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
             }
         }
     }
@@ -416,7 +421,7 @@ extension WorkoutHistoryView {
             } label: {
                 Image(systemName: "plus.circle")
             }
-            .foregroundStyle(themeColor)
+            .foregroundStyle(primaryColor)
         }
     }
 }
@@ -440,7 +445,7 @@ extension WorkoutHistoryView {
                                     editNewWorkout = false
                                     selectedWorkout = nil
                                 }
-                                .foregroundStyle(themeColor)
+                                .foregroundStyle(primaryColor)
                             }
                         }
                 }
@@ -462,7 +467,7 @@ extension WorkoutHistoryView {
                             }
                             selectedWorkout = nil
                         }
-                        .foregroundStyle(themeColor)
+                        .foregroundStyle(primaryColor)
                     }
                 }
         }
@@ -480,7 +485,7 @@ extension WorkoutHistoryView {
                                     workoutViewModel.updateWorkout(workout, newEndTime: Date())
                                     coordinator.showEditWorkout.toggle()
                                 }
-                                .foregroundStyle(themeColor)
+                                .foregroundStyle(primaryColor)
                             }
                         }
                 }

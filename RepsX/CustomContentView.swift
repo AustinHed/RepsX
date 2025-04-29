@@ -136,7 +136,7 @@ struct ContentView: View {
         .ignoresSafeArea(edges: .bottom)
         .toolbar(.hidden)
         //storing the color in the env
-        .environment(\.themeColor, Color(hexString:selectedThemeString))
+        .environment(\.themeModel, selectedTheme.first ?? ThemeModelKey.defaultValue)
         .onAppear{
             //create default Categories and Exercise Templates
             initializeDefaultDataIfNeeded(context: modelContext)

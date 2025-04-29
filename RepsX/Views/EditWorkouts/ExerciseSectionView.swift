@@ -10,7 +10,6 @@ import SwiftUI
 struct ExerciseSectionView: View {
     
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.themeColor) var themeColor
     
     //initialized Exercise
     var exercise: Exercise
@@ -23,6 +22,13 @@ struct ExerciseSectionView: View {
     //viewModel
     private var exerciseViewModel: ExerciseViewModel {
         ExerciseViewModel(modelContext: modelContext)
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     //focus states
@@ -39,7 +45,7 @@ struct ExerciseSectionView: View {
             ///display sets in order of set.order
             HStack  {
                 //number
-                exerciseNumberField(index: index, set: set, primaryColor: themeColor)
+                exerciseNumberField(index: index, set: set, primaryColor: primaryColor)
                 
                 //values to display, based on modality
                 ///ex. weight x reps, distance x time
@@ -78,7 +84,7 @@ struct ExerciseSectionView: View {
         }
 
         //add button
-        addButton(primaryColor: themeColor)
+        addButton(primaryColor: primaryColor)
     }
     
 }

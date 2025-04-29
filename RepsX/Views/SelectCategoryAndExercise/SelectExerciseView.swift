@@ -44,7 +44,12 @@ struct SelectExerciseView: View {
     }
     
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.themeColor) var themeColor
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     var body: some View {
         
@@ -133,7 +138,7 @@ struct SelectExerciseView: View {
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
     }
 }

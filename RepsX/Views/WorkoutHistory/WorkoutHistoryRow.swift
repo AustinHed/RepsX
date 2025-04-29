@@ -11,8 +11,12 @@ struct WorkoutHistoryRow: View {
     var workout: Workout
     @State private var isExpanded: Bool = false  // Default is contracted
 
-    //theme color
-    @Environment(\.themeColor) var themeColor
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -59,7 +63,7 @@ extension WorkoutHistoryRow {
             } label: {
                 Image(systemName: "chevron.down")
                     .rotationEffect(.degrees(isExpanded ? 180 : 0))
-                    .foregroundColor(themeColor)
+                    .foregroundColor(primaryColor)
             }
             .buttonStyle(.plain)
         }

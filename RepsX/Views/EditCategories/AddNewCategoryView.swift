@@ -11,7 +11,6 @@ struct AddNewCategoryView: View {
     
     //environment
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.themeColor) var themeColor
     @Environment(\.dismiss) private var dismiss
     
     //view model
@@ -19,6 +18,13 @@ struct AddNewCategoryView: View {
         CategoryViewModel(modelContext: modelContext)
     }
     
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
+
     //name to edit
     @State private var newName:String = ""
     
@@ -49,7 +55,7 @@ struct AddNewCategoryView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
                 }
                 //save button
                 ToolbarItem(placement: .topBarTrailing) {
@@ -57,14 +63,14 @@ struct AddNewCategoryView: View {
                         categoryViewModel.addCategory(name: newName)
                         dismiss()
                     }
-                    .foregroundStyle(newName.isEmpty ? Color.gray: themeColor)
+                    .foregroundStyle(newName.isEmpty ? Color.gray: primaryColor)
                     .disabled(Bool(newName.isEmpty))
                 }
             }
             //MARK: Background
             .scrollContentBackground(.hidden)
             .background(
-                CustomBackground(themeColor: themeColor)
+                CustomBackground(primaryColor: primaryColor)
             )
         }
     }

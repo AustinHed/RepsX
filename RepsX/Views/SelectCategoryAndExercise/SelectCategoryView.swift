@@ -34,7 +34,6 @@ struct SelectCategoryView: View {
     //Environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.themeColor) var themeColor
     
     //View Models
     private var categoryViewModel: CategoryViewModel {
@@ -42,6 +41,13 @@ struct SelectCategoryView: View {
     }
     private var exerciseTemplateViewModel: ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     //toggles
@@ -144,7 +150,7 @@ struct SelectCategoryView: View {
             //MARK: Background
             .scrollContentBackground(.hidden)
             .background(
-                CustomBackground(themeColor: themeColor)
+                CustomBackground(primaryColor: primaryColor)
             )
         }
         

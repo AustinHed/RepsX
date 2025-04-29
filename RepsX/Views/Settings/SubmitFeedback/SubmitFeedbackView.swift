@@ -22,7 +22,12 @@ enum FeedbackCategory: String, CaseIterable, Codable {
 struct StarRatingSelector: View {
     // A rating of 0 means "NA", 1-5 are star ratings.
     @Binding var rating: Int
-    @Environment(\.themeColor) var themeColor
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     var body: some View {
         HStack(spacing: 16) {
@@ -37,7 +42,7 @@ struct StarRatingSelector: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 20, height: 20)
-                        .foregroundColor(themeColor)
+                        .foregroundColor(primaryColor)
                 }
                 .buttonStyle(PlainButtonStyle())
             }
@@ -48,8 +53,12 @@ struct StarRatingSelector: View {
 }
 
 struct SubmitFeedbackView: View {
-    //Environment
-    @Environment(\.themeColor) var themeColor
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     @Environment(\.dismiss) var dismiss
     
     //Ratings
@@ -101,8 +110,8 @@ struct SubmitFeedbackView: View {
             )
         }
         .scrollContentBackground(.hidden)
-        .background(CustomBackground(themeColor: themeColor))
-        .tint(themeColor)
+        .background(CustomBackground(primaryColor: primaryColor))
+        .tint(primaryColor)
     }
     
     

@@ -15,7 +15,6 @@ struct EditCategoryView: View {
     
     //model context
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.themeColor) var themeColor
     @Environment(\.dismiss) private var dismiss
     
     //view models
@@ -31,6 +30,13 @@ struct EditCategoryView: View {
     }
     var customExercises: [ExerciseTemplate] {
         exercises.filter { !$0.standard }
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     
@@ -110,7 +116,7 @@ struct EditCategoryView: View {
                 Button("Back") {
                     dismiss()
                 }
-                .foregroundStyle(themeColor)
+                .foregroundStyle(primaryColor)
             }
         }
         //MARK: On Appear
@@ -128,7 +134,7 @@ struct EditCategoryView: View {
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
         //MARK: Other
         .navigationBarBackButtonHidden(true)

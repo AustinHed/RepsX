@@ -8,8 +8,14 @@ where
   T.AllCases: RandomAccessCollection
 {
   @Binding var selection: T
-  @Environment(\.themeColor) var themeColor
   @Namespace private var pickerAnimation
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
 
   /// Called for each case to get the String to display.
   let label: (T) -> String
@@ -33,7 +39,7 @@ where
                 ZStack {
                   if selection == option {
                     RoundedRectangle(cornerRadius: 30)
-                      .fill(themeColor.opacity(0.3))
+                      .fill(primaryColor.opacity(0.3))
                       .matchedGeometryEffect(id: "pickerBG", in: pickerAnimation)
                   }
                 }

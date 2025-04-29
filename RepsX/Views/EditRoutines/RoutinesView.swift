@@ -14,12 +14,18 @@ struct RoutinesView: View {
     //Fetch all existing routines
     @Query(sort: \Routine.name, order: .forward) var routines: [Routine]
     
-    @Environment(\.themeColor) var themeColor
     @Environment(\.modelContext) private var modelContext
     
     //routines view model
     private var routineViewModel:RoutineViewModel {
         RoutineViewModel(modelContext: modelContext)
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     //new routine AND toggle to invoke navigation link
@@ -103,7 +109,7 @@ struct RoutinesView: View {
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
         .background(
             NavigationLink(
@@ -121,7 +127,7 @@ struct RoutinesView: View {
             )
             .hidden()
         )
-        .tint(themeColor)
+        .tint(primaryColor)
         .safeAreaInset(edge: .bottom) {
             // Add extra space (e.g., 100 points)
             Color.clear.frame(height: 100)
@@ -178,7 +184,7 @@ extension RoutinesView {
                 Spacer()
                 Image(systemName:"plus.circle.fill")
                     .font(.system(size: 60))
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
                     .frame(maxWidth: .infinity)
                 Spacer()
             }

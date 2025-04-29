@@ -23,10 +23,7 @@ struct EditTargetGoalView: View {
         _newPrimaryTarget = State(initialValue: goal.targetPrimaryValue)
         _newSecondaryTarget = State(initialValue: goal.targetSecondaryValue)
     }
-    
-    
-    
-    @Environment(\.themeColor) var themeColor
+        
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     
@@ -43,6 +40,12 @@ struct EditTargetGoalView: View {
     //viewModel
     private var targetGoalViewModel:TargetGoalViewModel {
         TargetGoalViewModel(modelContext: modelContext)
+    }
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     
@@ -115,7 +118,7 @@ struct EditTargetGoalView: View {
             //MARK: Background
             .scrollContentBackground(.hidden)
             .background(
-                CustomBackground(themeColor: themeColor)
+                CustomBackground(primaryColor: primaryColor)
             )
             //MARK: Toolbar
             .toolbar {
@@ -314,7 +317,7 @@ extension EditTargetGoalView {
                     width: MarkDimension(floatLiteral: markerSize-1)
                 )
                 .cornerRadius(markerSize / 2) // Capsule-like appearance.
-                .foregroundStyle(themeColor.opacity(0.4))
+                .foregroundStyle(primaryColor.opacity(0.4))
                 .opacity(selectedWeightDataPoint == nil || selectedWeightDataPoint?.date == point.date ? 1 : 0.3)
             }
             
@@ -325,14 +328,14 @@ extension EditTargetGoalView {
                     y: .value("Median Weight", point.value)
                 )
                 .interpolationMethod(.catmullRom)
-                .foregroundStyle(themeColor.opacity(0.8))
+                .foregroundStyle(primaryColor.opacity(0.8))
                 .opacity(selectedWeightDataPoint == nil ? 1 : 0.3)
                 .lineStyle(StrokeStyle(lineWidth: 4))
                 
                 if let selected = selectedWeightDataPoint {
                     RuleMark(x: .value("Date", selected.date, unit: .day))
                         .lineStyle(StrokeStyle(lineWidth: 2, dash: []))
-                        .foregroundStyle(themeColor)
+                        .foregroundStyle(primaryColor)
                 }
             }
             
@@ -345,7 +348,7 @@ extension EditTargetGoalView {
                 .symbol {
                     ZStack {
                         Circle()
-                            .fill(themeColor)
+                            .fill(primaryColor)
                             .frame(width: markerSize, height: markerSize)
                         Circle()
                             .stroke(Color.white, lineWidth: 2)
@@ -429,7 +432,7 @@ extension EditTargetGoalView {
             if let selected = selectedSetsDataPoint {
                 RuleMark(x: .value("Date", selected.date, unit: .day))
                     .lineStyle(StrokeStyle(lineWidth: 2, dash: []))
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
             }
         }
         .interactiveChartOverlay(data: setChartData, selectedDataPoint: $selectedSetsDataPoint) { $0.date }
@@ -515,7 +518,7 @@ extension EditTargetGoalView {
             if let selected = selectedVolumeDataPoint {
                 RuleMark(x: .value("Date", selected.date, unit: .day))
                     .lineStyle(StrokeStyle(lineWidth: 2, dash: []))
-                    .foregroundStyle(themeColor)
+                    .foregroundStyle(primaryColor)
             }
         }
         .interactiveChartOverlay(data: volumeChartData, selectedDataPoint: $selectedVolumeDataPoint) { $0.date }

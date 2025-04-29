@@ -35,8 +35,13 @@ struct ExerciseHistoryView: View {
         .sorted { $0.workoutDate > $1.workoutDate }
     }
     
-    @Environment(\.themeColor) var themeColor
-
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
+    
     var body: some View {
         List(setHistory) { record in
                 rowView(for: record)
@@ -46,7 +51,7 @@ struct ExerciseHistoryView: View {
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
     }
 }

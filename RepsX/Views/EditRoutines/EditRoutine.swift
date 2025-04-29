@@ -19,7 +19,6 @@ struct EditRoutine: View {
     //Environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.themeColor) var themeColor
     
     //ViewModels
     private var workoutViewModel: WorkoutViewModel {
@@ -30,6 +29,13 @@ struct EditRoutine: View {
     }
     private var exerciseInRoutineViewModel: ExerciseInRoutineViewModel {
         ExerciseInRoutineViewModel(modelContext: modelContext)
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     //Add Exercise
@@ -49,7 +55,7 @@ struct EditRoutine: View {
                     selectedTab = .history
                     dismiss()
                 }
-                .foregroundStyle(themeColor)
+                .foregroundStyle(primaryColor)
                 
             }
             //name
@@ -112,7 +118,7 @@ struct EditRoutine: View {
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
-                .foregroundStyle(themeColor)
+                .foregroundStyle(primaryColor)
                 
             }
         }
@@ -141,9 +147,9 @@ struct EditRoutine: View {
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
-        .tint(themeColor)
+        .tint(primaryColor)
         .safeAreaInset(edge: .bottom) {
             // Add extra space (e.g., 100 points)
             Color.clear.frame(height: 100)
@@ -227,7 +233,7 @@ extension EditRoutine {
             } label: {
                 Text("Add Exercise")
             }
-            .foregroundStyle(themeColor)
+            .foregroundStyle(primaryColor)
         }
     }
 }

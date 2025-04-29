@@ -18,9 +18,7 @@ struct ExpandableChartView<Content: View>: View {
     let content: Content
     //chart type (sets, reps, etc.)
     var chartType:ChartFilter
-    
-    @Environment(\.themeColor) var themeColor
-    
+        
     // State to track if the chart is expanded or collapsed.
     @State private var isExpanded = false
     
@@ -30,6 +28,13 @@ struct ExpandableChartView<Content: View>: View {
     // Heights for collapsed and expanded states.
     let collapsedHeight: CGFloat
     let expandedHeight: CGFloat
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
 
     
@@ -112,7 +117,7 @@ struct ExpandableChartView<Content: View>: View {
                     Spacer()
                     Image(systemName: "chevron.down")
                         .rotationEffect(.degrees(isExpanded ? 180 : 0))
-                        .foregroundStyle(themeColor)
+                        .foregroundStyle(primaryColor)
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 10)

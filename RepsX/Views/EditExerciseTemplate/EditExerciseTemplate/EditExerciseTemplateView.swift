@@ -15,15 +15,18 @@ struct EditExerciseTemplateView: View {
     
     //environment
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.themeColor) var themeColor
     @Environment(\.dismiss) private var dismiss
     
     private var exerciseTemplateViewModel:ExerciseTemplateViewModel {
         ExerciseTemplateViewModel(modelContext: modelContext)
     }
     
-    //dismiss
-    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     var body: some View {
             List{
@@ -102,7 +105,7 @@ struct EditExerciseTemplateView: View {
             //MARK: Background
             .scrollContentBackground(.hidden)
             .background(
-                CustomBackground(themeColor: themeColor)
+                CustomBackground(primaryColor: primaryColor)
             )
         
     }

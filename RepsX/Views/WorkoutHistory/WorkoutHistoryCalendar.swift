@@ -96,8 +96,12 @@ struct WorkoutHistoryCalendarView: View {
         }
     }
     
-    //theme color
-    @Environment(\.themeColor) var themeColor
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     var body: some View {
         VStack(spacing: 10) {
@@ -120,7 +124,7 @@ struct WorkoutHistoryCalendarView: View {
                 }) {
                     Image(systemName: "chevron.left")
                         .font(.title3)
-                        .foregroundStyle(themeColor)
+                        .foregroundStyle(primaryColor)
                 }
                 (Spacer(minLength: 40))
                 
@@ -140,7 +144,7 @@ struct WorkoutHistoryCalendarView: View {
                 }) {
                     Image(systemName: "chevron.right")
                         .font(.title3)
-                        .foregroundStyle(themeColor)
+                        .foregroundStyle(primaryColor)
                 }
                 Spacer()
                 
@@ -160,7 +164,7 @@ struct WorkoutHistoryCalendarView: View {
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                         .font(.title3)
                         .padding(.leading, 16)
-                        .foregroundStyle(themeColor)
+                        .foregroundStyle(primaryColor)
                 }
             }
             .padding(.horizontal)
@@ -185,7 +189,7 @@ struct WorkoutHistoryCalendarView: View {
                             let textColor: Color = {
                                 if calendar.isDate(date, inSameDayAs: Date()) {
                                     //todays date
-                                    return themeColor
+                                    return primaryColor
                                 } else if isFuture {
                                     //future date
                                     return Color.gray
@@ -229,7 +233,7 @@ struct WorkoutHistoryCalendarView: View {
                         let textColor: Color = {
                             if calendar.isDate(date, inSameDayAs: Date()) {
                                 //todays date
-                                return themeColor
+                                return primaryColor
                             } else if isFuture {
                                 //future date
                                 return Color.gray

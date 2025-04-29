@@ -13,7 +13,6 @@ struct EditExerciseInRoutineView: View {
     
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.themeColor) var themeColor
     
     //the ExerciseInRoutine to edit
     @State var exerciseInRoutine: ExerciseInRoutine
@@ -23,6 +22,12 @@ struct EditExerciseInRoutineView: View {
         ExerciseInRoutineViewModel(modelContext: modelContext)
     }
     
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
+    }
     
     //replace exercise var
     @State var replaceExerciseInRoutine:Bool = false
@@ -55,7 +60,7 @@ struct EditExerciseInRoutineView: View {
                     //replace existing exerciseTemplate with selected exercise
                 } label: {
                     Text("Replace")
-                        .foregroundStyle(themeColor)
+                        .foregroundStyle(primaryColor)
                 }
                 
                 
@@ -90,7 +95,7 @@ struct EditExerciseInRoutineView: View {
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
         
     }

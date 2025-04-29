@@ -31,11 +31,17 @@ struct ListOfCategoriesView<Destination: View>: View {
     //environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.themeColor) var themeColor
     
     //View Model
     private var categoryViewModel: CategoryViewModel {
         CategoryViewModel(modelContext: modelContext)
+    }
+    
+    //theme
+    @Environment(\.themeModel) var theme
+    @Environment(\.colorScheme) var colorScheme
+    var primaryColor: Color {
+        return theme.color(for: colorScheme)
     }
     
     
@@ -115,7 +121,7 @@ struct ListOfCategoriesView<Destination: View>: View {
                 } label: {
                     Image(systemName:"plus.circle")
                 }
-                .foregroundStyle(themeColor)
+                .foregroundStyle(primaryColor)
                 
             }
         }
@@ -131,9 +137,9 @@ struct ListOfCategoriesView<Destination: View>: View {
         //MARK: Background
         .scrollContentBackground(.hidden)
         .background(
-            CustomBackground(themeColor: themeColor)
+            CustomBackground(primaryColor: primaryColor)
         )
-        .tint(themeColor)
+        .tint(primaryColor)
     }
 }
 
