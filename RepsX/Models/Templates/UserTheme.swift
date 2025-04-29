@@ -16,8 +16,8 @@ final class UserTheme {
     var name: String
     
     //the two colors for a given theme
-    var primaryHex: String
-    var secondaryHex: String
+    var lightModeHex: String
+    var darkModeHex: String
     
     //whether this is the current theme
     var isSelected: Bool
@@ -25,15 +25,21 @@ final class UserTheme {
     //init, which requires both colors
     init(id: UUID = UUID(),
          name: String,
-         primaryHex: String,
-         secondaryHex: String,
+         lightModeHex: String,
+         darkModeHex: String,
          isSelected: Bool = false
     )
     {
         self.id = id
         self.name = name
-        self.primaryHex = primaryHex
-        self.secondaryHex = secondaryHex
+        self.lightModeHex = lightModeHex
+        self.darkModeHex = darkModeHex
         self.isSelected = isSelected
+    }
+}
+
+extension UserTheme {
+    func color(for colorScheme: ColorScheme) -> Color {
+        Color(hexString: colorScheme == .dark ? darkModeHex : lightModeHex)
     }
 }

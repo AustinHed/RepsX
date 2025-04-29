@@ -62,7 +62,7 @@ struct ContentView: View {
         if selectedTheme.isEmpty {
             return "#FF5733"
         } else {
-            return selectedTheme.first!.primaryHex
+            return selectedTheme.first!.lightModeHex
         }
         
     }

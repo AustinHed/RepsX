@@ -16,8 +16,8 @@ struct SelectThemeView: View {
     
     var selectedTheme: UserTheme {
         selectedThemes.first ?? UserTheme(name: "Default Theme",
-                                          primaryHex: "#007AFF",
-                                          secondaryHex: "#8E8E93"
+                                          lightModeHex: "#007AFF",
+                                          darkModeHex: "#8E8E93"
         )
     }
     
@@ -42,7 +42,7 @@ struct SelectThemeView: View {
                                     Text(userTheme.name)
                                         .foregroundStyle(.black)
                                     Image(systemName: "checkmark")
-                                        .foregroundStyle(Color(hexString: userTheme.primaryHex))
+                                        .foregroundStyle(Color(hexString: userTheme.lightModeHex))
                                 }
                             } else {
                                 Text(userTheme.name)
@@ -52,8 +52,14 @@ struct SelectThemeView: View {
                             Spacer()
                             Circle()
                                 .frame(width: 20, height: 20)
-                                .foregroundStyle(Color(hexString: userTheme.primaryHex))
+                                .foregroundStyle(Color(hexString: userTheme.lightModeHex))
                                 .padding(.trailing, 5)
+                            
+                            Circle()
+                                .frame(width: 20, height: 20)
+                                .foregroundStyle(Color(hexString: userTheme.darkModeHex))
+                                .padding(.trailing, 5)
+                            
                         }
                     }
                 }

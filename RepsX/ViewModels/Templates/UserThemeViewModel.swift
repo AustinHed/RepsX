@@ -18,8 +18,8 @@ class UserThemeViewModel {
     }
     
     //add
-    func addUserTheme(name: String, primaryHex: String, secondaryHex: String) {
-        let newUserTheme = UserTheme(name: name, primaryHex: primaryHex, secondaryHex: secondaryHex)
+    func addUserTheme(name: String, lightModeHex: String, darkModeHex: String) {
+        let newUserTheme = UserTheme(name: name, lightModeHex: lightModeHex, darkModeHex: darkModeHex)
         modelContext.insert(newUserTheme)
         save()
     }
@@ -65,8 +65,8 @@ class UserThemeViewModel {
     var selectedTheme: UserTheme {
         fetchThemes().first(where: { $0.isSelected }) ?? UserTheme(
             name: "Default Theme",
-            primaryHex: "#007AFF",
-            secondaryHex: "#8E8E93",
+            lightModeHex: "#007AFF",
+            darkModeHex: "#8E8E93",
             isSelected: true
         )
     }
@@ -74,21 +74,21 @@ class UserThemeViewModel {
     var primaryColor: Color {
         let theme = fetchThemes().first(where: { $0.isSelected }) ?? UserTheme(
             name: "Default Theme",
-            primaryHex: "#007AFF",
-            secondaryHex: "#8E8E93",
+            lightModeHex: "#007AFF",
+            darkModeHex: "#8E8E93",
             isSelected: true
         )
-        return Color(hexString: theme.primaryHex)
+        return Color(hexString: theme.lightModeHex)
     }
     
     var secondaryColor: Color {
         let theme = fetchThemes().first(where: { $0.isSelected }) ?? UserTheme(
             name: "Default Theme",
-            primaryHex: "#007AFF",
-            secondaryHex: "#8E8E93",
+            lightModeHex: "#007AFF",
+            darkModeHex: "#8E8E93",
             isSelected: true
         )
-        return Color(hexString: theme.secondaryHex)
+        return Color(hexString: theme.darkModeHex)
     }
     
     //save
@@ -107,8 +107,8 @@ class UserThemeViewModel {
 final class ThemeManager {
     var userThemes: [UserTheme] = []
     var selectedTheme: UserTheme = UserTheme(name: "Default Theme",
-                                              primaryHex: "#007AFF", //#007AFF
-                                              secondaryHex: "#8E8E93") //#8E8E93
+                                              lightModeHex: "#007AFF", //#007AFF
+                                             darkModeHex: "#8E8E93") //#8E8E93
     var modelContext: ModelContext
 
     init(modelContext: ModelContext) {
@@ -118,12 +118,12 @@ final class ThemeManager {
     
     // Computed property for easier access to the primaryHex value
     var primaryHex: String {
-        selectedTheme.primaryHex
+        selectedTheme.lightModeHex
     }
     
     // Computed property for easier access to the secondaryHex value
     var secondaryHex: String {
-        selectedTheme.secondaryHex
+        selectedTheme.darkModeHex
     }
     
     func refreshThemes() {
