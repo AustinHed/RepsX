@@ -28,11 +28,14 @@ struct SelectThemeView: View {
     private var userThemeViewModel: UserThemeViewModel {
         UserThemeViewModel(modelContext: modelContext)
     }
+    
+    @State private var customColor: Color = .gray
+    @State private var showColorPicker: Bool = false
         
     var body: some View {
             List{
                 //theme options
-                ForEach(userThemes) { userTheme in
+                ForEach(userThemes.filter {$0.name != "Custom Theme"}) { userTheme in
                     Button {
                         userThemeViewModel.selectCurrentTheme(userTheme)
                     } label: {
@@ -64,17 +67,43 @@ struct SelectThemeView: View {
                     }
                 }
                 
+                //Custom theme
                 Section {
-                    Button {
-                        //no action yet - allow custom theme
-                    } label: {
-                        Text("Custom Theme")
+                    ForEach(userThemes.filter {$0.name == "Custom Theme"}) { userTheme in
+                        Button {
+                            userThemeViewModel.selectCurrentTheme(userTheme)
+                        } label: {
+                            HStack{
+                                if userTheme.isSelected {
+                                    HStack{
+                                        Text(userTheme.name)
+                                            .foregroundStyle(Color.primary)
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(Color(hexString: userTheme.lightModeHex))
+                                    }
+                                } else {
+                                    Text(userTheme.name)
+                                        .foregroundStyle(Color.primary)
+                                }
+                                
+                                Spacer()
+                                ColorPicker("", selection: $customColor, supportsOpacity: false)
+                                    .labelsHidden()
+                                    .onChange(of: customColor) { newColor in
+                                        userTheme.lightModeHex = newColor.toHex() ?? userTheme.lightModeHex
+                                        userTheme.darkModeHex = newColor.darkerVariantHex() ?? userTheme.darkModeHex
+                                        try? modelContext.save()
+                                    }
+                                    .onAppear {
+                                        customColor = Color(hexString: userTheme.lightModeHex)
+                                    }
+                            }
+                        }
                     }
-
                 }
             }
             .navigationTitle("Select Theme")
-            //Background
+            //MARK: Background
             .scrollContentBackground(.hidden)
             .background(
                 CustomBackground(primaryColor: userThemeViewModel.primaryColor)
@@ -92,6 +121,7 @@ struct SelectThemeView: View {
     SelectThemeView()
         .modelContainer(for: [Workout.self, Exercise.self, Set.self, ExerciseTemplate.self, CategoryModel.self, Routine.self, ExerciseInRoutine.self, UserTheme.self])
 }
+
 
 
 

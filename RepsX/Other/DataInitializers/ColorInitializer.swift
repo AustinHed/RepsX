@@ -13,7 +13,6 @@ func initializeDefaultThemes(in modelContext: ModelContext) {
         }
         return
     }
-
     let defaultThemes: [UserTheme] = [
         {
             let theme = UserTheme(name: "Ocean Blue",
@@ -48,7 +47,8 @@ func initializeDefaultThemes(in modelContext: ModelContext) {
                   darkModeHex: "#922B21"),  // rich burgundy
         UserTheme(name: "Slate Indigo",
                   lightModeHex: "#5D6D7E",  // dusty blue-gray
-                  darkModeHex: "#283747")   // deep indigo
+                  darkModeHex: "#283747"),   // deep indigo
+        UserTheme(name: "Custom Theme", lightModeHex: "#5D6D7E", darkModeHex: "#283747")
     ]
 
     for theme in defaultThemes {

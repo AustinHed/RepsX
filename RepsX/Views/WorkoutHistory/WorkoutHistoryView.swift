@@ -372,7 +372,7 @@ extension WorkoutHistoryView {
         } label: {
             ZStack{
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
+                    .foregroundStyle(Color("lightAndDarkBackgrounds"))
                     .frame(height: 45)
                     .padding(.horizontal)
                 

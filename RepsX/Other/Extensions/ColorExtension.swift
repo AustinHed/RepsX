@@ -36,6 +36,7 @@ extension UIColor {
     }
 }
 
+//hex values
 extension Color {
     /// Initialize a Color from a hex string (e.g. "#007AFF")
     init(hexString: String) {
@@ -66,6 +67,53 @@ extension Color {
     /// In practice you may want to store the hex string separately.
     func toHex() -> String {
         return "#FFFFFF"
+    }
+}
+
+//darker variant
+extension Color {
+    func toHex() -> String? {
+        let uiColor = UIColor(self)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+
+        guard uiColor.getRed(&red, green: &green, blue: &blue, alpha: nil) else {
+            return nil
+        }
+
+        let r = Int(red * 255)
+        let g = Int(green * 255)
+        let b = Int(blue * 255)
+
+        return String(format: "#%02X%02X%02X", r, g, b)
+    }
+    
+    func darkerVariantHex(saturationBoost: CGFloat = 1.1, brightnessDrop: CGFloat = 0.6) -> String? {
+        let uiColor = UIColor(self)
+        var hue: CGFloat = 0
+        var saturation: CGFloat = 0
+        var brightness: CGFloat = 0
+        var alpha: CGFloat = 0
+
+        guard uiColor.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) else {
+            return nil
+        }
+
+        let newSaturation = min(saturation * saturationBoost, 1.0)
+        let newBrightness = max(brightness * brightnessDrop, 0.0)
+
+        let darkerColor = UIColor(hue: hue, saturation: newSaturation, brightness: newBrightness, alpha: alpha)
+
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0
+
+        darkerColor.getRed(&red, green: &green, blue: &blue, alpha: nil)
+
+        let r = Int(red * 255)
+        let g = Int(green * 255)
+        let b = Int(blue * 255)
+
+        return String(format: "#%02X%02X%02X", r, g, b)
     }
 }
 
