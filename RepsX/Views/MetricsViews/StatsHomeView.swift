@@ -186,7 +186,7 @@ struct StatsHomeView: View {
             CustomBackground(themeColor: themeColor)
         )
         .tint(themeColor)
-        .contentMargins(.horizontal,16)
+        //.contentMargins(.horizontal,16)
         
     }
 }

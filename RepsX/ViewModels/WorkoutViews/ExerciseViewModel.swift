@@ -163,7 +163,16 @@ extension ExerciseViewModel {
         )
 
         do {
-            return try modelContext.fetch(descriptor).first?.sets ?? []
+            //print("fetch function for: \(templateId)")
+            let all = try modelContext.fetch(descriptor)
+            if all.count > 0 {
+                print("returned more than 1")
+                print(all.second?.sets.count ?? "no sets")
+                return all.second?.sets ?? []
+            } else {
+                print("returned none")
+                return []
+            }
         } catch {
             print("Error fetching recent sets: \(error)")
             return []

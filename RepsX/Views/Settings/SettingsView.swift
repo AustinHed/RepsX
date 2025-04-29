@@ -143,7 +143,7 @@ struct SettingsView: View {
             initializeDefaultThemes(in: modelContext)
         }
         .tint(themeColor)
-        .contentMargins(.horizontal,16)
+        //.contentMargins(.horizontal,16)
         .safeAreaInset(edge: .bottom) {
             // Add extra space (e.g., 100 points)
             Color.clear.frame(height: 100)

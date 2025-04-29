@@ -34,12 +34,10 @@ struct ExerciseSectionView: View {
     
     //body
     var body: some View {
-        
         //sets
         ForEach(Array(exercise.sets.sorted { $0.order < $1.order }.enumerated()), id: \.element.id) { index, set in
             ///display sets in order of set.order
             HStack  {
-                
                 //number
                 exerciseNumberField(index: index, set: set, primaryColor: themeColor)
                 
@@ -61,6 +59,7 @@ struct ExerciseSectionView: View {
             }
             .onAppear {
                 if !didLoadPreviousSets{
+                    print("loading previous sets")
                     previousSets = exerciseViewModel.fetchMostRecentWorkout(for: exercise.templateId)
                     didLoadPreviousSets = true
                 }
@@ -74,9 +73,7 @@ struct ExerciseSectionView: View {
                     withAnimation{
                         exerciseViewModel.deleteSet(set, from: exercise)
                     }
-                    
                 }
-                
             }
         }
 
@@ -238,7 +235,6 @@ struct RepsTextField: View {
 }
 extension ExerciseSectionView {
     func setRepsField(for set: Set) -> some View {
-        
         let placeholder: String = {
             if let historicalSet = previousSets.first(where: { $0.order == set.order && $0.reps != 0 }) {
                 return String(format: "%d", historicalSet.reps)
@@ -381,8 +377,6 @@ extension ExerciseSectionView {
             ), placeholder: placeholder)
         }
 }
-
-
 //MARK: Intensity
 extension ExerciseSectionView {
     func intensityBar(set:Set) -> some View {
@@ -397,16 +391,12 @@ extension ExerciseSectionView {
     }
     
 }
-
-
 //MARK: Notes
 extension ExerciseSectionView {
     func setNotesField(for set: Set) -> some View {
         Text("notes")
     }
 }
-
-
 //MARK: Add Button
 extension ExerciseSectionView {
     func addButton(primaryColor:Color) -> some View {
@@ -418,3 +408,6 @@ extension ExerciseSectionView {
         .foregroundStyle(primaryColor)
     }
 }
+
+
+
