@@ -69,7 +69,6 @@ struct AddNewExerciseTemplateView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundStyle(primaryColor)
                 }
                 
                 //done button
@@ -85,7 +84,6 @@ struct AddNewExerciseTemplateView: View {
                         }
                     }
                     .disabled(templateName.isEmpty || selectedCategory == nil)
-                    .foregroundStyle((templateName.isEmpty || selectedCategory == nil) ? Color.gray : primaryColor)
                 }
             }
             //MARK: On Appear
@@ -94,7 +92,6 @@ struct AddNewExerciseTemplateView: View {
                 if selectedCategory == nil {
                     selectedCategory = category
                 }
-                print("\(primaryColor)")
             }
             //MARK: Sheets
             //category picker
@@ -110,7 +107,6 @@ struct AddNewExerciseTemplateView: View {
             .background(
                 CustomBackground(primaryColor: primaryColor)
             )
-            .tint(primaryColor)
         }
 
     }
@@ -140,7 +136,7 @@ extension AddNewExerciseTemplateView {
             } label: {
                 HStack {
                     Text("Category")
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                     Spacer()
                     if let selected = selectedCategory {
                         Text(selected.name)
@@ -163,7 +159,7 @@ extension AddNewExerciseTemplateView {
                     Text("Standard Categories")
                         .font(.headline)
                         .bold()
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .textCase(nil)
                     Spacer()
                 }
@@ -175,7 +171,7 @@ extension AddNewExerciseTemplateView {
                             isCategoryPickerPresented = false
                         } label: {
                             Text(cat.name)
-                                .foregroundStyle(.black)
+                                .foregroundStyle(Color.primary)
                         }
                     }
                 }
@@ -186,7 +182,7 @@ extension AddNewExerciseTemplateView {
                         Text("Custom Categories")
                             .font(.headline)
                             .bold()
-                            .foregroundStyle(.black)
+                            .foregroundStyle(Color.primary)
                             .textCase(nil)
                         Spacer()
                     }
@@ -198,7 +194,7 @@ extension AddNewExerciseTemplateView {
                                 isCategoryPickerPresented = false
                             } label: {
                                 Text(cat.name)
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(Color.primary)
                             }
                         }
                     }
@@ -233,7 +229,7 @@ extension AddNewExerciseTemplateView {
             } label: {
                 HStack {
                     Text("Modality")
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                     Spacer()
                     VStack(alignment: .leading) {
                         Text(selectedModality.rawValue.capitalized)
@@ -271,7 +267,7 @@ extension AddNewExerciseTemplateView {
                         selectedModality = .repetition
                         isModalityPickerPresented = false
                     }
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                 } footer: {
                     Text("For exercises measured in Weight and Reps \nex. Bench Press, Squats, Deadlift, etc.")
                 }
@@ -283,7 +279,7 @@ extension AddNewExerciseTemplateView {
                         selectedModality = .endurance
                         isModalityPickerPresented = false
                     }
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                 } footer: {
                     Text("For exercises measured in Distance and Time \nex. Running, Rowing, Cycling, etc.")
                 }

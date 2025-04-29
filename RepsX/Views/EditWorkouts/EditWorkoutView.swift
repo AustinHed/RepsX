@@ -244,7 +244,7 @@ extension EditWorkoutView {
             ))
             .multilineTextAlignment(.trailing)
             // If the workout name is blank, the text appears in light gray (via the placeholder), otherwise in black.
-            .foregroundColor(workout.name.isEmpty ? .gray : .black)
+            .foregroundColor(workout.name.isEmpty ? .gray : colorScheme == .dark ? .white : .black)
             .focused($nameFieldFocused)
             .onSubmit {
                 // Called when the user taps Return

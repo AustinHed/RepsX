@@ -101,7 +101,7 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
                 Text("Standard Exercises")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
                 Spacer()
             }
@@ -118,7 +118,7 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
                     Text("Custom Exercises")
                         .font(.headline)
                         .bold()
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .textCase(nil)
                     Spacer()
                 }
@@ -178,7 +178,6 @@ struct ListOfExerciseTemplatesView<Destination: View>: View {
                 } label: {
                     Image(systemName: "plus.circle")
                 }
-                .foregroundStyle(primaryColor)
             }
         }
         // MARK: Sheets

@@ -40,13 +40,13 @@ struct SelectThemeView: View {
                             if userTheme.isSelected {
                                 HStack{
                                     Text(userTheme.name)
-                                        .foregroundStyle(.black)
+                                        .foregroundStyle(Color.primary)
                                     Image(systemName: "checkmark")
                                         .foregroundStyle(Color(hexString: userTheme.lightModeHex))
                                 }
                             } else {
                                 Text(userTheme.name)
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(Color.primary)
                             }
                             
                             Spacer()

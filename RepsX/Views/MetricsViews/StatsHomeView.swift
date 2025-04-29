@@ -65,7 +65,7 @@ struct StatsHomeView: View {
                 Text("Goals")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
                 Spacer()
             }
@@ -102,7 +102,7 @@ struct StatsHomeView: View {
                 Text("Specific Stats")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
             }
                 .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
@@ -123,7 +123,7 @@ struct StatsHomeView: View {
                 Text("General Stats")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
             }
                 .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))

@@ -61,7 +61,7 @@ struct SelectExerciseView: View {
                     Text("Default Exercises")
                         .font(.headline)
                         .bold()
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .textCase(nil)
                     Spacer()
                 }
@@ -75,7 +75,7 @@ struct SelectExerciseView: View {
                             HStack{
                                 Text(exercise.name)
                             }
-                            .foregroundStyle(.black)
+                            .foregroundStyle(Color.primary)
                             
                         }
                     }
@@ -88,7 +88,7 @@ struct SelectExerciseView: View {
                     Text("Custom Exercises")
                         .font(.headline)
                         .bold()
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .textCase(nil)
                     Spacer()
                 }
@@ -102,7 +102,7 @@ struct SelectExerciseView: View {
                             HStack{
                                 Text(exercise.name)
                             }
-                            .foregroundStyle(.black)
+                            .foregroundStyle(Color.primary)
                         }
                     }
                 }

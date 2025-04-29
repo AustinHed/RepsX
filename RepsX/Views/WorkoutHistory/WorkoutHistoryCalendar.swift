@@ -5,6 +5,7 @@ struct WorkoutHistoryCalendarView: View {
     @State private var isExpanded = false
     @State private var currentDate = Date()
     
+    
     // Compute the dates for the current week (Sunday to Saturday) based on currentDate.
     private var weekDates: [Date] {
         let calendar = Calendar.current
@@ -215,7 +216,7 @@ struct WorkoutHistoryCalendarView: View {
                                 //minutes exercised that day
                                 Text("\(minutesForDay(on: date))m")
                                     .font(.caption)
-                                    .foregroundStyle(minutesForDay(on: date) == 0 ? .clear : .black)
+                                    .foregroundStyle(minutesForDay(on: date) == 0 ? .clear : colorScheme == .dark ? .secondary : .black)
                             }
                         } else {
                             Text("")
@@ -236,7 +237,7 @@ struct WorkoutHistoryCalendarView: View {
                                 return primaryColor
                             } else if isFuture {
                                 //future date
-                                return Color.gray
+                                return Color.secondary
                             } else {
                                 //past date
                                 return Color.primary
@@ -263,7 +264,7 @@ struct WorkoutHistoryCalendarView: View {
                                 //minutes exercised that day
                                 Text("\(minutesForDay(on: date))m")
                                     .font(.caption)
-                                    .foregroundStyle(minutesForDay(on: date) == 0 ? .clear : .black)
+                                    .foregroundStyle(minutesForDay(on: date) == 0 ? .clear : colorScheme == .dark ? .secondary : .black)
                             }
                             
                         }

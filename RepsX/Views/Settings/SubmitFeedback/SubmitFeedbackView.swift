@@ -45,6 +45,7 @@ struct StarRatingSelector: View {
                         .foregroundColor(primaryColor)
                 }
                 .buttonStyle(PlainButtonStyle())
+                
             }
             
 
@@ -111,7 +112,8 @@ struct SubmitFeedbackView: View {
         }
         .scrollContentBackground(.hidden)
         .background(CustomBackground(primaryColor: primaryColor))
-        .tint(primaryColor)
+        
+        
     }
     
     
@@ -133,7 +135,7 @@ extension SubmitFeedbackView {
             Text("Rating")
                 .font(.headline)
                 .bold()
-                .foregroundStyle(.black)
+                .foregroundStyle(Color.primary)
                 .textCase(nil)
             Spacer()
         }
@@ -199,7 +201,7 @@ extension SubmitFeedbackView {
                 Text("Feedback")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
                 Spacer()
             }
@@ -230,7 +232,7 @@ extension SubmitFeedbackView {
                 Text("Custom Categories")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
                 Spacer()
             }

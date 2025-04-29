@@ -28,7 +28,7 @@ struct RoutineItem: View {
             HStack {
                 Text(routine.name)
                     .font(.headline)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                 Spacer()
                 if routine.favorite{
                     Image(systemName:"star.circle.fill")
@@ -46,7 +46,7 @@ struct RoutineItem: View {
             } else {
                 ForEach(routine.exercises.prefix(maxDisplayCount), id: \.self) { exercise in
                     Text(exercise.exerciseName)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .font(.subheadline)
                         .lineLimit(1)
                         .truncationMode(.tail)
@@ -69,7 +69,7 @@ struct RoutineItem: View {
         }
         .padding(15)
         .frame(width: .infinity, height: 140)
-        .background(Color.white)
+        .background(Color("lightAndDarkBackgrounds"))
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }

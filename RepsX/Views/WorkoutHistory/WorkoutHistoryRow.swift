@@ -22,7 +22,7 @@ struct WorkoutHistoryRow: View {
         VStack(spacing: 0) {
             contentStack
         }
-        .background(Color.white)
+        .background(Color("lightAndDarkBackgrounds"))
         .cornerRadius(10)
     }
 }
@@ -54,8 +54,6 @@ extension WorkoutHistoryRow {
                     .foregroundColor(.secondary)
             }
             Spacer()
-            // The disclosure button toggles expansion.
-            // In your headerView disclosure button:
             Button {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     isExpanded.toggle()

@@ -84,7 +84,7 @@ struct EditRoutine: View {
                     } label: {
                         HStack{
                             Text(routine.favorite ? "Unfavorite" : "Favorite")
-                                .foregroundStyle(.black)
+                                .foregroundStyle(Color.primary)
                             Spacer()
                             Image(systemName: "star.fill")
                         }
@@ -174,7 +174,7 @@ extension EditRoutine {
             Text("Name")
                 .font(.headline)
                 .bold()
-                .foregroundStyle(.black)
+                .foregroundStyle(Color.primary)
                 .textCase(nil)
             Spacer()
         }
@@ -202,7 +202,7 @@ extension EditRoutine {
             Text("Exercises")
                 .font(.headline)
                 .bold()
-                .foregroundStyle(.black)
+                .foregroundStyle(Color.primary)
                 .textCase(nil)
             Spacer()
         }
@@ -212,7 +212,7 @@ extension EditRoutine {
                 NavigationLink(value: exercise) {
                     VStack(alignment:.leading){
                         Text(exercise.exerciseName)
-                            .foregroundStyle(.black)
+                            .foregroundStyle(Color.primary)
                         Text("\(exercise.setCount) Sets")
                             .font(.subheadline)
                             .foregroundStyle(.gray)

@@ -36,7 +36,7 @@ struct SettingsView: View {
                 Text("Personalization")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
                 Spacer()
             }
@@ -53,7 +53,7 @@ struct SettingsView: View {
                 Text("Exercises & Categories")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
                 Spacer()
             }
@@ -68,7 +68,7 @@ struct SettingsView: View {
                 Text("Feedback & Support")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
                 Spacer()
             }
@@ -82,7 +82,7 @@ struct SettingsView: View {
                 } label: {
                     HStack{
                         Text("Rate on the App Store")
-                            .foregroundStyle(.black)
+                            .foregroundStyle(Color.primary)
                         Spacer()
                         Image(systemName:"chevron.right")
                             .foregroundStyle(.gray).opacity(0.5)
@@ -100,7 +100,7 @@ struct SettingsView: View {
                 Text("Legal")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
                 Spacer()
             }

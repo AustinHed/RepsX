@@ -57,7 +57,7 @@ struct EditTargetGoalView: View {
                     Text("Details")
                         .font(.headline)
                         .bold()
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .padding(.leading,3)
                         .padding(.horizontal, 16)
                     editName
@@ -72,7 +72,7 @@ struct EditTargetGoalView: View {
                     Text("History")
                         .font(.headline)
                         .bold()
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .padding(.leading,3)
                         .padding(.horizontal, 16)
                     if medianChartData.isEmpty {
@@ -80,7 +80,7 @@ struct EditTargetGoalView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal)
                             .padding(.vertical, 10)
-                            .background(Color.white)
+                            .background(Color(.systemBackground))
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                             .padding(.horizontal, 16)
                     } else {
@@ -102,7 +102,7 @@ struct EditTargetGoalView: View {
                     Text("Delete")
                         .font(.headline)
                         .bold()
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .padding(.leading,3)
                         .padding(.horizontal, 16)
                     delete
@@ -588,7 +588,7 @@ extension EditTargetGoalView {
             ZStack (alignment:.leading){
                 if newName.isEmpty {
                     Text(goal.name)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .padding(.leading, 16)
                 }
                 TextField("", text: $newName)

@@ -41,6 +41,7 @@ final class UserTheme {
 //choose the right color based on light or dark mode
 extension UserTheme {
     func color(for colorScheme: ColorScheme) -> Color {
-        Color(hexString: colorScheme == .dark ? darkModeHex : lightModeHex)
+        //Color(hexString: colorScheme == .dark ? darkModeHex : lightModeHex)
+        Color(hexString: lightModeHex)
     }
 }

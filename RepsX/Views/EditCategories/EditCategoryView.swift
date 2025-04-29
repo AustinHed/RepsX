@@ -49,7 +49,7 @@ struct EditCategoryView: View {
                 Text("Name")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
                 Spacer()
             }
@@ -62,7 +62,7 @@ struct EditCategoryView: View {
                         .onSubmit {
                             categoryViewModel.updateCategory(category, newName: category.name)
                         }
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                 }
             }
             
@@ -116,7 +116,6 @@ struct EditCategoryView: View {
                 Button("Back") {
                     dismiss()
                 }
-                .foregroundStyle(primaryColor)
             }
         }
         //MARK: On Appear

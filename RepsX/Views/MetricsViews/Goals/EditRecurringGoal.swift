@@ -49,7 +49,7 @@ struct EditRecurringGoal: View {
                 Text("Details")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .padding(.leading,3)
                 //edit name
                 editName
@@ -80,7 +80,7 @@ struct EditRecurringGoal: View {
                 Text("Delete")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .padding(.leading,3)
                 //Delete goal
                 delete
@@ -140,7 +140,7 @@ extension EditRecurringGoal {
             ZStack (alignment:.leading){
                 if newName.isEmpty {
                     Text(goal.name)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .padding(.leading, 16)
                 }
                 TextField("", text: $newName)
@@ -199,12 +199,12 @@ extension EditRecurringGoal {
             Text("History")
                 .font(.headline)
                 .bold()
-                .foregroundStyle(.black)
+                .foregroundStyle(Color.primary)
             Spacer()
             Text("\(consistencyGoalViewModel.currentStreak(for: goal, from: workouts)) \(periodName) streak")
                 .font(.headline)
                 .bold()
-                .foregroundStyle(.black)
+                .foregroundStyle(Color.primary)
         }
         
     }

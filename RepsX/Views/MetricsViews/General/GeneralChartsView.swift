@@ -76,7 +76,7 @@ struct GeneralChartsView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal)
                     .padding(.vertical, 10)
-                    .background(Color.white)
+                    .background(Color(.systemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .padding(.horizontal)
                     .navigationTitle(filter.navigationTitle)
@@ -280,7 +280,7 @@ extension GeneralChartsView {
             }
             .padding(.horizontal)
             .padding(.vertical, 10)
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(.horizontal)
         }
@@ -317,7 +317,7 @@ extension GeneralChartsView {
     func customPickerItem(title: String, isActive: Bool) -> some View {
         Text(title)
             .font(.subheadline)
-            .foregroundStyle(.black)
+            .foregroundStyle(Color.primary)
             .frame(height: 30)
             .frame(maxWidth: .infinity)
             .background(

@@ -56,7 +56,7 @@ struct RoutinesView: View {
                         } label: {
                             HStack{
                                 Text("Favorite")
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(Color.primary)
                                 Spacer()
                                 Image(systemName:"star.circle.fill")
                                     .foregroundStyle(.yellow)

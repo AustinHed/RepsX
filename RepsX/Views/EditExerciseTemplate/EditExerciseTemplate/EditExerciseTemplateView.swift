@@ -34,13 +34,13 @@ struct EditExerciseTemplateView: View {
                 Section("Name"){
                     if exerciseTemplate.standard {
                         Text(exerciseTemplate.name)
-                            .foregroundStyle(.black)
+                            .foregroundStyle(Color.primary)
                     } else {
                         TextField("Exercise", text: $exerciseTemplate.name)
                             .onSubmit {
                                 exerciseTemplateViewModel.updateExerciseTemplate(exerciseTemplate, newName: exerciseTemplate.name)
                             }
-                            .foregroundStyle(.black)
+                            .foregroundStyle(Color.primary)
                     }
                 }
 

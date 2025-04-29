@@ -62,7 +62,7 @@ struct SelectCategoryView: View {
                     Text("Default Categories")
                         .font(.headline)
                         .bold()
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .textCase(nil)
                     Spacer()
                 }
@@ -85,7 +85,7 @@ struct SelectCategoryView: View {
                         Text("Custom Categories")
                             .font(.headline)
                             .bold()
-                            .foregroundStyle(.black)
+                            .foregroundStyle(Color.primary)
                             .textCase(nil)
                         Spacer()
                     }

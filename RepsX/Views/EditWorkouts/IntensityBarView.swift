@@ -47,7 +47,7 @@ struct IntensityBar: View {
             }
         }
         // The white background shows through as the gap lines between segments.
-        .background(Color.white)
+        .background(Color(.systemBackground))
         .frame(height: 15)
         .cornerRadius(18)
     }

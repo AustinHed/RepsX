@@ -63,7 +63,7 @@ struct AddNewRoutineView: View {
                             //TODO: what if not sets
                             VStack(alignment:.leading){
                                 Text(exercise.exerciseName)
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(Color.primary)
                                 Text("\(exercise.setCount) Sets")
                                     .font(.subheadline)
                                     .foregroundStyle(.gray)

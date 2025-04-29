@@ -36,7 +36,7 @@ struct AddNewCategoryView: View {
                     Text("Name")
                         .font(.headline)
                         .bold()
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .textCase(nil)
                     Spacer()
                 }
@@ -55,7 +55,6 @@ struct AddNewCategoryView: View {
                     Button("Cancel") {
                         dismiss()
                     }
-                    .foregroundStyle(primaryColor)
                 }
                 //save button
                 ToolbarItem(placement: .topBarTrailing) {
@@ -63,7 +62,6 @@ struct AddNewCategoryView: View {
                         categoryViewModel.addCategory(name: newName)
                         dismiss()
                     }
-                    .foregroundStyle(newName.isEmpty ? Color.gray: primaryColor)
                     .disabled(Bool(newName.isEmpty))
                 }
             }

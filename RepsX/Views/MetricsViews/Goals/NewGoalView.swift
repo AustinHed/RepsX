@@ -118,8 +118,8 @@ struct NewGoalView: View {
 extension NewGoalView {
     var nameEntry: some View{
         ZStack{
-            RoundedRectangle(cornerRadius: 12)
-                .foregroundStyle(.white)
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(Color("lightAndDarkBackgrounds"))
             //textEntry
             TextField("Name", text: $name)
                 .padding()
@@ -131,8 +131,8 @@ extension NewGoalView {
 extension NewGoalView {
     var goalType: some View {
         ZStack{
-            RoundedRectangle(cornerRadius: 12)
-                .foregroundStyle(.white)
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(Color("lightAndDarkBackgrounds"))
             //choose type
             HStack(alignment:.center){
                 Text("Type")
@@ -154,8 +154,8 @@ extension NewGoalView {
 extension NewGoalView {
     var recurringDetails: some View {
         ZStack{
-            RoundedRectangle(cornerRadius: 12)
-                .foregroundStyle(.white)
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(Color("lightAndDarkBackgrounds"))
             VStack(alignment:.leading){
                 //Measure
                 HStack (alignment:.center) {
@@ -280,8 +280,8 @@ extension NewGoalView {
 extension NewGoalView {
     var targetDetails: some View {
         ZStack{
-            RoundedRectangle(cornerRadius: 12)
-                .foregroundStyle(.white)
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(Color("lightAndDarkBackgrounds"))
             VStack(alignment:.leading){
                 
                 //Measure
@@ -400,8 +400,8 @@ extension NewGoalView {
 extension NewGoalView {
     var startDateSection: some View {
         ZStack{
-            RoundedRectangle(cornerRadius: 12)
-                .foregroundStyle(.white)
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(Color("lightAndDarkBackgrounds"))
             HStack{
                 Text("Start on")
                     .font(.headline)
@@ -465,8 +465,8 @@ struct GoalTimePickerSheet: View {
 extension NewGoalView {
     var createGoalButton: some View {
         ZStack{
-            RoundedRectangle(cornerRadius: 12)
-                .foregroundStyle(.white)
+            RoundedRectangle(cornerRadius: 10)
+                .foregroundStyle(Color("lightAndDarkBackgrounds"))
             
             Button {
                 //TODO: different action based on goalType

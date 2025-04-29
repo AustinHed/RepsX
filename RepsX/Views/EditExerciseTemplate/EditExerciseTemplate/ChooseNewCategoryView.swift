@@ -83,14 +83,14 @@ struct ChooseNewCategoryView: View {
         if exerciseTemplate.category == category {
             HStack {
                 Text(category.name)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                 Spacer()
                 Image(systemName: "checkmark")
                     .foregroundStyle(primaryColor)
             }
         } else {
             Text(category.name)
-                .foregroundStyle(.black)
+                .foregroundStyle(Color.primary)
         }
     }
 }

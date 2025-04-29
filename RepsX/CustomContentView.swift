@@ -7,6 +7,8 @@ struct ContentView: View {
     
     @Environment(\.modelContext) private var modelContext
     
+    @Environment(\.colorScheme) var colorScheme
+    
     //This hides the bar at the bottom of the screen
     init() {
         UITabBar.appearance().isHidden = true
@@ -112,8 +114,8 @@ struct ContentView: View {
                     .fill(
                             LinearGradient(
                                 gradient: Gradient(colors: [
-                                    Color.white.opacity(0.0), // lower opacity at the top
-                                    Color.white.opacity(0.8)  // higher opacity at the bottom
+                                    colorScheme == .light ? Color.white.opacity(0.0) : Color.black.opacity(0.0), // lower opacity at the top
+                                    colorScheme == .light ? Color.white.opacity(0.8) : Color.black.opacity(0.8)  // higher opacity at the bottom
                                 ]),
                                 startPoint: .top,
                                 endPoint: .bottom
@@ -125,8 +127,8 @@ struct ContentView: View {
                     .frame(height: 60)
                     .background(
                         Capsule()
-                            .fill(Color.white)
-                            .shadow(color: .gray.opacity(0.5), radius: 5)
+                            .fill(Color("lightAndDarkBackgrounds"))
+                            .shadow(color: colorScheme == .dark ? .white.opacity(0.5) : .gray.opacity(0.5), radius: 5)
                     )
                     .padding(.horizontal, 17)
                     .padding(.bottom, 20)
@@ -154,11 +156,11 @@ extension ContentView {
         HStack(spacing: 10) {
             Spacer()
             Image(systemName: imageName)
-                .foregroundStyle(isActive ? .black : .black.opacity(0.8))
+                .foregroundStyle(isActive ? Color.primary : Color.primary.opacity(0.7))
             //if the tab is selected, change the color
             if isActive{
                 Text(title)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .lineLimit(1)                   // <-- never wrap
                     .truncationMode(.tail)          // <-- “…” at end
                     .layoutPriority(1)              // <-- ensure it gets priority to shrink

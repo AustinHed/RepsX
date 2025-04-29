@@ -163,7 +163,7 @@ extension WorkoutHistoryView {
                 .bold()
             
             WorkoutHistoryCalendarView(workouts: workouts)
-                .background(Color.white)
+                .background(Color("lightAndDarkBackgrounds"))
                 .cornerRadius(10)
                 .padding(.horizontal)
         }
@@ -333,7 +333,7 @@ extension WorkoutHistoryView {
                     }
                     .padding(.bottom,20)
                 }
-                .background(Color.white)
+                .background(Color("lightAndDarkBackgrounds"))
                 .cornerRadius(10)
                 .padding(.horizontal)
             } else {
@@ -349,7 +349,7 @@ extension WorkoutHistoryView {
                 .padding(.top, 10)
                 .padding(.bottom, 10)
                 .padding(.horizontal)
-                .background(Color.white)
+                .background(Color("lightAndDarkBackgrounds"))
                 .cornerRadius(10)
                 .padding(.horizontal)
                 
@@ -372,7 +372,7 @@ extension WorkoutHistoryView {
         } label: {
             ZStack{
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(.white)
+                    .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
                     .frame(height: 45)
                     .padding(.horizontal)
                 

@@ -86,14 +86,14 @@ struct ChooseNewModalityView: View {
         if exerciseTemplate.modality == modality {
             HStack {
                 Text(modality.rawValue.capitalizingFirstLetter())
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                 Spacer()
                 Image(systemName: "checkmark")
                     .foregroundColor(primaryColor)
             }
         } else {
             Text(modality.rawValue.capitalizingFirstLetter())
-                .foregroundStyle(.black)
+                .foregroundStyle(Color.primary)
         }
     }
     

@@ -22,7 +22,7 @@ where
 
   var body: some View {
     ZStack {
-      Capsule().foregroundStyle(Color.white.opacity(0.1))
+      //Capsule().foregroundStyle(Color.white.opacity(0.1))
       HStack(spacing: 0) {
         ForEach(Array(T.allCases), id: \.self) { option in
           Button {
@@ -32,7 +32,7 @@ where
           } label: {
             Text(label(option))
               .font(.subheadline)
-              .foregroundStyle(selection == option ? .black : .gray)
+              .foregroundStyle(selection == option ? colorScheme == .dark ? .white : .black : .gray)
               .frame(height: 30)
               .frame(maxWidth: .infinity)
               .background(

@@ -76,7 +76,7 @@ struct ListOfCategoriesView<Destination: View>: View {
                 Text("Standard Categories")
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(.black)
+                    .foregroundStyle(Color.primary)
                     .textCase(nil)
                 Spacer()
             }
@@ -94,7 +94,7 @@ struct ListOfCategoriesView<Destination: View>: View {
                     Text("Custom Categories")
                         .font(.headline)
                         .bold()
-                        .foregroundStyle(.black)
+                        .foregroundStyle(Color.primary)
                         .textCase(nil)
                     Spacer()
                 }
@@ -113,7 +113,7 @@ struct ListOfCategoriesView<Destination: View>: View {
             destinationBuilder(category)
         }
         //MARK: Toolbar
-        .toolbar{
+        .toolbar {
             //add new category
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -121,8 +121,6 @@ struct ListOfCategoriesView<Destination: View>: View {
                 } label: {
                     Image(systemName:"plus.circle")
                 }
-                .foregroundStyle(primaryColor)
-                
             }
         }
         //MARK: Sheets
@@ -139,7 +137,6 @@ struct ListOfCategoriesView<Destination: View>: View {
         .background(
             CustomBackground(primaryColor: primaryColor)
         )
-        .tint(primaryColor)
     }
 }
 
