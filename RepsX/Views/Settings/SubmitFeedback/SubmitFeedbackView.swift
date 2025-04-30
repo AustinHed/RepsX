@@ -229,7 +229,7 @@ extension SubmitFeedbackView {
                 .focused($emailFocusState)
         } header: {
             HStack{
-                Text("Custom Categories")
+                Text("Email Address")
                     .font(.headline)
                     .bold()
                     .foregroundStyle(Color.primary)
