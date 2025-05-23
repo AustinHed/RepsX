@@ -13,18 +13,18 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3B62B3082D63BD4B00984AE1 /* RepsX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepsX.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B62B3082D63BD4B00984AE1 /* LastRep.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LastRep.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B63CB8B2DE0E12E00BB876F /* AirtableInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AirtableInfo.plist; sourceTree = "<group>"; };
 		3BD7FC772DB87E2300ABD281 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		3BD7FC762DB87DDA00ABD281 /* Exceptions for "RepsX" folder in "RepsX" target */ = {
+		3BD7FC762DB87DDA00ABD281 /* Exceptions for "RepsX" folder in "LastRep" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 3B62B3072D63BD4B00984AE1 /* RepsX */;
+			target = 3B62B3072D63BD4B00984AE1 /* LastRep */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -32,7 +32,7 @@
 		3B62B30A2D63BD4B00984AE1 /* RepsX */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				3BD7FC762DB87DDA00ABD281 /* Exceptions for "RepsX" folder in "RepsX" target */,
+				3BD7FC762DB87DDA00ABD281 /* Exceptions for "RepsX" folder in "LastRep" target */,
 			);
 			path = RepsX;
 			sourceTree = "<group>";
@@ -64,7 +64,7 @@
 		3B62B3092D63BD4B00984AE1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3B62B3082D63BD4B00984AE1 /* RepsX.app */,
+				3B62B3082D63BD4B00984AE1 /* LastRep.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -72,9 +72,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3B62B3072D63BD4B00984AE1 /* RepsX */ = {
+		3B62B3072D63BD4B00984AE1 /* LastRep */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3B62B3182D63BD4C00984AE1 /* Build configuration list for PBXNativeTarget "RepsX" */;
+			buildConfigurationList = 3B62B3182D63BD4C00984AE1 /* Build configuration list for PBXNativeTarget "LastRep" */;
 			buildPhases = (
 				3B62B3042D63BD4B00984AE1 /* Sources */,
 				3B62B3052D63BD4B00984AE1 /* Frameworks */,
@@ -87,12 +87,12 @@
 			fileSystemSynchronizedGroups = (
 				3B62B30A2D63BD4B00984AE1 /* RepsX */,
 			);
-			name = RepsX;
+			name = LastRep;
 			packageProductDependencies = (
 				3B62BA182D7A5B0900984AE1 /* SwipeActions */,
 			);
 			productName = RepsX;
-			productReference = 3B62B3082D63BD4B00984AE1 /* RepsX.app */;
+			productReference = 3B62B3082D63BD4B00984AE1 /* LastRep.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -127,7 +127,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3B62B3072D63BD4B00984AE1 /* RepsX */,
+				3B62B3072D63BD4B00984AE1 /* LastRep */,
 			);
 		};
 /* End PBXProject section */
@@ -288,6 +288,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RepsX/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LastRep;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -300,7 +302,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.AustinHed.RepsX;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AustinHed.LastRep;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -326,6 +328,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RepsX/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LastRep;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -338,7 +342,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.AustinHed.RepsX;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AustinHed.LastRep;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -362,7 +366,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3B62B3182D63BD4C00984AE1 /* Build configuration list for PBXNativeTarget "RepsX" */ = {
+		3B62B3182D63BD4C00984AE1 /* Build configuration list for PBXNativeTarget "LastRep" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3B62B3192D63BD4C00984AE1 /* Debug */,
