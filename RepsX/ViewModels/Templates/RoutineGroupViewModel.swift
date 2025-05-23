@@ -26,7 +26,6 @@ class RoutineGroupViewModel {
     }
     
     //delete
-    //TODO: ensure this doesn't cause a crash
     func deleteRoutineGroup(_ routineGroup: RoutineGroup) {
         modelContext.delete(routineGroup)
         save()

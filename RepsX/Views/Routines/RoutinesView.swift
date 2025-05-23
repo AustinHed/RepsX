@@ -229,7 +229,7 @@ extension RoutinesView {
             if !ungroupedRoutines.isEmpty {
                 let binding = $isUngroupedExpanded
                 GroupView(
-                    title: "Ungrouped",
+                    title: "Other",
                     routines: ungroupedRoutines,
                     isExpanded: binding,
                     columns: columns

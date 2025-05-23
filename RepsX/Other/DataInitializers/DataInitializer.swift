@@ -73,91 +73,183 @@ func initializeDefaultDataIfNeeded(context: ModelContext) {
             func template(named name: String) -> ExerciseTemplate? {
                 return allExerciseTemplates.first { $0.name == name }
             }
-            
-            // Big 5 Compound Routine
-            let big5Exercises: [ExerciseInRoutine] = [
-                ExerciseInRoutine(exerciseTemplate: template(named: "Bench Press"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Squat"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Overhead Press"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Pull-Up"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Deadlift"), setCount: 3)
-            ]
-            let big5Routine = Routine(name: "Big 5 Compound", exercises: big5Exercises, favorite: false)
 
-            // Full-Body Strength
-            let fullBodyStrengthExercises: [ExerciseInRoutine] = [
-                ExerciseInRoutine(exerciseTemplate: template(named: "Squat"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Bench Press"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Deadlift"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Overhead Press"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Pull-Up"), setCount: 3)
-            ]
-            let fullBodyStrengthRoutine = Routine(name: "Full-Body Strength", exercises: fullBodyStrengthExercises, favorite: false)
+            // Create default Routine Groups
+            let pushGroup = RoutineGroup(name: "Push")
+            let pullGroup = RoutineGroup(name: "Pull")
+            let legsGroup = RoutineGroup(name: "Legs")
+            let fullBodyGroup = RoutineGroup(name: "Full Body")
+            [pushGroup, pullGroup, legsGroup, fullBodyGroup].forEach { context.insert($0) }
 
-            // Push Day
-            let pushDayExercises: [ExerciseInRoutine] = [
-                ExerciseInRoutine(exerciseTemplate: template(named: "Bench Press"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Incline Dumbbell Press"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Overhead Press"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Tricep Pushdown"), setCount: 3)
-            ]
-            let pushDayRoutine = Routine(name: "Push Day", exercises: pushDayExercises, favorite: false)
+            // --- Push Group Routines ---
+            let pushRoutine1 = Routine(
+                name: "Push Volume",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Bench Press"), setCount: 4),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Incline Dumbbell Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Overhead Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Lateral Raise"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Tricep Pushdown"), setCount: 3)
+                ],
+                group: pushGroup
+            )
+            let pushRoutine2 = Routine(
+                name: "Chest & Shoulders",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Bench Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Decline Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Arnold Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Front Raise"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Skullcrusher"), setCount: 3)
+                ],
+                group: pushGroup
+            )
+            let pushRoutine3 = Routine(
+                name: "Triceps Focus",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Overhead Tricep Extension"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Tricep Dips"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Incline Dumbbell Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Cable Fly"), setCount: 3)
+                ],
+                group: pushGroup
+            )
 
-            // Pull Day
-            let pullDayExercises: [ExerciseInRoutine] = [
-                ExerciseInRoutine(exerciseTemplate: template(named: "Deadlift"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Barbell Row"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Lat Pulldown"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Seated Cable Row"), setCount: 3)
-            ]
-            let pullDayRoutine = Routine(name: "Pull Day", exercises: pullDayExercises, favorite: false)
+            // --- Pull Group Routines ---
+            let pullRoutine1 = Routine(
+                name: "Pull Strength",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Deadlift"), setCount: 4),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Barbell Row"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Pull-Up"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Hammer Curl"), setCount: 3)
+                ],
+                group: pullGroup
+            )
+            let pullRoutine2 = Routine(
+                name: "Back & Biceps",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Lat Pulldown"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Seated Cable Row"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Bicep Curl"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Reverse Fly"), setCount: 3)
+                ],
+                group: pullGroup
+            )
+            let pullRoutine3 = Routine(
+                name: "Row Emphasis",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Barbell Row"), setCount: 4),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Preacher Curl"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Pull-Up"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Concentration Curl"), setCount: 3)
+                ],
+                group: pullGroup
+            )
 
-            // Leg Day
-            let legDayExercises: [ExerciseInRoutine] = [
-                ExerciseInRoutine(exerciseTemplate: template(named: "Squat"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Leg Press"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Leg Extension"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Calf Raise"), setCount: 3)
-            ]
-            let legDayRoutine = Routine(name: "Leg Day", exercises: legDayExercises, favorite: false)
+            // --- Legs Group Routines ---
+            let legsRoutine1 = Routine(
+                name: "Quad Dominant",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Squat"), setCount: 4),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Leg Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Leg Extension"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Calf Raise"), setCount: 3)
+                ],
+                group: legsGroup
+            )
+            let legsRoutine2 = Routine(
+                name: "Hamstring Builder",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Romanian Deadlift"), setCount: 4),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Hamstring Curl"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Glute Bridge"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Seated Calf Raise"), setCount: 3)
+                ],
+                group: legsGroup
+            )
+            let legsRoutine3 = Routine(
+                name: "Glute Focus",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Hip Thrust"), setCount: 4),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Squat"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Leg Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Glute Bridge"), setCount: 3)
+                ],
+                group: legsGroup
+            )
 
-            // Upper-Body Strength
-            let upperBodyStrengthExercises: [ExerciseInRoutine] = [
-                ExerciseInRoutine(exerciseTemplate: template(named: "Bench Press"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Barbell Row"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Overhead Press"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Bicep Curl"), setCount: 3)
-            ]
-            let upperBodyStrengthRoutine = Routine(name: "Upper-Body Strength", exercises: upperBodyStrengthExercises, favorite: false)
+            // --- Full Body Group Routines ---
+            let fullBodyRoutine1 = Routine(
+                name: "Full Body Power",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Bench Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Squat"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Deadlift"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Pull-Up"), setCount: 3)
+                ],
+                group: fullBodyGroup
+            )
+            let fullBodyRoutine2 = Routine(
+                name: "Full Body Classic",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Overhead Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Lat Pulldown"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Leg Extension"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Hamstring Curl"), setCount: 3)
+                ],
+                group: fullBodyGroup
+            )
+            let fullBodyRoutine3 = Routine(
+                name: "Full Body Express",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Bench Press"), setCount: 2),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Barbell Row"), setCount: 2),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Squat"), setCount: 2),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Plank"), setCount: 2)
+                ],
+                group: fullBodyGroup
+            )
 
-            // Lower-Body Strength
-            let lowerBodyStrengthExercises: [ExerciseInRoutine] = [
-                ExerciseInRoutine(exerciseTemplate: template(named: "Squat"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Romanian Deadlift"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Leg Extension"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Glute Bridge"), setCount: 3)
-            ]
-            let lowerBodyStrengthRoutine = Routine(name: "Lower-Body Strength", exercises: lowerBodyStrengthExercises, favorite: false)
-
-            // Core & Stability
-            let coreStabilityExercises: [ExerciseInRoutine] = [
-                ExerciseInRoutine(exerciseTemplate: template(named: "Plank"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Crunch"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Russian Twist"), setCount: 3),
-                ExerciseInRoutine(exerciseTemplate: template(named: "Side Plank"), setCount: 3)
-            ]
-            let coreStabilityRoutine = Routine(name: "Core & Stability", exercises: coreStabilityExercises, favorite: false)
+            // --- Ungrouped Routines ---
+            let ungroupedRoutine1 = Routine(
+                name: "Upper Burn",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Bench Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Overhead Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Bicep Curl"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Tricep Dips"), setCount: 3)
+                ],
+                group: nil
+            )
+            let ungroupedRoutine2 = Routine(
+                name: "Lower Burn",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Squat"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Leg Press"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Romanian Deadlift"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Calf Raise"), setCount: 3)
+                ],
+                group: nil
+            )
+            let ungroupedRoutine3 = Routine(
+                name: "Core & Stability",
+                exercises: [
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Plank"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Crunch"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Russian Twist"), setCount: 3),
+                    ExerciseInRoutine(exerciseTemplate: template(named: "Side Plank"), setCount: 3)
+                ],
+                group: nil
+            )
 
             // Insert all new routines
             [
-                big5Routine,
-                fullBodyStrengthRoutine,
-                pushDayRoutine,
-                pullDayRoutine,
-                legDayRoutine,
-                upperBodyStrengthRoutine,
-                lowerBodyStrengthRoutine,
-                coreStabilityRoutine
+                pushRoutine1, pushRoutine2, pushRoutine3,
+                pullRoutine1, pullRoutine2, pullRoutine3,
+                legsRoutine1, legsRoutine2, legsRoutine3,
+                fullBodyRoutine1, fullBodyRoutine2, fullBodyRoutine3,
+                ungroupedRoutine1, ungroupedRoutine2, ungroupedRoutine3
             ].forEach { context.insert($0) }
         }
         
