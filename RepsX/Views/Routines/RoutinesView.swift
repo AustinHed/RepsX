@@ -36,6 +36,8 @@ struct RoutinesView: View {
     @State private var expandedGroups: [UUID] = []
     @State private var isUngroupedExpanded: Bool = true
     
+    @State private var isAddGroupSheetPresented = false
+    
     //all favorite routines
     private var favorites: [Routine] {
         routines.filter { $0.favorite }
@@ -80,8 +82,23 @@ struct RoutinesView: View {
                     Image(systemName:"plus.circle")
                 }
             }
-            
-            
+            //groups menu
+            ToolbarItem(placement:.topBarTrailing) {
+                Menu {
+                    Button("Create New Group") {
+                        isAddGroupSheetPresented.toggle()
+                    }
+                    Button("Edit Groups") {
+                        //TODO: navigate to the edit groups screen
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
+        //MARK: Sheets
+        .sheet(isPresented: $isAddGroupSheetPresented) {
+            AddNewRoutineGroupView()
         }
         //MARK: Background
         .scrollContentBackground(.hidden)
@@ -109,8 +126,6 @@ struct RoutinesView: View {
             // Add extra space (e.g., 100 points)
             Color.clear.frame(height: 100)
         }
-        
-        
     }
 }
 
@@ -238,6 +253,10 @@ extension RoutinesView {
         }
     }
 
+}
+
+//MARK: Background Nav Link
+extension RoutinesView {
     private var navigationLinkBackground: some View {
         NavigationLink(
             destination: Group {
