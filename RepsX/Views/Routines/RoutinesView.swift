@@ -118,9 +118,7 @@ struct RoutinesView: View {
             )
             .hidden()
         )
-        .tint(primaryColor)
         .safeAreaInset(edge: .bottom) {
-            // Add extra space (e.g., 100 points)
             Color.clear.frame(height: 100)
         }
     }
@@ -147,18 +145,6 @@ extension RoutinesView{
                 }
             }
         }
-    }
-}
-
-//MARK: Swipe to delete
-extension RoutinesView {
-    private func deleteSwipeAction(for routine: Routine) -> some View {
-        Button(role: .destructive) {
-            routineViewModel.deleteRoutine(routine)
-        } label: {
-            Image(systemName: "trash.fill")
-        }
-        .tint(.red)
     }
 }
 
@@ -229,7 +215,7 @@ extension RoutinesView {
                     }
                 }
             )
-            SectionView(
+            GroupView(
                 title: group.name,
                 routines: routines(in: group),
                 isExpanded: binding,
@@ -242,7 +228,7 @@ extension RoutinesView {
         Group {
             if !ungroupedRoutines.isEmpty {
                 let binding = $isUngroupedExpanded
-                SectionView(
+                GroupView(
                     title: "Ungrouped",
                     routines: ungroupedRoutines,
                     isExpanded: binding,

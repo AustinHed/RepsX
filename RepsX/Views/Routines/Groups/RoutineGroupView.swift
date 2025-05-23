@@ -9,11 +9,13 @@ import SwiftUI
 import SwiftData
 import Foundation
 
-struct SectionView: View {
+struct GroupView: View {
     let title: String
     let routines: [Routine]
     @Binding var isExpanded: Bool
     let columns: [GridItem]
+    
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -34,6 +36,7 @@ struct SectionView: View {
                 }
                 .padding(.horizontal)
             }
+            .tint(colorScheme == .dark ? .white : .black)
 
             // Grid Content
             if isExpanded {
