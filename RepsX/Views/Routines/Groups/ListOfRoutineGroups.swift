@@ -1,5 +1,5 @@
 //
-//  AddRoutineGroupView.swift
+//  ListOfRoutineGroups.swift
 //  RepsX
 //
 //  Created by Austin Hed on 5/23/25.
@@ -9,7 +9,11 @@ import SwiftUI
 import SwiftData
 import Foundation
 
-struct AddNewRoutineGroupView: View {
+struct ListOfRoutineGroups: View {
+    
+    //Query
+    @Query(sort: \RoutineGroup.name) var groups: [RoutineGroup]
+    
     //Environment
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
@@ -26,40 +30,37 @@ struct AddNewRoutineGroupView: View {
         return theme.color(for: colorScheme)
     }
     
-    @State var name: String = ""
+    //to delete
+    @State private var groupToDelete: RoutineGroup?
+    @State private var isDeleteConfirmationPresented = false
+    
+    //to edit names
+    @State private var groupBeingEdited: RoutineGroup?
+    @State private var editedName: String = ""
     
     var body: some View {
-        NavigationStack{
+        NavigationStack {
             List {
-                HStack{
-                    Text("Name")
-                    Spacer()
-                    TextField("New Group", text: $name)
-                        .multilineTextAlignment(.trailing)
+                ForEach(groups) { group in
+                    NavigationLink(value: group) {
+                        Text(group.name)
+                    }
                 }
             }
-            .listStyle(InsetGroupedListStyle())
-            .navigationTitle("Add New Group")
+            .navigationTitle(Text("Routine Groups"))
             .navigationBarTitleDisplayMode(.inline)
             //MARK: Toolbar
             .toolbar {
                 //close button
                 ToolbarItem(placement: .topBarLeading) {
-                    Button("Cancel") {
+                    Button("Close") {
                         dismiss()
                     }
                 }
-                //Save button
-                ToolbarItem(placement:.topBarTrailing) {
-                    Button("Save") {
-                        if !name.isEmpty {
-                            routineGroupViewModel.addRoutineGroup(name: name)
-                            print("added name \(name)")
-                            dismiss()
-                        }
-                    }
-                    .disabled(name.isEmpty)
-                }
+            }
+            //MARK: Navigation Link
+            .navigationDestination(for: RoutineGroup.self) { group in
+                EditRoutineGroup(routineGroup: group)
             }
             //MARK: Background
             .scrollContentBackground(.hidden)
@@ -67,5 +68,6 @@ struct AddNewRoutineGroupView: View {
                 CustomBackground(primaryColor: primaryColor)
             )
         }
+        
     }
 }

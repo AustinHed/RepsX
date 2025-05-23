@@ -36,7 +36,8 @@ struct RoutinesView: View {
     @State private var expandedGroups: [UUID] = []
     @State private var isUngroupedExpanded: Bool = true
     
-    @State private var isAddGroupSheetPresented = false
+    @State private var isAddGroupSheetPresented: Bool = false
+    @State private var isEditGroupSheetPresenteted: Bool = false
     
     //all favorite routines
     private var favorites: [Routine] {
@@ -89,7 +90,7 @@ struct RoutinesView: View {
                         isAddGroupSheetPresented.toggle()
                     }
                     Button("Edit Groups") {
-                        //TODO: navigate to the edit groups screen
+                        isEditGroupSheetPresenteted.toggle()
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
@@ -99,6 +100,9 @@ struct RoutinesView: View {
         //MARK: Sheets
         .sheet(isPresented: $isAddGroupSheetPresented) {
             AddNewRoutineGroupView()
+        }
+        .sheet(isPresented: $isEditGroupSheetPresenteted) {
+            ListOfRoutineGroups()
         }
         //MARK: Background
         .scrollContentBackground(.hidden)
@@ -202,7 +206,7 @@ extension RoutinesView {
             if !favorites.isEmpty {
                 VStack(alignment: .leading) {
                     Text("Favorites")
-                        .font(.title2.bold())
+                        .font(.headline.bold())
                         .padding(.horizontal)
 
                     LazyVGrid(columns: columns, spacing: 15) {
@@ -219,7 +223,9 @@ extension RoutinesView {
     }
 
     private var groupedRoutineSections: some View {
-        ForEach(routineGroups) { group in
+        ForEach(routineGroups.filter { group in
+            routines.contains(where: { $0.group?.id == group.id })
+        }) { group in
             let binding = Binding(
                 get: { expandedGroups.contains(group.id) },
                 set: { newValue in

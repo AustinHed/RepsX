@@ -25,10 +25,12 @@ struct SectionView: View {
             } label: {
                 HStack {
                     Text(title)
-                        .font(.title2.bold())
+                        .font(.headline)
+                        .bold()
+                        .foregroundStyle(.primary)
                     Spacer()
                     Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .foregroundStyle(.secondary)
+                        //.foregroundStyle(.secondary)
                 }
                 .padding(.horizontal)
             }
