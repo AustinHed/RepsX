@@ -18,6 +18,8 @@ struct WorkoutHistoryView: View {
     @Query(filter: #Predicate{(routine:Routine) in
         return routine.favorite}, sort: \Routine.name) var favoriteRoutines: [Routine]
     @Query var exercisesList: [Exercise]
+    @Query(sort: \RoutineGroup.name) private var routineGroups: [RoutineGroup]
+    @Query private var allRoutines: [Routine]
     
     //for the 30-day recap
     @State var lookback: RecapOptions = .Thirty
@@ -45,6 +47,16 @@ struct WorkoutHistoryView: View {
     
     //deleting workout confirmation
     @State private var workoutToDelete: Workout?
+    
+    //choosing workouts from Routine Groups
+    private var groupsWithRoutines: [RoutineGroup] {
+        routineGroups.filter { group in
+            allRoutines.contains { $0.group?.id == group.id }
+        }
+    }
+    private func randomRoutine(from group: RoutineGroup) -> Routine? {
+        allRoutines.filter { $0.group?.id == group.id }.randomElement()
+    }
     
     //View Model
     private var workoutViewModel: WorkoutViewModel {
@@ -382,6 +394,7 @@ extension WorkoutHistoryView {
         }
     }
 }
+
 //MARK: Toolbar contents
 extension WorkoutHistoryView {
     //add workout menu
@@ -409,6 +422,19 @@ extension WorkoutHistoryView {
                     }
                 }
                 
+                // random routine by group
+                Section("Random from Group") {
+                    ForEach(groupsWithRoutines) { group in
+                        Button(group.name) {
+                            if let routine = randomRoutine(from: group) {
+                                let createdWorkout = workoutViewModel.addWorkoutFromRoutine(routine, date: Date())
+                                selectedWorkout = createdWorkout
+                                editNewWorkout = true
+                            }
+                        }
+                    }
+                }
+                
                 //cancel button
                 Section {
                     Button(role: .destructive) {
@@ -425,6 +451,7 @@ extension WorkoutHistoryView {
         }
     }
 }
+
 //MARK: Fullscreen Covers
 extension WorkoutHistoryView {
     //new workout editor

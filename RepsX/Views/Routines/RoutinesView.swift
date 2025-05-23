@@ -176,7 +176,7 @@ extension RoutinesView {
             favoritesSection
             groupedRoutineSections
             ungroupedSection
-            addButton.padding(.horizontal, 15)
+            //addButton.padding(.horizontal, 15)
         }
     }
 
