@@ -1,0 +1,52 @@
+[
+  { "id": "11111111-1111-1111-1111-111111111111", "name": "Bench Press", "category": "Chest" },
+  { "id": "11111111-1111-1111-1111-111111111112", "name": "Incline Dumbbell Press", "category": "Chest" },
+  { "id": "11111111-1111-1111-1111-111111111113", "name": "Decline Press", "category": "Chest" },
+  { "id": "11111111-1111-1111-1111-111111111114", "name": "Cable Fly", "category": "Chest" },
+  { "id": "11111111-1111-1111-1111-111111111115", "name": "Chest Dips", "category": "Chest" },
+
+  { "id": "22222222-2222-2222-2222-222222222111", "name": "Deadlift", "category": "Back" },
+  { "id": "22222222-2222-2222-2222-222222222112", "name": "Pull-Up", "category": "Back" },
+  { "id": "22222222-2222-2222-2222-222222222113", "name": "Barbell Row", "category": "Back" },
+  { "id": "22222222-2222-2222-2222-222222222114", "name": "Lat Pulldown", "category": "Back" },
+  { "id": "22222222-2222-2222-2222-222222222115", "name": "Seated Cable Row", "category": "Back" },
+
+  { "id": "33333333-3333-3333-3333-333333333111", "name": "Overhead Press", "category": "Shoulders" },
+  { "id": "33333333-3333-3333-3333-333333333112", "name": "Lateral Raise", "category": "Shoulders" },
+  { "id": "33333333-3333-3333-3333-333333333113", "name": "Front Raise", "category": "Shoulders" },
+  { "id": "33333333-3333-3333-3333-333333333114", "name": "Reverse Fly", "category": "Shoulders" },
+  { "id": "33333333-3333-3333-3333-333333333115", "name": "Arnold Press", "category": "Shoulders" },
+
+  { "id": "44444444-4444-4444-4444-444444444111", "name": "Bicep Curl", "category": "Biceps" },
+  { "id": "44444444-4444-4444-4444-444444444112", "name": "Hammer Curl", "category": "Biceps" },
+  { "id": "44444444-4444-4444-4444-444444444113", "name": "Preacher Curl", "category": "Biceps" },
+  { "id": "44444444-4444-4444-4444-444444444114", "name": "Concentration Curl", "category": "Biceps" },
+
+  { "id": "55555555-5555-5555-5555-555555555111", "name": "Tricep Pushdown", "category": "Triceps" },
+  { "id": "55555555-5555-5555-5555-555555555112", "name": "Skullcrusher", "category": "Triceps" },
+  { "id": "55555555-5555-5555-5555-555555555113", "name": "Overhead Tricep Extension", "category": "Triceps" },
+  { "id": "55555555-5555-5555-5555-555555555114", "name": "Tricep Dips", "category": "Triceps" },
+
+  { "id": "66666666-6666-6666-6666-666666666111", "name": "Wrist Curl", "category": "Forearms" },
+  { "id": "66666666-6666-6666-6666-666666666112", "name": "Reverse Wrist Curl", "category": "Forearms" },
+
+  { "id": "77777777-7777-7777-7777-777777777111", "name": "Squat", "category": "Quadriceps" },
+  { "id": "77777777-7777-7777-7777-777777777112", "name": "Leg Press", "category": "Quadriceps" },
+  { "id": "77777777-7777-7777-7777-777777777113", "name": "Leg Extension", "category": "Quadriceps" },
+
+  { "id": "88888888-8888-8888-8888-888888888111", "name": "Hamstring Curl", "category": "Hamstrings" },
+  { "id": "88888888-8888-8888-8888-888888888112", "name": "Romanian Deadlift", "category": "Hamstrings" },
+
+  { "id": "99999999-9999-9999-9999-999999999111", "name": "Hip Thrust", "category": "Glutes" },
+  { "id": "99999999-9999-9999-9999-999999999112", "name": "Glute Bridge", "category": "Glutes" },
+
+  { "id": "aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaa111", "name": "Calf Raise", "category": "Calves" },
+  { "id": "aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaa112", "name": "Seated Calf Raise", "category": "Calves" },
+
+  { "id": "bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbb211", "name": "Plank", "category": "Abdominals" },
+  { "id": "bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbb212", "name": "Crunch", "category": "Abdominals" },
+  { "id": "bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbb213", "name": "Leg Raise", "category": "Abdominals" },
+
+  { "id": "ccccccc3-cccc-cccc-cccc-ccccccccc311", "name": "Russian Twist", "category": "Obliques" },
+  { "id": "ccccccc3-cccc-cccc-cccc-ccccccccc312", "name": "Side Plank", "category": "Obliques" }
+]
