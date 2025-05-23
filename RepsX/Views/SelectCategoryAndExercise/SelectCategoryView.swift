@@ -52,7 +52,8 @@ struct SelectCategoryView: View {
     
     //toggles
     @State var isAddingExercise: Bool = false
-    @State var isEditingCategories:Bool = false
+    //@State var isEditingCategories:Bool = false
+    @State private var showEditCategories = false
     
     var body: some View {
         NavigationStack {
@@ -128,10 +129,8 @@ struct SelectCategoryView: View {
                 //edit exercises and categories
                 ToolbarItem(placement: .topBarTrailing) {
                     Menu {
-                        NavigationLink("Edit Categories") {
-                            ListOfCategoriesView(navigationTitle: "Edit Categories") { category in
-                                EditCategoryView(category: category)
-                            }
+                        Button("Edit Categories") {
+                            showEditCategories.toggle()
                         }
                     } label: {
                         Image(systemName:"ellipsis.circle")
@@ -142,9 +141,19 @@ struct SelectCategoryView: View {
             .sheet(isPresented: $isAddingExercise) {
                 AddNewExerciseTemplateView()
             }
-            .sheet(isPresented: $isEditingCategories) {
-                ListOfCategoriesView(navigationTitle: "Edit Categories") { category in
-                    EditCategoryView(category: category)
+//            .sheet(isPresented: $isEditingCategories) {
+//                ListOfCategoriesView(navigationTitle: "Edit Categories") { category in
+//                    EditCategoryView(category: category)
+//                }
+//            }
+            .sheet(isPresented: $showEditCategories) {
+                NavigationStack {
+                    ListOfCategoriesView(
+                        navigationTitle: "Edit Categories",
+                        isPresentedModally: true
+                    ) { category in
+                        EditCategoryView(category: category)
+                    }
                 }
             }
             //MARK: Background

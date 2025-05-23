@@ -60,10 +60,17 @@ struct ListOfCategoriesView<Destination: View>: View {
     // Closure that builds the destination iew for a given category.
     let destinationBuilder: (CategoryModel) -> Destination
     
-    init(navigationTitle: String,
-         allWorkouts: [Workout]? = nil,
-         @ViewBuilder destinationBuilder: @escaping (CategoryModel) -> Destination) {
+    //used to show the cancel button when shown as a modal
+    let isPresentedModally: Bool
+    
+    init(
+        navigationTitle: String,
+        isPresentedModally: Bool = false,
+        allWorkouts: [Workout]? = nil,
+        @ViewBuilder destinationBuilder: @escaping (CategoryModel) -> Destination
+    ) {
         self.navigationTitle = navigationTitle
+        self.isPresentedModally = isPresentedModally
         self.allWorkouts = allWorkouts
         self.destinationBuilder = destinationBuilder
     }
@@ -114,12 +121,19 @@ struct ListOfCategoriesView<Destination: View>: View {
         }
         //MARK: Toolbar
         .toolbar {
-            //add new category
+            if isPresentedModally {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+            }
+
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     isAddingNewCategory.toggle()
                 } label: {
-                    Image(systemName:"plus.circle")
+                    Image(systemName: "plus.circle")
                 }
             }
         }
