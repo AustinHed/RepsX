@@ -9,7 +9,9 @@ import SwiftUI
 import SwiftData
 
 struct EditRoutineGroup: View {
-    @State var routineGroup: RoutineGroup
+    let routineGroup: RoutineGroup
+    @State private var groupName: String
+    
     @State private var isDeleteConfirmationPresented = false
     
     //environment
@@ -28,13 +30,18 @@ struct EditRoutineGroup: View {
         return theme.color(for: colorScheme)
     }
     
+    init(routineGroup: RoutineGroup) {
+        self.routineGroup = routineGroup
+        _groupName = State(initialValue: routineGroup.name)
+    }
+    
     var body: some View {
         List {
             //update name
             Section("Name"){
-                TextField("Name", text: $routineGroup.name)
+                TextField("Name", text: $groupName)
                     .onSubmit {
-                        routineGroupViewModel.updateRoutineGroup(routineGroup, newName: routineGroup.name)
+                        routineGroupViewModel.updateRoutineGroup(routineGroup, newName: groupName)
                     }
                     .foregroundStyle(Color.primary)
             }
@@ -50,8 +57,10 @@ struct EditRoutineGroup: View {
                     titleVisibility: .visible
                 ) {
                     Button("Delete", role: .destructive) {
-                        routineGroupViewModel.deleteRoutineGroup(routineGroup)
                         dismiss()
+                        
+                        routineGroupViewModel.deleteRoutineGroup(routineGroup)
+                        
                     }
                     Button("Cancel", role: .cancel) {}
                 }

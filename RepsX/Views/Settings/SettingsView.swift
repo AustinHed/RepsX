@@ -8,6 +8,7 @@ enum SettingsDestination: Hashable {
     
     case exercises
     case categories
+    case routineGroups
     
     case feedback
     case help
@@ -50,7 +51,7 @@ struct SettingsView: View {
             //Exercise and Categories
             Section(header:
                         HStack{
-                Text("Exercises & Categories")
+                Text("Workouts")
                     .font(.headline)
                     .bold()
                     .foregroundStyle(Color.primary)
@@ -61,6 +62,7 @@ struct SettingsView: View {
             ) {
                 NavigationLink("Edit Exercises", value: SettingsDestination.exercises)
                 NavigationLink("Edit Categories", value: SettingsDestination.categories)
+                NavigationLink("Edit Routine Groups", value: SettingsDestination.routineGroups)
             }
             
             Section(header:
@@ -122,6 +124,7 @@ struct SettingsView: View {
                 SelectThemeView()
             case .appIcon:
                 SelectAppIconView()
+                
             case .exercises:
                 ListOfExerciseTemplatesView(navigationTitle: "Edit Exercises") { exercise in
                     EditExerciseTemplateView(exerciseTemplate: exercise)
@@ -130,12 +133,16 @@ struct SettingsView: View {
                 ListOfCategoriesView(navigationTitle: "Edit Categories") { category in
                     EditCategoryView(category: category)
                 }
+            case .routineGroups:
+                ListOfRoutineGroups()
+                
             case .feedback:
                 SubmitFeedbackView()
             case .help:
                 Text("Help and Support View")
             case .acknowledgements:
                 Text("Acknowledgements View")
+                
             case .terms:
                 TermsOfServiceView()
             case .privacy:

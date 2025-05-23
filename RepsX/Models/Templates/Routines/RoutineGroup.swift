@@ -13,6 +13,7 @@ import Foundation
 class RoutineGroup: Identifiable {
     var id: UUID
     var name: String
+    @Relationship(deleteRule: .nullify, inverse: \Routine.group)
     var routines: [Routine]
 
     init(id: UUID = UUID(), name: String, routines: [Routine] = []) {

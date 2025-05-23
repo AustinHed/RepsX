@@ -34,6 +34,7 @@ struct RoutinesView: View {
     @State private var isLinkActive = false
     
     @State private var expandedGroups: [UUID] = []
+    @State private var hasInitializedExpandedGroups = false
     @State private var isUngroupedExpanded: Bool = true
     
     @State private var isEditGroupSheetPresenteted: Bool = false
@@ -95,7 +96,10 @@ struct RoutinesView: View {
         }
         //MARK: Sheets
         .sheet(isPresented: $isEditGroupSheetPresenteted) {
-            ListOfRoutineGroups()
+            NavigationStack{
+                ListOfRoutineGroups()
+                    .presentedModally(true)
+            }
         }
         //MARK: Background
         .scrollContentBackground(.hidden)
@@ -120,6 +124,12 @@ struct RoutinesView: View {
         )
         .safeAreaInset(edge: .bottom) {
             Color.clear.frame(height: 100)
+        }
+        .onAppear {
+            if !hasInitializedExpandedGroups {
+                expandedGroups = routineGroups.map { $0.id }
+                hasInitializedExpandedGroups = true
+            }
         }
     }
 }

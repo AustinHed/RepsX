@@ -27,8 +27,14 @@ class RoutineGroupViewModel {
     
     //delete
     func deleteRoutineGroup(_ routineGroup: RoutineGroup) {
-        modelContext.delete(routineGroup)
-        save()
+        for routine in routineGroup.routines {
+            routine.group = nil
+        }
+        
+        DispatchQueue.main.async {
+            self.modelContext.delete(routineGroup)
+            self.save()
+        }
     }
     
     //update
