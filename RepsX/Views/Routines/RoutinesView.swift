@@ -36,7 +36,6 @@ struct RoutinesView: View {
     @State private var expandedGroups: [UUID] = []
     @State private var isUngroupedExpanded: Bool = true
     
-    @State private var isAddGroupSheetPresented: Bool = false
     @State private var isEditGroupSheetPresenteted: Bool = false
     
     //all favorite routines
@@ -86,9 +85,6 @@ struct RoutinesView: View {
             //groups menu
             ToolbarItem(placement:.topBarTrailing) {
                 Menu {
-                    Button("Create New Group") {
-                        isAddGroupSheetPresented.toggle()
-                    }
                     Button("Edit Groups") {
                         isEditGroupSheetPresenteted.toggle()
                     }
@@ -98,9 +94,6 @@ struct RoutinesView: View {
             }
         }
         //MARK: Sheets
-        .sheet(isPresented: $isAddGroupSheetPresented) {
-            AddNewRoutineGroupView()
-        }
         .sheet(isPresented: $isEditGroupSheetPresenteted) {
             ListOfRoutineGroups()
         }

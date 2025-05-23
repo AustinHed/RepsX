@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 import UIKit
 
 struct EditRoutine: View {
+    
+    //Query
+    @Query(sort: \RoutineGroup.name) var groups: [RoutineGroup]
     
     //the routine to edit
     var routine: Routine
@@ -46,7 +50,7 @@ struct EditRoutine: View {
         List {
             //start button
             Section {
-                Button("Start Workout"){
+                Button {
                     //first, create a new workout from the current routine
                     let newWorkout = workoutViewModel.addWorkoutFromRoutine(routine, date: Date())
                     //then, pass that workout to the singleton WorkoutCoordinator to be used in LogView
@@ -54,12 +58,18 @@ struct EditRoutine: View {
                     WorkoutCoordinator.shared.showEditWorkout = true
                     selectedTab = .history
                     dismiss()
+                } label: {
+                    Text("Start Workout")
+                        .bold()
                 }
                 .foregroundStyle(primaryColor)
                 
             }
             //name
             nameSection(routine: routine, routineViewModel: routineViewModel)
+            
+            //group
+            groupSection(routine: routine, routineViewModel: routineViewModel, groups: groups)
             
             //exercises
             exercisesSection(for: routine)
@@ -157,12 +167,6 @@ struct EditRoutine: View {
     }
 }
 
-//MARK: Reorder
-extension EditRoutine {
-    //TODO: Reorder
-    
-}
-
 //MARK: Name
 extension EditRoutine {
     func nameSection(
@@ -189,6 +193,39 @@ extension EditRoutine {
             ))
             .onSubmit {
                 routineViewModel.updateRoutine(routine, newName: routine.name)
+            }
+        }
+    }
+}
+
+//MARK: Group
+extension EditRoutine {
+    func groupSection(
+        routine: Routine,
+        routineViewModel: RoutineViewModel,
+        groups: [RoutineGroup]
+    ) -> some View {
+        Section (header:
+                    HStack{
+            Text("Assign Group")
+                .font(.headline)
+                .bold()
+                .foregroundStyle(Color.primary)
+                .textCase(nil)
+            Spacer()
+        }
+            .listRowInsets(EdgeInsets(top: 0, leading: 3, bottom: 0, trailing: 0))
+        ) {
+            Picker("Group", selection: Binding<RoutineGroup?>(
+                get: { routine.group },
+                set: { newGroup in
+                    routine.group = newGroup
+                }
+            )) {
+                Text("None").tag(RoutineGroup?.none)
+                ForEach(groups) { group in
+                    Text(group.name).tag(Optional(group))
+                }
             }
         }
     }

@@ -30,6 +30,8 @@ struct ListOfRoutineGroups: View {
         return theme.color(for: colorScheme)
     }
     
+    //to add
+    @State private var isAddingGroup: Bool = false
     //to delete
     @State private var groupToDelete: RoutineGroup?
     @State private var isDeleteConfirmationPresented = false
@@ -57,10 +59,22 @@ struct ListOfRoutineGroups: View {
                         dismiss()
                     }
                 }
+                ToolbarItem(placement:.topBarTrailing) {
+                    Button {
+                        isAddingGroup.toggle()
+                    } label: {
+                        Image(systemName: "plus.circle")
+                    }
+
+                }
             }
             //MARK: Navigation Link
             .navigationDestination(for: RoutineGroup.self) { group in
                 EditRoutineGroup(routineGroup: group)
+            }
+            //MARK: Sheets
+            .sheet(isPresented: $isAddingGroup) {
+                AddNewRoutineGroupView()
             }
             //MARK: Background
             .scrollContentBackground(.hidden)
