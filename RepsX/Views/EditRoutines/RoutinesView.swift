@@ -11,8 +11,9 @@ import Foundation
 
 struct RoutinesView: View {
     
-    //Fetch all existing routines
+    //queries
     @Query(sort: \Routine.name, order: .forward) var routines: [Routine]
+    @Query(sort: \RoutineGroup.name, order: .forward) private var routineGroups: [RoutineGroup]
     
     @Environment(\.modelContext) private var modelContext
     
@@ -32,6 +33,24 @@ struct RoutinesView: View {
     @State private var newRoutine: Routine? = nil
     @State private var isLinkActive = false
     
+    @State private var expandedGroups: [UUID] = []
+    @State private var isUngroupedExpanded: Bool = true
+    
+    //all favorite routines
+    private var favorites: [Routine] {
+        routines.filter { $0.favorite }
+    }
+
+    //all routines in a given group
+    private func routines(in group: RoutineGroup) -> [Routine] {
+        routines.filter { $0.group?.id == group.id }
+    }
+
+    //all routines without a group
+    private var ungroupedRoutines: [Routine] {
+        routines.filter { $0.group == nil && !$0.favorite }
+    }
+    
     //Routing around
     @Binding var selectedTab: ContentView.Tab
     
@@ -42,49 +61,7 @@ struct RoutinesView: View {
     
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: columns, spacing: 15) {
-                //Routines
-                ForEach(routines) { routine in
-                    NavigationLink(value: routine) {
-                        RoutineItem(routine: routine)
-                    }
-                    //favorite and delete
-                    .contextMenu {
-                        //favorite
-                        Button {
-                            routineViewModel.favoriteRoutine(routine)
-                        } label: {
-                            HStack{
-                                Text("Favorite")
-                                    .foregroundStyle(Color.primary)
-                                Spacer()
-                                Image(systemName:"star.circle.fill")
-                                    .foregroundStyle(.yellow)
-                            }
-                        }
-                        
-                        //delete
-                        Button(role: .destructive) {
-                            withAnimation {
-                                routineViewModel.deleteRoutine(routine)
-                            }
-                        } label: {
-                            HStack{
-                                Text("Delete")
-                                    .foregroundStyle(.red)
-                                Spacer()
-                                Image(systemName:"trash.fill")
-                                    .foregroundStyle(.red)
-                            }
-                        }                        
-                    }
-                }
-                
-                //Add button
-                addButton
-            }
-            
-            .padding(.horizontal, 15)
+            routineList
         }
         .navigationTitle("Routines")
         //MARK: Destination
@@ -193,7 +170,92 @@ extension RoutinesView {
     }
 }
 
+//MARK: Routine List
+extension RoutinesView {
+    
+    private var routineList: some View {
+        VStack(spacing: 20) {
+            favoritesSection
+            groupedRoutineSections
+            ungroupedSection
+            addButton.padding(.horizontal, 15)
+        }
+    }
+
+    private var favoritesSection: some View {
+        Group {
+            if !favorites.isEmpty {
+                VStack(alignment: .leading) {
+                    Text("Favorites")
+                        .font(.title2.bold())
+                        .padding(.horizontal)
+
+                    LazyVGrid(columns: columns, spacing: 15) {
+                        ForEach(favorites) { routine in
+                            NavigationLink(value: routine) {
+                                RoutineItem(routine: routine)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 15)
+                }
+            }
+        }
+    }
+
+    private var groupedRoutineSections: some View {
+        ForEach(routineGroups) { group in
+            let binding = Binding(
+                get: { expandedGroups.contains(group.id) },
+                set: { newValue in
+                    if newValue {
+                        expandedGroups.append(group.id)
+                    } else {
+                        expandedGroups.removeAll { $0 == group.id }
+                    }
+                }
+            )
+            SectionView(
+                title: group.name,
+                routines: routines(in: group),
+                isExpanded: binding,
+                columns: columns
+            )
+        }
+    }
+
+    private var ungroupedSection: some View {
+        Group {
+            if !ungroupedRoutines.isEmpty {
+                let binding = $isUngroupedExpanded
+                SectionView(
+                    title: "Ungrouped",
+                    routines: ungroupedRoutines,
+                    isExpanded: binding,
+                    columns: columns
+                )
+            }
+        }
+    }
+
+    private var navigationLinkBackground: some View {
+        NavigationLink(
+            destination: Group {
+                if let routine = newRoutine {
+                    AddNewRoutineView(routine: routine)
+                } else {
+                    EmptyView()
+                }
+            },
+            isActive: $isLinkActive,
+            label: {
+                EmptyView()
+            }
+        )
+        .hidden()
+    }
+}
+
 #Preview{
     RoutinesView(selectedTab: .constant(.routines))
 }
-

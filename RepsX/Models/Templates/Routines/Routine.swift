@@ -19,15 +19,17 @@ class Routine: Identifiable {
     var name: String
     var exercises: [ExerciseInRoutine]
     var favorite: Bool
-    
+    var group: RoutineGroup? //a single grouping the Routine belongs to, optional
+
     init(id: UUID = UUID(),
          name: String = "Unknown Routine",
          exercises: [ExerciseInRoutine] = [],
-         favorite: Bool = false
-        ){
+         favorite: Bool = false,
+         group: RoutineGroup? = nil) {
         self.id = id
         self.name = name
         self.exercises = exercises
         self.favorite = favorite
+        self.group = group
     }
 }

@@ -32,10 +32,14 @@ class RoutineViewModel {
     }
     
     //MARK: Update
-    func updateRoutine(_ routine: Routine, newName: String? = nil) {
+    func updateRoutine(_ routine: Routine, newName: String? = nil, newGroup: RoutineGroup? = nil) {
         if let newName = newName {
             routine.name = newName
         }
+        if let newGroup = newGroup {
+            routine.group = newGroup
+        }
+        save()
 
     }
     //favorite
