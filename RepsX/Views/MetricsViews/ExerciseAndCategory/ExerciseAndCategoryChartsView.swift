@@ -61,7 +61,7 @@ struct ExerciseAndCategoryChartsView: View {
                     .frame(height: 35)
                     .background(
                         Capsule()
-                            .fill(Color.white)
+                            .fill(Color(UIColor.systemBackground))
                     )
                     .padding(.horizontal, 18)
                     .padding(.top, 10)
