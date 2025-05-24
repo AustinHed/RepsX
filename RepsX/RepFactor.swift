@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct RepsXApp: App {
+struct RepFactor: App {
     @Environment(\.modelContext) private var modelContext
     
     var body: some Scene {

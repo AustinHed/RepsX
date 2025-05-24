@@ -13,18 +13,18 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3B62B3082D63BD4B00984AE1 /* LastRep.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LastRep.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3B62B3082D63BD4B00984AE1 /* RepFactor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepFactor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B63CB8B2DE0E12E00BB876F /* AirtableInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AirtableInfo.plist; sourceTree = "<group>"; };
 		3BD7FC772DB87E2300ABD281 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		3BD7FC762DB87DDA00ABD281 /* Exceptions for "RepsX" folder in "LastRep" target */ = {
+		3BD7FC762DB87DDA00ABD281 /* Exceptions for "RepsX" folder in "RepFactor" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 3B62B3072D63BD4B00984AE1 /* LastRep */;
+			target = 3B62B3072D63BD4B00984AE1 /* RepFactor */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -32,7 +32,7 @@
 		3B62B30A2D63BD4B00984AE1 /* RepsX */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				3BD7FC762DB87DDA00ABD281 /* Exceptions for "RepsX" folder in "LastRep" target */,
+				3BD7FC762DB87DDA00ABD281 /* Exceptions for "RepsX" folder in "RepFactor" target */,
 			);
 			path = RepsX;
 			sourceTree = "<group>";
@@ -64,7 +64,7 @@
 		3B62B3092D63BD4B00984AE1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3B62B3082D63BD4B00984AE1 /* LastRep.app */,
+				3B62B3082D63BD4B00984AE1 /* RepFactor.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -72,9 +72,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3B62B3072D63BD4B00984AE1 /* LastRep */ = {
+		3B62B3072D63BD4B00984AE1 /* RepFactor */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3B62B3182D63BD4C00984AE1 /* Build configuration list for PBXNativeTarget "LastRep" */;
+			buildConfigurationList = 3B62B3182D63BD4C00984AE1 /* Build configuration list for PBXNativeTarget "RepFactor" */;
 			buildPhases = (
 				3B62B3042D63BD4B00984AE1 /* Sources */,
 				3B62B3052D63BD4B00984AE1 /* Frameworks */,
@@ -87,12 +87,12 @@
 			fileSystemSynchronizedGroups = (
 				3B62B30A2D63BD4B00984AE1 /* RepsX */,
 			);
-			name = LastRep;
+			name = RepFactor;
 			packageProductDependencies = (
 				3B62BA182D7A5B0900984AE1 /* SwipeActions */,
 			);
 			productName = RepsX;
-			productReference = 3B62B3082D63BD4B00984AE1 /* LastRep.app */;
+			productReference = 3B62B3082D63BD4B00984AE1 /* RepFactor.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -110,7 +110,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3B62B3032D63BD4B00984AE1 /* Build configuration list for PBXProject "RepsX" */;
+			buildConfigurationList = 3B62B3032D63BD4B00984AE1 /* Build configuration list for PBXProject "RepFactor" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -127,7 +127,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3B62B3072D63BD4B00984AE1 /* LastRep */,
+				3B62B3072D63BD4B00984AE1 /* RepFactor */,
 			);
 		};
 /* End PBXProject section */
@@ -357,7 +357,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3B62B3032D63BD4B00984AE1 /* Build configuration list for PBXProject "RepsX" */ = {
+		3B62B3032D63BD4B00984AE1 /* Build configuration list for PBXProject "RepFactor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3B62B3162D63BD4C00984AE1 /* Debug */,
@@ -366,7 +366,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3B62B3182D63BD4C00984AE1 /* Build configuration list for PBXNativeTarget "LastRep" */ = {
+		3B62B3182D63BD4C00984AE1 /* Build configuration list for PBXNativeTarget "RepFactor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3B62B3192D63BD4C00984AE1 /* Debug */,
